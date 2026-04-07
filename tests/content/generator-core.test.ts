@@ -62,17 +62,19 @@ describe("generator-core", () => {
     const sourceDir = path.join(tempRoot, "source", "前端");
     const publicDir = path.join(tempRoot, "public");
     const localAssetDir = path.join(sourceDir, "images");
-    const absoluteAssetDir = path.join(tempRoot, "absolute");
+    const absoluteAssetDir = path.join(path.parse(tempRoot).root, "tmp", path.basename(tempRoot), "absolute");
+    const absoluteAssetPath = path.join(absoluteAssetDir, "system.png");
+    const absoluteMarkdownPath = path.posix.join("/tmp", path.basename(tempRoot), "absolute", "system.png");
 
     await mkdir(localAssetDir, { recursive: true });
     await mkdir(absoluteAssetDir, { recursive: true });
     await writeFile(path.join(localAssetDir, "demo.png"), "relative-image");
-    await writeFile(path.join(absoluteAssetDir, "system.png"), "absolute-image");
+    await writeFile(absoluteAssetPath, "absolute-image");
 
     const sourceFilePath = path.join(sourceDir, "AJAX 学习笔记（Day 01）：入门.md");
     const markdown = [
       "![relative](images/demo.png)",
-      `![absolute](${path.join(absoluteAssetDir, "system.png")})`,
+      `![absolute](${absoluteMarkdownPath})`,
     ].join("\n\n");
 
     const result = await rewriteMarkdownAssetPaths(markdown, {

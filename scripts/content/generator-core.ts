@@ -146,6 +146,17 @@ export async function rewriteMarkdownAssetPaths(
     }
 
     if (originalReference.startsWith("/")) {
+      const rootedAbsolutePath = path.resolve(sourceDir, originalReference);
+      if (await fileExists(rootedAbsolutePath)) {
+        const rewrittenUrl = await copyAbsoluteAsset(rootedAbsolutePath, options.publicDir);
+        nextMarkdown = replaceMarkdownImageReference(
+          nextMarkdown,
+          matchedExpression,
+          rawReference,
+          originalReference,
+          rewrittenUrl,
+        );
+      }
       continue;
     }
 
