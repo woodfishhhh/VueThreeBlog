@@ -16,6 +16,7 @@ jobs:
     env:
       VITE_BASE_PATH: /newBlog/
       DEPLOY_ARCHIVE: vue-three-blog-${{ github.run_id }}.tar.gz
+      DEPLOY_REMOTE_ARCHIVE: /tmp/vue-three-blog-${{ github.run_id }}.tar.gz
 
     steps:
       - name: Checkout
@@ -39,39 +40,38 @@ jobs:
       - name: Package site archive
         run: tar -czf "${{ env.DEPLOY_ARCHIVE }}" -C dist .
 
+      - name: Configure SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
       - name: Upload site archive
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: ${{ env.DEPLOY_ARCHIVE }}
-          target: /tmp
+        run: |
+          scp "${{ env.DEPLOY_ARCHIVE }}" "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ env.DEPLOY_REMOTE_ARCHIVE }}"
 
       - name: Activate release
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            set -eu
+        run: |
+          ssh "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" <<EOF
+          set -eu
 
-            archive="/tmp/${{ env.DEPLOY_ARCHIVE }}"
-            target_dir="${{ secrets.DEPLOY_DIR }}"
-            next_dir="${target_dir}.next"
-            backup_dir="${target_dir}.bak"
+          archive="${{ env.DEPLOY_REMOTE_ARCHIVE }}"
+          target_dir="${{ secrets.DEPLOY_DIR }}"
+          next_dir="\${target_dir}.next"
+          backup_dir="\${target_dir}.bak"
 
-            rm -rf "$next_dir" "$backup_dir"
-            mkdir -p "$next_dir"
-            tar -xzf "$archive" -C "$next_dir"
+          rm -rf "\$next_dir" "\$backup_dir"
+          mkdir -p "\$next_dir"
+          tar -xzf "\$archive" -C "\$next_dir"
 
-            if [ -d "$target_dir" ]; then
-              mv "$target_dir" "$backup_dir"
-            fi
+          if [ -d "\$target_dir" ]; then
+            mv "\$target_dir" "\$backup_dir"
+          fi
 
-            mv "$next_dir" "$target_dir"
-            chmod -R 755 "$target_dir"
+          mv "\$next_dir" "\$target_dir"
+          chmod -R 755 "\$target_dir"
 
-            rm -f "$archive"
-            rm -rf "$backup_dir"
+          rm -f "\$archive"
+          rm -rf "\$backup_dir"
+          EOF
