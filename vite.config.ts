@@ -4,7 +4,22 @@ import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
 
+function normalizeBase(value: string | undefined) {
+  if (!value) {
+    return "/";
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === "/") {
+    return "/";
+  }
+
+  const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return withLeadingSlash.endsWith("/") ? withLeadingSlash : `${withLeadingSlash}/`;
+}
+
 export default defineConfig({
+  base: normalizeBase(process.env.VITE_BASE_PATH),
   plugins: [vue(), tailwindcss()],
   resolve: {
     alias: {

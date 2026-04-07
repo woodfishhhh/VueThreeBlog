@@ -5,7 +5,7 @@ import NotFoundView from "@/views/NotFoundView.vue";
 import PostView from "@/views/PostView.vue";
 
 export const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",

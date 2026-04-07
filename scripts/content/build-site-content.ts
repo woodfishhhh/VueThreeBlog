@@ -562,7 +562,7 @@ async function buildAuthorProfile(options: {
   };
 }
 
-async function readFriendLinks(linkPath: string, _targetPublicDir: string): Promise<GeneratedFriendLink[]> {
+async function readFriendLinks(linkPath: string, targetPublicDir: string): Promise<GeneratedFriendLink[]> {
   const raw = await safeReadFile(linkPath);
   const data = (yaml.load(raw) as { links?: unknown } | undefined) ?? {};
   const result: GeneratedFriendLink[] = [];
@@ -581,8 +581,10 @@ async function readFriendLinks(linkPath: string, _targetPublicDir: string): Prom
         continue;
       }
 
-      // 使用原始头像 URL，不进行本地化
-      const avatar = readString(typedItem?.avatar) || undefined;
+      const rawAvatar = readString(typedItem?.avatar);
+      const avatar = rawAvatar
+        ? (await localizeRemoteAsset(rawAvatar, targetPublicDir)) || rawAvatar
+        : undefined;
 
       result.push({
         name,
