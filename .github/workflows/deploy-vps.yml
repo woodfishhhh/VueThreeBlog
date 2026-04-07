@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_BASE_PATH: /newBlog/
+      DEPLOY_ARCHIVE: vue-three-blog-${{ github.run_id }}.tar.gz
 
     steps:
       - name: Checkout
@@ -35,31 +36,42 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Reset deploy directory
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            mkdir -p "${{ secrets.DEPLOY_DIR }}"
-            find "${{ secrets.DEPLOY_DIR }}" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+      - name: Package site archive
+        run: tar -czf "${{ env.DEPLOY_ARCHIVE }}" -C dist .
 
-      - name: Deploy site files
+      - name: Upload site archive
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: dist/*
-          target: ${{ secrets.DEPLOY_DIR }}
-          strip_components: 1
+          source: ${{ env.DEPLOY_ARCHIVE }}
+          target: /tmp
 
-      - name: Fix permissions
+      - name: Activate release
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            chmod -R 755 "${{ secrets.DEPLOY_DIR }}"
+            set -eu
+
+            archive="/tmp/${{ env.DEPLOY_ARCHIVE }}"
+            target_dir="${{ secrets.DEPLOY_DIR }}"
+            next_dir="${target_dir}.next"
+            backup_dir="${target_dir}.bak"
+
+            rm -rf "$next_dir" "$backup_dir"
+            mkdir -p "$next_dir"
+            tar -xzf "$archive" -C "$next_dir"
+
+            if [ -d "$target_dir" ]; then
+              mv "$target_dir" "$backup_dir"
+            fi
+
+            mv "$next_dir" "$target_dir"
+            chmod -R 755 "$target_dir"
+
+            rm -f "$archive"
+            rm -rf "$backup_dir"
