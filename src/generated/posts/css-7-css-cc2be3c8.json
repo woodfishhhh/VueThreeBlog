@@ -1,0 +1,48 @@
+{
+  "canonicalSlug": "css-7-css-cc2be3c8",
+  "aliases": [
+    "CSS 学习笔记（7）：CSS 优先级叠加计算规则详解"
+  ],
+  "title": "CSS 学习笔记（7）：CSS 优先级叠加计算规则详解",
+  "publishedAt": "2025-09-21T23:32:09.000Z",
+  "publishedLabel": "Sep 21, 2025",
+  "excerpt": "公式：行内样式 (1,0,0,0) > ID 选择器 (0,1,0,0) > 类选择器 (0,0,1,0) > 标签选择器 (0,0,0,1)\n每一级之间不存在进位，例如 10 个类选择器的权重仍低于 1 个 ID 选择器。",
+  "categories": [
+    "前端开发",
+    "CSS"
+  ],
+  "tags": [
+    "前端开发",
+    "CSS",
+    "选择器",
+    "前端基础"
+  ],
+  "html": "<h3 id=\"一权重计算规则\">一、权重计算规则</h3>\n<p><strong>公式：行内样式 (1,0,0,0) > ID 选择器 (0,1,0,0) > 类选择器 (0,0,1,0) > 标签选择器 (0,0,0,1)</strong>\n每一级之间不存在进位，例如 10 个类选择器的权重仍低于 1 个 ID 选择器。</p>\n<h3 id=\"二示例不同选择器组合的优先级比较\">二、示例：不同选择器组合的优先级比较</h3>\n<pre><code class=\"hljs language-html\"><span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">style</span>></span><span class=\"css\">\n  <span class=\"hljs-comment\">/* 选择器1：权重 (0,1,0,0) */</span>\n  <span class=\"hljs-selector-id\">#title</span> {\n    <span class=\"hljs-attribute\">color</span>: red;\n  }\n\n  <span class=\"hljs-comment\">/* 选择器2：权重 (0,0,2,0) */</span>\n  <span class=\"hljs-selector-class\">.section</span> <span class=\"hljs-selector-class\">.heading</span> {\n    <span class=\"hljs-attribute\">color</span>: blue;\n  }\n\n  <span class=\"hljs-comment\">/* 选择器3：权重 (0,0,1,1) */</span>\n  <span class=\"hljs-selector-tag\">div</span><span class=\"hljs-selector-class\">.content</span> {\n    <span class=\"hljs-attribute\">color</span>: green;\n  }\n\n  <span class=\"hljs-comment\">/* 选择器4：权重 (0,0,0,2) */</span>\n  <span class=\"hljs-selector-tag\">div</span> <span class=\"hljs-selector-tag\">p</span> {\n    <span class=\"hljs-attribute\">color</span>: purple;\n  }\n</span><span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">style</span>></span>\n\n<span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">div</span> <span class=\"hljs-attr\">class</span>=<span class=\"hljs-string\">\"section\"</span>></span>\n  <span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">h1</span> <span class=\"hljs-attr\">id</span>=<span class=\"hljs-string\">\"title\"</span> <span class=\"hljs-attr\">class</span>=<span class=\"hljs-string\">\"heading\"</span>></span>标题<span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">h1</span>></span> <span class=\"hljs-comment\">&#x3C;!-- 应用选择器1 (红色) --></span>\n  <span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">div</span> <span class=\"hljs-attr\">class</span>=<span class=\"hljs-string\">\"content\"</span>></span>\n    <span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">p</span>></span>段落内容<span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">p</span>></span> <span class=\"hljs-comment\">&#x3C;!-- 应用选择器3 (绿色) --></span>\n  <span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">div</span>></span>\n<span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">div</span>></span>\n</code></pre>\n<h3 id=\"三优先级比较步骤\">三、优先级比较步骤</h3>\n<ol>\n<li><strong>比较行内样式</strong>：若存在行内样式，则直接胜出。</li>\n<li><strong>比较 ID 选择器数量</strong>：数量多的优先级高。</li>\n<li><strong>比较类选择器数量</strong>：若 ID 数量相同，则比较类选择器数量。</li>\n<li><strong>比较标签选择器数量</strong>：若类数量也相同，则比较标签选择器数量。</li>\n</ol>\n<h3 id=\"四复合选择器的权重计算\">四、复合选择器的权重计算</h3>\n<pre><code class=\"hljs language-html\"><span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">style</span>></span><span class=\"css\">\n  <span class=\"hljs-comment\">/* 选择器A：权重 (0,1,1,1) */</span>\n  <span class=\"hljs-selector-tag\">div</span><span class=\"hljs-selector-id\">#main</span><span class=\"hljs-selector-class\">.container</span> {\n    <span class=\"hljs-attribute\">background-color</span>: yellow;\n  }\n\n  <span class=\"hljs-comment\">/* 选择器B：权重 (0,0,3,0) */</span>\n  <span class=\"hljs-selector-class\">.header</span> <span class=\"hljs-selector-class\">.nav</span> <span class=\"hljs-selector-class\">.link</span> {\n    <span class=\"hljs-attribute\">color</span>: cyan;\n  }\n\n  <span class=\"hljs-comment\">/* 选择器C：权重 (0,0,2,2) */</span>\n  <span class=\"hljs-selector-tag\">div</span><span class=\"hljs-selector-class\">.container</span> <span class=\"hljs-selector-tag\">p</span><span class=\"hljs-selector-class\">.text</span> {\n    <span class=\"hljs-attribute\">font-size</span>: <span class=\"hljs-number\">18px</span>;\n  }\n</span><span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">style</span>></span>\n\n<span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">div</span> <span class=\"hljs-attr\">id</span>=<span class=\"hljs-string\">\"main\"</span> <span class=\"hljs-attr\">class</span>=<span class=\"hljs-string\">\"container header\"</span>></span>\n  <span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">nav</span> <span class=\"hljs-attr\">class</span>=<span class=\"hljs-string\">\"nav\"</span>></span>\n    <span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">a</span> <span class=\"hljs-attr\">href</span>=<span class=\"hljs-string\">\"#\"</span> <span class=\"hljs-attr\">class</span>=<span class=\"hljs-string\">\"link\"</span>></span>链接<span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">a</span>></span> <span class=\"hljs-comment\">&#x3C;!-- 应用选择器B (青色) --></span>\n  <span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">nav</span>></span>\n  <span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">p</span> <span class=\"hljs-attr\">class</span>=<span class=\"hljs-string\">\"text\"</span>></span>内容<span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">p</span>></span> <span class=\"hljs-comment\">&#x3C;!-- 应用选择器C (18px) --></span>\n<span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">div</span>></span>\n</code></pre>\n<h3 id=\"五important-和-继承的特殊规则\">五、!important 和 继承的特殊规则</h3>\n<ol>\n<li>\n<p><strong>!important</strong>：</p>\n<pre><code class=\"hljs language-css\"><span class=\"hljs-selector-tag\">p</span> {\n  <span class=\"hljs-attribute\">color</span>: orange <span class=\"hljs-meta\">!important</span>; <span class=\"hljs-comment\">/* 覆盖所有其他规则，即使权重更低 */</span>\n}\n</code></pre>\n</li>\n<li>\n<p><strong>继承</strong>：</p>\n<pre><code class=\"hljs language-html\"><span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">body</span> <span class=\"hljs-attr\">style</span>=<span class=\"hljs-string\">\"color: gray;\"</span>></span>\n  <span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">p</span>></span>继承的文本颜色 (权重最低)<span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">p</span>></span>\n  <span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">p</span> <span class=\"hljs-attr\">class</span>=<span class=\"hljs-string\">\"local\"</span>></span>应用类样式 (优先于继承)<span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">p</span>></span>\n<span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">body</span>></span>\n<span class=\"hljs-tag\">&#x3C;<span class=\"hljs-name\">style</span>></span><span class=\"css\">\n  <span class=\"hljs-selector-class\">.local</span> {\n    <span class=\"hljs-attribute\">color</span>: black;\n  }\n</span><span class=\"hljs-tag\">&#x3C;/<span class=\"hljs-name\">style</span>></span>\n</code></pre>\n</li>\n</ol>",
+  "toc": [
+    {
+      "id": "一权重计算规则",
+      "level": 3,
+      "text": "一、权重计算规则"
+    },
+    {
+      "id": "二示例不同选择器组合的优先级比较",
+      "level": 3,
+      "text": "二、示例：不同选择器组合的优先级比较"
+    },
+    {
+      "id": "三优先级比较步骤",
+      "level": 3,
+      "text": "三、优先级比较步骤"
+    },
+    {
+      "id": "四复合选择器的权重计算",
+      "level": 3,
+      "text": "四、复合选择器的权重计算"
+    },
+    {
+      "id": "五important-和-继承的特殊规则",
+      "level": 3,
+      "text": "五、!important 和 继承的特殊规则"
+    }
+  ]
+}

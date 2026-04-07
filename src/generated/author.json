@@ -1,0 +1,254 @@
+{
+  "name": "木鱼",
+  "title": "是一名 学生 / 电子音乐制作人 / 算法爱好者",
+  "slogan": "源于热爱，去感受",
+  "intro": "你好，很高兴认识你👋",
+  "avatar": "/remote-assets/7169dd51bc194ce663ef8873ccf3f5bbc7645e1b.jpg",
+  "postsCount": 101,
+  "tagsCount": 283,
+  "categoriesCount": 32,
+  "skills": [
+    {
+      "title": "Java",
+      "color": "#ffffff",
+      "img": "/remote-assets/f5eff3ba16c706659786755ffd6a2d0da5296052.jpg"
+    },
+    {
+      "title": "Docker",
+      "color": "#57b6e6",
+      "img": "/remote-assets/5b1845c65e25b15426ecaf702a6059e92631f266.png"
+    },
+    {
+      "title": "Node",
+      "color": "#333333",
+      "img": "/remote-assets/30463ad8543448c573a828f6c3a1b4516c5ce6ec.svg"
+    },
+    {
+      "title": "Vite 8",
+      "color": "#646cff",
+      "img": "/remote-assets/1caad8ed0db36356bedda6210f12777ccfbaec2e.svg"
+    },
+    {
+      "title": "Vitest",
+      "color": "#fcc72b",
+      "img": "/remote-assets/844d19012f559577bb8862255a4374541550a2ac.svg"
+    },
+    {
+      "title": "Tailwind CSS",
+      "color": "#06b6d4",
+      "img": "/remote-assets/ec1b4acab97c70266b44f9ec341e4ecbb686cf96.svg"
+    },
+    {
+      "title": "Three.js",
+      "color": "#ffffff",
+      "img": "/remote-assets/637adb3a767a6dfbe494f0a648903070487352f4.svg"
+    },
+    {
+      "title": "FL Studio",
+      "color": "#f37c20",
+      "img": "/asset/image.png"
+    },
+    {
+      "title": "C",
+      "color": "#a8b9cc",
+      "img": "https://cdn.simpleicons.org/c/A8B9CC?viewbox=auto"
+    },
+    {
+      "title": "C++",
+      "color": "#00599c",
+      "img": "/remote-assets/c91a8272871b74dc33f968c73f252f1f44f962c2.svg"
+    },
+    {
+      "title": "Pinia",
+      "color": "#42b883",
+      "img": "/remote-assets/b2a84a25972f9daedfa88b822aada237dc955984.svg"
+    },
+    {
+      "title": "TypeScript",
+      "color": "#3178c6",
+      "img": "https://cdn.simpleicons.org/typescript/3178C6?viewbox=auto"
+    },
+    {
+      "title": "Python",
+      "color": "#ffffff",
+      "img": "/remote-assets/93e8ae5fd03d1d5b11085d5acfc80e6cf127db41.png"
+    },
+    {
+      "title": "Vue",
+      "color": "#b8f0ae",
+      "img": "/remote-assets/a2be1de3f739f32c7f00506a52d4d98acc451aa6.png"
+    },
+    {
+      "title": "CSS3",
+      "color": "#2c51db",
+      "img": "/remote-assets/f17fbb17212948b6d5b55912d419aad85e99bd25.png"
+    },
+    {
+      "title": "JS",
+      "color": "#f7cb4f",
+      "img": "/remote-assets/3a5cd466f4f8b2a78ca7ac2e79edd4f4b351fe7d.png"
+    },
+    {
+      "title": "HTML",
+      "color": "#e9572b",
+      "img": "/remote-assets/28f3609f1f7c5a6a56a6d4ffce55d558457f2558.png"
+    },
+    {
+      "title": "Git",
+      "color": "#df5b40",
+      "img": "/remote-assets/ab1ea044e7dec01da2266e1cfe233a7ab7b5a1fc.webp"
+    }
+  ],
+  "tags": [],
+  "leftTags": [
+    "🤖️ 数码科技爱好者",
+    "🔍 分享与热心帮助",
+    "🏠 我是鱼唇大学生",
+    "🔨 前端开发正在学"
+  ],
+  "rightTags": [
+    "学习算法和音乐 🤝",
+    "脚踏实地行动派 🏃",
+    "团队小组发动机 🧱",
+    "电子音乐制作人 🎧"
+  ],
+  "careers": [
+    {
+      "school": "JUFE",
+      "major": "计算机科学与技术",
+      "color": "#357ef5"
+    },
+    {
+      "school": "THU（目标）",
+      "major": "计算机科学与技术",
+      "color": "#357ef5"
+    },
+    {
+      "school": "PKU（目标）",
+      "major": "人工智能",
+      "color": "#357ef5"
+    }
+  ],
+  "personalities": {
+    "tips": "性格",
+    "title": "探险家 Adventurer",
+    "color": "#ac899c",
+    "type": "ISFP-T",
+    "image": "/remote-assets/bc28e2598af0737ba055b512008eb98aa7d0d9c9.png",
+    "linkText": "16personalities",
+    "typeLink": "https://www.16personalities.com/ch/%E7%BB%93%E6%9E%9C/isfp-t/m/4m0pp3vwk",
+    "typeName": "探险家 Adventurer",
+    "myphoto": "/remote-assets/8b6b3de91c49f67f805f0aa6ac7df38ec918daea.jpg"
+  },
+  "motto": {
+    "title": "座右铭",
+    "prefix": "如果没有天赋，",
+    "content": "那就一直重复"
+  },
+  "expertise": {
+    "title": "特长",
+    "prefix": "喜欢突然冒出一个",
+    "specialist": "PLAN",
+    "content": "也许有用，但一定",
+    "level": "好玩"
+  },
+  "game": [
+    {
+      "title": "爱好游戏",
+      "subtitle": "CS2",
+      "img": "/remote-assets/9a83f04e7d7724e39ed4d2cbc929010956ccc341.png",
+      "box_shadow": "0 12px 28px rgba(53,126,245,.35)",
+      "tips_left": "枪法稳一点，心态好一点",
+      "tips_right": "Teamplay"
+    }
+  ],
+  "likes": [
+    {
+      "type": "comic",
+      "tips": "喜欢的影视剧",
+      "title": "特摄 + 动漫",
+      "subtips": "一些常看收藏",
+      "list": [
+        {
+          "name": "神奇宝贝",
+          "href": "https://www.bilibili.com/bangumi/play/ss47066?spm_id_from=333.337.0.0",
+          "cover": "/remote-assets/f210d667411e2fab0130ac8cdf7007caed3b1446.png"
+        },
+        {
+          "name": "工作细胞",
+          "href": "https://www.bilibili.com/bangumi/play/ss37889?spm_id_from=333.337.0.0",
+          "cover": "/remote-assets/e94fe0dfd6ae2d6198b2873d7df6b424d25bbeef.png"
+        },
+        {
+          "name": "猫和老鼠",
+          "href": "https://www.bilibili.com/bangumi/play/ss357?spm_id_from=333.337.0.0",
+          "cover": "/remote-assets/670167832eed642acd7b528963469574817be6ed.png"
+        },
+        {
+          "name": "奈克瑟斯奥特曼",
+          "href": "https://www.bilibili.com/bangumi/play/ss38404?spm_id_from=333.337.0.0",
+          "cover": "/remote-assets/67bf4f75b375d4342eae2fc750d0fb9f5ac54c46.png"
+        },
+        {
+          "name": "泽塔奥特曼",
+          "href": "https://www.bilibili.com/bangumi/play/ss38397?spm_id_from=333.337.0.0",
+          "cover": "/remote-assets/3f200586225bc71a8d1716655d3302d895a6fdc9.png"
+        }
+      ]
+    },
+    {
+      "type": "like-technology",
+      "tips": "关注偏好",
+      "title": "人工智能 · 编程",
+      "subtips": "AI.Coding.Passion!",
+      "bg": "/remote-assets/99fd8b55cb2e0718d50a39a89d5fbbbb153f72de.png"
+    },
+    {
+      "type": "like-music",
+      "tips": "音乐偏好",
+      "title": "ColorBass · ProgressiveHouse · 凯尔特",
+      "subtips": "跟木鱼一起欣赏更多音乐",
+      "bg": "/remote-assets/262fde786595def44e16f736c1550af2bd674e0c.jpg",
+      "button": true,
+      "button_link": "https://music.163.com/playlist?id=2290135145&uct2=U2FsdGVkX19AQho4E/Vok7NwUAskwBGv/gvCgXWtR20=",
+      "button_text": "更多推荐"
+    }
+  ],
+  "oneself": {
+    "map": {
+      "light": "/remote-assets/7709f9d0b479b33a6849bbd4b68f551f58658c26.png",
+      "dark": "/remote-assets/7709f9d0b479b33a6849bbd4b68f551f58658c26.png"
+    },
+    "location": "中国，南昌市",
+    "birthYear": 2006,
+    "university": "江西财经大学",
+    "major": "计算机科学与技术",
+    "occupation": "大一学生"
+  },
+  "cause": {
+    "tip": "建站原因",
+    "title": "为什么写博客",
+    "content": "记录学习路径，沉淀知识，也把热爱分享给同频的人。"
+  },
+  "tenyear": {
+    "tips": "进度",
+    "title": "大学阶段进度条",
+    "text": "保持热爱，慢慢变强。",
+    "start": "2024-09-01",
+    "end": "2028-06-30"
+  },
+  "award": {
+    "enable": true,
+    "description": "感谢每一份支持，都是继续创作的动力。",
+    "tips": "已收到 {sum} 元支持，真的非常感谢。"
+  },
+  "rewardList": [
+    {
+      "name": "赖祥文",
+      "money": 666,
+      "time": 1748793600000,
+      "color": "#f7c948",
+      "icon": "fas fa-gift"
+    }
+  ]
+}

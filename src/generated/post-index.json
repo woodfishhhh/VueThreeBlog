@@ -1,0 +1,2075 @@
+[
+  {
+    "canonicalSlug": "sql-advanced-updates-views",
+    "aliases": [
+      "4SQL 进阶：数据更新、空值处理与视图"
+    ],
+    "title": "SQL 进阶：数据更新、空值处理与视图",
+    "publishedAt": "2026-03-16T17:37:26.000Z",
+    "publishedLabel": "Mar 16, 2026",
+    "excerpt": "数据更新包含插入、修改、删除三类核心操作，是SQL对表数据的基础操作，需严格匹配数据类型、遵守完整性约束。",
+    "categories": [
+      "数据库",
+      "SQL"
+    ],
+    "tags": [
+      "SQL",
+      "INSERT",
+      "UPDATE",
+      "DELETE",
+      "视图"
+    ]
+  },
+  {
+    "canonicalSlug": "5-41a7c813",
+    "aliases": [
+      "5数据库安全性：安全标准、存取控制与审计"
+    ],
+    "title": "数据库安全性：安全标准、存取控制与审计",
+    "publishedAt": "2026-03-16T17:37:26.000Z",
+    "publishedLabel": "Mar 16, 2026",
+    "excerpt": "- 关键参数：\r\n  - PUBLIC：表示授予所有用户该权限\r\n  - WITH GRANT OPTION：允许被授权用户转授该权限给其他用户\r\n  - 对属性列授权时，必须明确指定列名（如UPDATE(Sno)）\r\n- 授权者范围：数据库管理员（DBA）、数据库对象创建者、拥有WITH GRAN...",
+    "categories": [
+      "数据库",
+      "数据库原理"
+    ],
+    "tags": [
+      "数据库安全",
+      "DAC",
+      "MAC",
+      "审计"
+    ]
+  },
+  {
+    "canonicalSlug": "6-e-r-e13abc9d",
+    "aliases": [
+      "6数据库概念设计：E-R 模型、联系类型与图示规范"
+    ],
+    "title": "数据库概念设计：E-R 模型、联系类型与图示规范",
+    "publishedAt": "2026-03-16T17:37:26.000Z",
+    "publishedLabel": "Mar 16, 2026",
+    "excerpt": "这份笔记紧扣期末考点，聚焦E-R模型核心概念、绘图规范、实体联系类型及实例分析，内容简洁实用，适配期末大题解题需求。",
+    "categories": [
+      "数据库",
+      "数据库设计"
+    ],
+    "tags": [
+      "E-R模型",
+      "概念设计",
+      "联系类型",
+      "数据库设计"
+    ]
+  },
+  {
+    "canonicalSlug": "7-2f05e8f4",
+    "aliases": [
+      "7数据库恢复技术：事务、故障与检查点恢复"
+    ],
+    "title": "数据库恢复技术：事务、故障与检查点恢复",
+    "publishedAt": "2026-03-16T17:37:26.000Z",
+    "publishedLabel": "Mar 16, 2026",
+    "excerpt": "一致性示例：银行转账（A转1万至B）\r\n- 正确操作：$A=A-10000$ 且 $B=B+10000$，数据库保持一致性；\r\n- 异常情况：仅执行$A=A-10000$，数据丢失，数据库处于不一致状态。",
+    "categories": [
+      "数据库",
+      "数据库原理"
+    ],
+    "tags": [
+      "数据库恢复",
+      "事务",
+      "ACID",
+      "检查点"
+    ]
+  },
+  {
+    "canonicalSlug": "8-91afa5df",
+    "aliases": [
+      "8数据库并发控制：封锁协议、可串行性与两段锁"
+    ],
+    "title": "数据库并发控制：封锁协议、可串行性与两段锁",
+    "publishedAt": "2026-03-16T17:37:26.000Z",
+    "publishedLabel": "Mar 16, 2026",
+    "excerpt": "注：统一符号规则：$Ri(X)$表示事务$Ti$读取数据$X$，$Wi(X)$表示事务$Ti$写入数据$X$。",
+    "categories": [
+      "数据库",
+      "数据库原理"
+    ],
+    "tags": [
+      "并发控制",
+      "封锁协议",
+      "可串行性",
+      "两段锁"
+    ]
+  },
+  {
+    "canonicalSlug": "2-fab0b7c6",
+    "aliases": [
+      "2关系模型基础：基本概念、完整性与关系代数"
+    ],
+    "title": "关系模型基础：基本概念、完整性与关系代数",
+    "publishedAt": "2026-03-14T16:32:59.000Z",
+    "publishedLabel": "Mar 14, 2026",
+    "excerpt": "1. 考查形式：关系基本概念、关系完整性以选填为主；关系代数为高频考点，选填+简答/计算均会涉及\n2. 核心框架：关系模型基于集合代数，核心围绕「关系概念+完整性约束+关系代数运算」展开",
+    "categories": [
+      "数据库",
+      "数据库原理"
+    ],
+    "tags": [
+      "关系模型",
+      "关系代数",
+      "完整性约束",
+      "候选码"
+    ]
+  },
+  {
+    "canonicalSlug": "3sql-ddl-0c8c5db1",
+    "aliases": [
+      "3SQL 基础：DDL、表定义与查询核心"
+    ],
+    "title": "SQL 基础：DDL、表定义与查询核心",
+    "publishedAt": "2026-03-14T15:45:49.000Z",
+    "publishedLabel": "Mar 14, 2026",
+    "excerpt": "-- 选课表SC（复合主键，表级约束；外键参照）\nCREATE TABLE SC(\n    SNO CHAR(9),\n    CNO CHAR(6),\n    GRADE INT,\n    PRIMARY KEY(SNO,CNO),     -- 复合主键（表级）\n    FOREIGN KEY(S...",
+    "categories": [
+      "数据库",
+      "SQL"
+    ],
+    "tags": [
+      "SQL",
+      "DDL",
+      "CREATE TABLE",
+      "完整性约束",
+      "模式"
+    ]
+  },
+  {
+    "canonicalSlug": "database-systems-foundations",
+    "aliases": [
+      "1数据库系统基础：概念、发展阶段与数据模型"
+    ],
+    "title": "数据库系统基础：概念、发展阶段与数据模型",
+    "publishedAt": "2026-03-14T15:24:34.000Z",
+    "publishedLabel": "Mar 14, 2026",
+    "excerpt": "定义：长期储存在计算机内、有组织、可共享的大量数据的集合。\n核心特点：①长期存储 ②有组织 ③可共享（基本特点）；④冗余度小 ⑤数据独立性高 ⑥易扩展性（对比人工/文件管理的优势特点）。",
+    "categories": [
+      "数据库",
+      "数据库原理"
+    ],
+    "tags": [
+      "数据库系统",
+      "DBMS",
+      "数据模型",
+      "数据独立性"
+    ]
+  },
+  {
+    "canonicalSlug": "udemy-vue-vue-439af4db",
+    "aliases": [
+      "Udemy Vue 学习笔记：Vue 完整指南"
+    ],
+    "title": "Udemy Vue 学习笔记：Vue 完整指南",
+    "publishedAt": "2026-01-22T15:02:25.000Z",
+    "publishedLabel": "Jan 22, 2026",
+    "excerpt": "This course was created by Maximilian Schwarzmüller",
+    "categories": [
+      "前端开发",
+      "Vue"
+    ],
+    "tags": [
+      "Vue 3",
+      "Udemy",
+      "Composition API",
+      "前端框架"
+    ]
+  },
+  {
+    "canonicalSlug": "post-5a3b94ce",
+    "aliases": [
+      "马克思主义基本原理期末模拟卷（仿校考试格式）"
+    ],
+    "title": "马克思主义基本原理期末模拟卷（仿校考试格式）",
+    "publishedAt": "2026-01-14T19:31:27.000Z",
+    "publishedLabel": "Jan 14, 2026",
+    "excerpt": "这是一份根据你提供的《马原》第一、二、三章重点知识点，完全仿照江西财经大学21-22学年期末试卷格式生成的模拟试卷。",
+    "categories": [
+      "考试资料",
+      "模拟卷"
+    ],
+    "tags": [
+      "马克思主义基本原理",
+      "马原",
+      "期末模拟卷",
+      "选择题"
+    ]
+  },
+  {
+    "canonicalSlug": "post-f9fbf2fb",
+    "aliases": [
+      "管理学期末模拟卷（含选择、简答与论述）"
+    ],
+    "title": "管理学期末模拟卷（含选择、简答与论述）",
+    "publishedAt": "2026-01-14T19:28:46.000Z",
+    "publishedLabel": "Jan 14, 2026",
+    "excerpt": "一、单项选择题(本大题共10小题，每小题2分，共20分)\n| 题号 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |\n| :------: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---...",
+    "categories": [
+      "考试资料",
+      "模拟卷"
+    ],
+    "tags": [
+      "管理学",
+      "期末模拟卷",
+      "单项选择",
+      "简答题",
+      "论述题"
+    ]
+  },
+  {
+    "canonicalSlug": "post-f1d6d5e7",
+    "aliases": [
+      "数据结构期末速通"
+    ],
+    "title": "数据结构期末速通",
+    "publishedAt": "2026-01-09T15:47:41.000Z",
+    "publishedLabel": "Jan 09, 2026",
+    "excerpt": "1. 构建分析表格  \n   需创建4行多列表格，列数=关键字个数+1（预留补充列），各行含义如下：\n   - 第1行（下标）：从0开始依次递增（如关键字有10个，下标为0~9）；\n   - 第2行（关键字）：直接复制题目给定的字符序列（如\"ababacaaad\"）；\n   - 第3行（next数组...",
+    "categories": [
+      "计算机基础",
+      "数据结构"
+    ],
+    "tags": [
+      "数据结构",
+      "期末复习",
+      "KMP",
+      "考前速通"
+    ]
+  },
+  {
+    "canonicalSlug": "typescript-1ec59ddf",
+    "aliases": [
+      "TypeScript 入门到实战笔记：安装、编译与类型系统"
+    ],
+    "title": "TypeScript 入门到实战笔记：安装、编译与类型系统",
+    "publishedAt": "2025-12-31T02:17:14.000Z",
+    "publishedLabel": "Dec 31, 2025",
+    "excerpt": "---",
+    "categories": [
+      "编程语言",
+      "TypeScript"
+    ],
+    "tags": [
+      "TypeScript",
+      "tsc",
+      "类型系统",
+      "编译",
+      "开发环境"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-babel-npm-bb1d010e",
+    "aliases": [
+      "现代 JavaScript 开发：模块化、Babel、NPM 与构建工具"
+    ],
+    "title": "现代 JavaScript 开发：模块化、Babel、NPM 与构建工具",
+    "publishedAt": "2025-12-29T06:12:08.000Z",
+    "publishedLabel": "Dec 29, 2025",
+    "excerpt": "本章节聚焦“现代JavaScript开发实践”，衔接前文的异步编程（Promise、Async/Await）与ES6模块，后续将系统讲解模块规范、工程化工具（如NPM、Parcel）、代码优化及开发最佳实践，最终帮助学习者从“基础语法掌握”过渡到“企业级项目开发能力”。",
+    "categories": [
+      "前端开发",
+      "前端工程化"
+    ],
+    "tags": [
+      "ES Modules",
+      "Babel",
+      "NPM",
+      "Parcel"
+    ]
+  },
+  {
+    "canonicalSlug": "cache-c5c80abb",
+    "aliases": [
+      "Cache缓存"
+    ],
+    "title": "Cache缓存",
+    "publishedAt": "2025-12-28T14:10:41.000Z",
+    "publishedLabel": "Dec 28, 2025",
+    "excerpt": "[TOC]",
+    "categories": [
+      "计算机基础",
+      "计算机组成原理"
+    ],
+    "tags": [
+      "计算机组成原理",
+      "Cache缓存",
+      "Cache",
+      "存储器",
+      "定位"
+    ]
+  },
+  {
+    "canonicalSlug": "post-00a781d0",
+    "aliases": [
+      "主存扩展与存储器性能指标"
+    ],
+    "title": "主存扩展与存储器性能指标",
+    "publishedAt": "2025-12-28T13:49:53.000Z",
+    "publishedLabel": "Dec 28, 2025",
+    "excerpt": "[TOC]",
+    "categories": [
+      "计算机基础",
+      "计算机组成原理"
+    ],
+    "tags": [
+      "主存扩展",
+      "存储容量",
+      "MAR",
+      "MDR",
+      "存取周期"
+    ]
+  },
+  {
+    "canonicalSlug": "promise-29824ba7",
+    "aliases": [
+      "异步函数返回值：Promise 包装与结果获取"
+    ],
+    "title": "异步函数返回值：Promise 包装与结果获取",
+    "publishedAt": "2025-12-28T13:01:30.000Z",
+    "publishedLabel": "Dec 28, 2025",
+    "excerpt": "本视频聚焦 JavaScript 中异步函数（Async Functions）返回值的特性、获取方式、错误处理及代码优化，解决“异步函数如何返回数据”“返回值为何是 Promise”“如何优雅处理异步返回结果”等关键问题，是异步编程进阶的核心内容。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "异步函数",
+      "返回值",
+      "Promise",
+      "then"
+    ]
+  },
+  {
+    "canonicalSlug": "try-catch-d66a57cf",
+    "aliases": [
+      "try...catch 错误处理：捕获异步异常与兜底策略"
+    ],
+    "title": "try...catch 错误处理：捕获异步异常与兜底策略",
+    "publishedAt": "2025-12-28T12:53:11.000Z",
+    "publishedLabel": "Dec 28, 2025",
+    "excerpt": "- async/await 语法中，无法像普通 Promise 那样直接使用 .catch() 方法捕获错误，需借助 try...catch 语句实现错误处理\n- try...catch 并非专为 async/await 设计，是 JavaScript 语言原生特性（可能从语言初始阶段就存在），可同...",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "try...catch",
+      "异常处理",
+      "Async/Await",
+      "错误兜底"
+    ]
+  },
+  {
+    "canonicalSlug": "async-await-promise-b15b701b",
+    "aliases": [
+      "用 Async／Await 消费 Promise：语法、错误处理与返回值"
+    ],
+    "title": "用 Async/Await 消费 Promise：语法、错误处理与返回值",
+    "publishedAt": "2025-12-28T12:44:03.000Z",
+    "publishedLabel": "Dec 28, 2025",
+    "excerpt": "- 定义：Async 函数是一种特殊的 JavaScript 函数，通过在 function 关键字前添加 async 关键字声明，专门用于配合 Await 关键字消费 Promise，使异步代码逻辑更接近同步代码的直观形式。\n- 创建语法：",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "Async/Await",
+      "Promise",
+      "错误处理",
+      "返回值"
+    ]
+  },
+  {
+    "canonicalSlug": "dhcp-dns-ftp-http-5088d0b5",
+    "aliases": [
+      "计算机网络应用层：DHCP、DNS、FTP 与 HTTP"
+    ],
+    "title": "计算机网络应用层：DHCP、DNS、FTP 与 HTTP",
+    "publishedAt": "2025-12-28T04:22:12.000Z",
+    "publishedLabel": "Dec 28, 2025",
+    "excerpt": "应用层的定义：应用层是 OSI 体系结构的顶层，是离用户最近的一层，也是设计和建立计算机网络的最终目的。",
+    "categories": [
+      "计算机基础",
+      "计算机网络"
+    ],
+    "tags": [
+      "应用层",
+      "DHCP",
+      "DNS",
+      "FTP",
+      "HTTP"
+    ]
+  },
+  {
+    "canonicalSlug": "post-90af88a7",
+    "aliases": [
+      "事件循环实践：微任务、宏任务与执行顺序"
+    ],
+    "title": "事件循环实践：微任务、宏任务与执行顺序",
+    "publishedAt": "2025-12-27T18:08:24.000Z",
+    "publishedLabel": "Dec 27, 2025",
+    "excerpt": "1. 所属课程：Udemy 排名第一的 JavaScript 课程《2023 最新完整 JavaScript 课程 从入门到精通 -- 通过项目、挑战和理论掌握 JS》（中英文字幕版·下）\n2. 视频定位：该课程第 42 集，聚焦 JavaScript 事件循环（Event Loop）的实践应用，是...",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "事件循环",
+      "微任务",
+      "宏任务",
+      "执行顺序"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-async-core",
+    "aliases": [
+      "JavaScript 异步编程核心：AJAX、Promise 与 Async／Await"
+    ],
+    "title": "JavaScript 异步编程核心：AJAX、Promise 与 Async/Await",
+    "publishedAt": "2025-12-27T17:49:23.000Z",
+    "publishedLabel": "Dec 27, 2025",
+    "excerpt": "- 定义：JavaScript 是单线程语言，异步编程允许代码在等待某个操作（如网络请求、定时器）完成时，不阻塞后续代码执行，而是继续执行其他任务，待操作完成后再处理结果。\n- 应用场景：\n  - 网络请求（如获取 API 数据）\n  - 定时器（setTimeout、setInterval）\n  ...",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "异步编程",
+      "AJAX",
+      "Promise",
+      "Async/Await"
+    ]
+  },
+  {
+    "canonicalSlug": "post-955f9ce6",
+    "aliases": [
+      "计算机存储器"
+    ],
+    "title": "计算机存储器",
+    "publishedAt": "2025-12-27T17:08:27.000Z",
+    "publishedLabel": "Dec 27, 2025",
+    "excerpt": "[TOC]",
+    "categories": [
+      "计算机基础",
+      "计算机组成原理"
+    ],
+    "tags": [
+      "计算机组成原理",
+      "计算机存储器",
+      "存储器",
+      "定位"
+    ]
+  },
+  {
+    "canonicalSlug": "how-to-plan-a-web-project-a6a09a7f",
+    "aliases": [
+      "How to Plan a Web Project：用户故事、功能流与项目规划"
+    ],
+    "title": "How to Plan a Web Project：用户故事、功能流与项目规划",
+    "publishedAt": "2025-12-26T02:38:44.000Z",
+    "publishedLabel": "Dec 26, 2025",
+    "excerpt": "- 对复杂项目（如本课程的 Mapty 锻炼记录项目）而言，编码前规划可避免后续代码混乱、功能遗漏等问题。\n- 此前课程项目多直接编码，未深入考虑功能逻辑与架构设计，而实际开发中 “先规划再开发” 是标准流程，能减少返工成本。",
+    "categories": [
+      "前端开发",
+      "项目规划"
+    ],
+    "tags": [
+      "用户故事",
+      "功能流",
+      "项目规划",
+      "架构设计"
+    ]
+  },
+  {
+    "canonicalSlug": "post-3ecdc2c5",
+    "aliases": [
+      "可选链"
+    ],
+    "title": "可选链",
+    "publishedAt": "2025-12-25T18:31:13.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "当访问嵌套对象的属性时，若中间某一层属性不存在（值为undefined或null），直接访问会触发类型错误。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "可选链",
+      "Java",
+      "对象",
+      "Udemy"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-1ee124e7",
+    "aliases": [
+      "JavaScript数组方法"
+    ],
+    "title": "JavaScript数组方法",
+    "publishedAt": "2025-12-25T18:28:57.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "本章节聚焦JavaScript中处理数组的现代高阶函数方法,重点讲解forEach、map、filter、reduce四大核心数组方法的语法、参数、返回值及典型应用场景,通过对比传统循环方式,掌握函数式编程思想在数组处理中的应用,提升代码简洁性和可维护性。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "JavaScript数组方法",
+      "Java",
+      "数组",
+      "函数"
+    ]
+  },
+  {
+    "canonicalSlug": "post-7d4ad81c",
+    "aliases": [
+      "增强对象字面量"
+    ],
+    "title": "增强对象字面量",
+    "publishedAt": "2025-12-25T18:27:27.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "- 对象字面量定义：通过{}语法直接在代码中编写的对象，例如const restaurant = { name: 'ABC', address: 'XX街' }，是 JavaScript 中创建对象的常用方式。\n- ES6 增强目的：简化对象字面量的编写语法，提升代码简洁性和可读性，主要包含 3 种...",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "增强对象字面量",
+      "Java",
+      "对象",
+      "Udemy"
+    ]
+  },
+  {
+    "canonicalSlug": "for-of-3353211e",
+    "aliases": [
+      "for-of循环"
+    ],
+    "title": "for-of循环",
+    "publishedAt": "2025-12-25T18:24:13.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "- 属于 ES6（2015 年）推出的数组遍历新语法，核心作用是简化传统 for 循环的代码逻辑，降低数组遍历的 “模板代码” 成本。\n- 适用场景：需直接访问数组元素、无需手动控制循环计数器的场景（如遍历菜单、商品列表等）。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "for-of循环",
+      "定位",
+      "数组",
+      "for...of"
+    ]
+  },
+  {
+    "canonicalSlug": "109-logical-assignment-operators-27de477c",
+    "aliases": [
+      "109 Logical Assignment Operators（逻辑赋值运算符）"
+    ],
+    "title": "109 Logical Assignment Operators（逻辑赋值运算符）",
+    "publishedAt": "2025-12-25T18:20:45.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "- 属于 ES 2021（ECMAScript 2021）标准中新增的语法特性，共包含 3 个运算符，核心作用是简化 “逻辑判断 + 赋值” 的组合操作，提升代码简洁性与可读性。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "逻辑赋值运算符",
+      "ES2021",
+      "Udemy"
+    ]
+  },
+  {
+    "canonicalSlug": "post-8e6636d1",
+    "aliases": [
+      "空值合并运算符"
+    ],
+    "title": "空值合并运算符",
+    "publishedAt": "2025-12-25T18:17:47.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "- 核心规则：当使用",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "空值合并运算符",
+      "Java",
+      "空值合并",
+      "Udemy"
+    ]
+  },
+  {
+    "canonicalSlug": "rest-091a7072",
+    "aliases": [
+      "Rest参数和模式"
+    ],
+    "title": "Rest参数和模式",
+    "publishedAt": "2025-12-25T18:13:09.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "二者均使用 ...（三个英文句点） 作为语法标识，容易混淆，需通过使用场景区分。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "Rest参数",
+      "模式",
+      "数组",
+      "函数"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-7e1f9fe4",
+    "aliases": [
+      "JavaScript扩展运算符"
+    ],
+    "title": "JavaScript扩展运算符",
+    "publishedAt": "2025-12-25T18:01:02.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "- 定义：扩展运算符（...）是 ES6 及后续版本新增的语法，核心功能是 “解包” 可迭代对象（如数组、字符串等）的元素，将其展开为独立的、以逗号分隔的值，且不创建新变量。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "JavaScript扩展运算符",
+      "Java",
+      "定位",
+      "数组"
+    ]
+  },
+  {
+    "canonicalSlug": "post-792caaaf",
+    "aliases": [
+      "对象解构"
+    ],
+    "title": "对象解构",
+    "publishedAt": "2025-12-25T17:57:30.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "- 语法格式：使用{}包裹需提取的属性名，等号右侧为目标对象，即const {属性名1, 属性名2,...} = 目标对象。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "对象解构",
+      "数组",
+      "对象",
+      "解构赋值"
+    ]
+  },
+  {
+    "canonicalSlug": "103-destructuring-arrays-0ebcaa0e",
+    "aliases": [
+      "103 Destructuring Arrays（数组解构）笔记"
+    ],
+    "title": "103 Destructuring Arrays（数组解构）笔记",
+    "publishedAt": "2025-12-25T17:54:42.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "1. 所属模块：现代 JavaScript 语法学习，聚焦 “内置数据结构与高级运算符”，是后续实战项目的基础铺垫\n2. 案例载体：以意大利餐厅 “Classico Italiano” 模拟配送应用为案例，仅关注 JavaScript 逻辑，不构建 UI（下一节将通过带优质 UI 的项目学习数组方法...",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "数组解构",
+      "ES6",
+      "Udemy"
+    ]
+  },
+  {
+    "canonicalSlug": "post-7c04ff4a",
+    "aliases": [
+      "基本类型与对象类型"
+    ],
+    "title": "基本类型与对象类型",
+    "publishedAt": "2025-12-25T17:52:44.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "结论：原始类型复制后，修改原变量不会影响复制变量，符合直觉。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "基本类型",
+      "对象类型",
+      "数组",
+      "函数"
+    ]
+  },
+  {
+    "canonicalSlug": "post-b4c4e41e",
+    "aliases": [
+      "常规函数与箭头函数"
+    ],
+    "title": "常规函数与箭头函数",
+    "publishedAt": "2025-12-25T17:43:31.000Z",
+    "publishedLabel": "Dec 25, 2025",
+    "excerpt": "本章节聚焦 JavaScript 中常规函数与箭头函数的核心差异，重点围绕this关键字指向规则、arguments关键字可用性展开，结合实际代码案例解析常见陷阱，并给出不同场景下的函数选择建议，帮助开发者规避错误、正确运用两种函数。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "常规函数",
+      "箭头函数",
+      "Java",
+      "继承"
+    ]
+  },
+  {
+    "canonicalSlug": "c-stl-javascript-65d23a35",
+    "aliases": [
+      "C++ STL 到 JavaScript：常用数据结构映射速查"
+    ],
+    "title": "C++ STL 到 JavaScript：常用数据结构映射速查",
+    "publishedAt": "2025-12-24T15:58:56.000Z",
+    "publishedLabel": "Dec 24, 2025",
+    "excerpt": "// 2. std::stack (栈)\n// C++: std::stack<int> s; s.push(1); s.pop();\n// JS: Array (使用 push 和 pop)\nconst stack = [];\nstack.push(1);\nstack.push(2);\nconst...",
+    "categories": [
+      "编程语言",
+      "JavaScript"
+    ],
+    "tags": [
+      "C++ STL",
+      "JavaScript",
+      "Array",
+      "Map",
+      "数据结构"
+    ]
+  },
+  {
+    "canonicalSlug": "tcp-udp-2d37cd5c",
+    "aliases": [
+      "计算机网络运输层：TCP、UDP 与端口机制"
+    ],
+    "title": "计算机网络运输层：TCP、UDP 与端口机制",
+    "publishedAt": "2025-12-20T17:45:52.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "核心任务：为相互通信的应用进程提供端到端的逻辑通信服务，实现进程到进程的通信（网络层仅提供主机到主机通信）。",
+    "categories": [
+      "计算机基础",
+      "计算机网络"
+    ],
+    "tags": [
+      "运输层",
+      "TCP",
+      "UDP",
+      "端口号"
+    ]
+  },
+  {
+    "canonicalSlug": "ajax-basics-intro",
+    "aliases": [
+      "AJAX 基础入门教程"
+    ],
+    "title": "AJAX 基础入门教程",
+    "publishedAt": "2025-12-20T12:00:04.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "AJAX就像是餐厅的\"传菜员\"，专门负责厨房（服务器）和餐桌（你的网页）之间的沟通。想象一下，如果没有传菜员，每次点菜都要你亲自跑到厨房去告诉厨师，然后等菜做好再端回来——这就是传统的网页刷新方式。",
+    "categories": [
+      "前端开发",
+      "AJAX"
+    ],
+    "tags": [
+      "AJAX基础",
+      "axios",
+      "HTTP请求",
+      "前后端通信"
+    ]
+  },
+  {
+    "canonicalSlug": "post-b723ff4e",
+    "aliases": [
+      "计算机网络链路层：成帧、透明传输与差错控制"
+    ],
+    "title": "计算机网络链路层：成帧、透明传输与差错控制",
+    "publishedAt": "2025-12-20T12:00:04.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "---",
+    "categories": [
+      "计算机基础",
+      "计算机网络"
+    ],
+    "tags": [
+      "数据链路层",
+      "封装成帧",
+      "透明传输",
+      "差错检测"
+    ]
+  },
+  {
+    "canonicalSlug": "post-c1f985c7",
+    "aliases": [
+      "定点数运算：移位、补码加减与乘除"
+    ],
+    "title": "定点数运算：移位、补码加减与乘除",
+    "publishedAt": "2025-12-20T12:00:03.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "- 操作对象：无符号数",
+    "categories": [
+      "计算机基础",
+      "计算机组成原理"
+    ],
+    "tags": [
+      "补码",
+      "移位运算",
+      "定点运算",
+      "ALU"
+    ]
+  },
+  {
+    "canonicalSlug": "post-14bbf716",
+    "aliases": [
+      "指令系统"
+    ],
+    "title": "指令系统",
+    "publishedAt": "2025-12-20T12:00:03.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "指令需提供的四类信息",
+    "categories": [
+      "计算机基础",
+      "计算机组成原理"
+    ],
+    "tags": [
+      "计算机组成原理",
+      "指令系统",
+      "存储器"
+    ]
+  },
+  {
+    "canonicalSlug": "post-c6b94195",
+    "aliases": [
+      "数据的表示"
+    ],
+    "title": "数据的表示",
+    "publishedAt": "2025-12-20T12:00:03.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "1. 核心前提：计算机内部用二进制表示数据，外部信息（数值、字符、音视频等）需转二进制存入寄存器 / 存储器\n2. 数值数据分类：\n   - 无符号数：无正负，可表存储地址（如门牌号）\n   - 有符号数：含正负，分定点数（整数 / 纯小数，小数点固定）、浮点数（带小数，小数点可移）\n3. 关键概念...",
+    "categories": [
+      "计算机基础",
+      "计算机组成原理"
+    ],
+    "tags": [
+      "计算机组成原理",
+      "数据的表示",
+      "存储器",
+      "数据表示"
+    ]
+  },
+  {
+    "canonicalSlug": "ipv4-db612eae",
+    "aliases": [
+      "IPv4 划分子网：原理、步骤与例题"
+    ],
+    "title": "IPv4 划分子网：原理、步骤与例题",
+    "publishedAt": "2025-12-20T12:00:03.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "当然可以！下面是对 “划分子网”（Subnetting）这一网络核心知识点的系统性讲解，涵盖定义、原理、目的、方法、步骤、实例以及常见误区，适合初学者和需要巩固基础的同学。",
+    "categories": [
+      "计算机基础",
+      "计算机网络"
+    ],
+    "tags": [
+      "IPv4",
+      "子网划分",
+      "子网掩码",
+      "CIDR"
+    ]
+  },
+  {
+    "canonicalSlug": "post-5cff4e13",
+    "aliases": [
+      "最长前缀匹配原则：路由查表原理与示例"
+    ],
+    "title": "最长前缀匹配原则：路由查表原理与示例",
+    "publishedAt": "2025-12-20T12:00:03.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "在IP路由表中，每条路由通常表示为：",
+    "categories": [
+      "计算机基础",
+      "计算机网络"
+    ],
+    "tags": [
+      "最长前缀匹配",
+      "路由表",
+      "CIDR",
+      "下一跳"
+    ]
+  },
+  {
+    "canonicalSlug": "post-42c0be64",
+    "aliases": [
+      "计算机网络概论：交换方式与分组交换基础"
+    ],
+    "title": "计算机网络概论：交换方式与分组交换基础",
+    "publishedAt": "2025-12-20T12:00:03.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "定义：电话交换机接通电话线的方式就是电路交换（Circuit Switching）",
+    "categories": [
+      "计算机基础",
+      "计算机网络"
+    ],
+    "tags": [
+      "电路交换",
+      "分组交换",
+      "报文交换",
+      "存储转发"
+    ]
+  },
+  {
+    "canonicalSlug": "post-a9ca2e84",
+    "aliases": [
+      "计算机网络物理层：接口特性与传输媒体"
+    ],
+    "title": "计算机网络物理层：接口特性与传输媒体",
+    "publishedAt": "2025-12-20T12:00:03.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "- 核心功能：在各种传输媒体上传输比特 0 和 1，为数据链路层提供透明传输比特流的服务",
+    "categories": [
+      "计算机基础",
+      "计算机网络"
+    ],
+    "tags": [
+      "物理层",
+      "接口特性",
+      "传输媒体",
+      "导向型传输媒体"
+    ]
+  },
+  {
+    "canonicalSlug": "codeforces-1822c-monocarp-s-string-8628e7dc",
+    "aliases": [
+      "Codeforces 1822C Monocarp's String 题解：前缀和 + 哈希求最短删除子串"
+    ],
+    "title": "Codeforces 1822C Monocarp's String 题解：前缀和 + 哈希求最短删除子串",
+    "publishedAt": "2025-12-20T12:00:03.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "给定一个仅由字符 a 和 b 组成的字符串 s，长度为 n。可以删除一段连续的子串（可以为空），使得剩余字符串中 a 的数量等于 b 的数量。求最少需要删除的字符个数；如果只能把整个字符串全部删掉才能平衡，输出 -1。",
+    "categories": [
+      "算法题解",
+      "Codeforces"
+    ],
+    "tags": [
+      "Codeforces 1822C",
+      "前缀和",
+      "哈希表",
+      "字符串",
+      "题解"
+    ]
+  },
+  {
+    "canonicalSlug": "codeforces-2162f-beautiful-intervals",
+    "aliases": [
+      "Codeforces 2162F Beautiful Intervals 题解（MEX 枚举思路）"
+    ],
+    "title": "Codeforces 2162F Beautiful Intervals 题解（MEX 枚举思路）",
+    "publishedAt": "2025-12-20T12:00:03.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "cf 1059\nhttps://codeforces.com/contest/2162",
+    "categories": [
+      "算法题解",
+      "Codeforces"
+    ],
+    "tags": [
+      "Codeforces 2162F",
+      "MEX",
+      "区间问题",
+      "题解"
+    ]
+  },
+  {
+    "canonicalSlug": "e-html-map-string-befca895",
+    "aliases": [
+      "E 题题解：简化 HTML 标签统计与 map、string 用法详解"
+    ],
+    "title": "E 题题解：简化 HTML 标签统计与 map、string 用法详解",
+    "publishedAt": "2025-12-20T12:00:03.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "by woodfish",
+    "categories": [
+      "算法题解",
+      "竞赛训练"
+    ],
+    "tags": [
+      "题解",
+      "HTML标签统计",
+      "std::map",
+      "string",
+      "C++ STL"
+    ]
+  },
+  {
+    "canonicalSlug": "jufe-day1-c-11cc687d",
+    "aliases": [
+      "JUFE 新生编程语法培训 Day1：环境配置与第一个 C++ 程序"
+    ],
+    "title": "JUFE 新生编程语法培训 Day1：环境配置与第一个 C++ 程序",
+    "publishedAt": "2025-12-20T12:00:03.000Z",
+    "publishedLabel": "Dec 20, 2025",
+    "excerpt": "by woodfish",
+    "categories": [
+      "培训讲义",
+      "编程入门"
+    ],
+    "tags": [
+      "C++入门",
+      "CodeBlocks",
+      "VSCode配置",
+      "新生培训",
+      "开发环境"
+    ]
+  },
+  {
+    "canonicalSlug": "ipv4-b3c24485",
+    "aliases": [
+      "计算机网络网络层：分组转发、IPv4 与路由选择"
+    ],
+    "title": "计算机网络网络层：分组转发、IPv4 与路由选择",
+    "publishedAt": "2025-12-14T23:17:07.000Z",
+    "publishedLabel": "Dec 14, 2025",
+    "excerpt": "网络层是 OSI 体系结构自下而上的第三层，核心任务是将分组从源主机经多个网络和链路传输到目的主机，主要包含分组转发、路由选择两大功能，且能向上层提供两种服务。",
+    "categories": [
+      "计算机基础",
+      "计算机网络"
+    ],
+    "tags": [
+      "网络层",
+      "IPv4",
+      "分组转发",
+      "路由选择",
+      "CIDR"
+    ]
+  },
+  {
+    "canonicalSlug": "web-api-5-bom-a6a2d3dc",
+    "aliases": [
+      "Web API 学习笔记（5）：BOM 操作与本地存储"
+    ],
+    "title": "Web API 学习笔记（5）：BOM 操作与本地存储",
+    "publishedAt": "2025-11-21T12:41:04.000Z",
+    "publishedLabel": "Nov 21, 2025",
+    "excerpt": "BOM（Browser Object Model）即浏览器对象模型，window对象是 BOM 的顶级对象，也是 JavaScript 中的全局对象。",
+    "categories": [
+      "前端开发",
+      "Web API"
+    ],
+    "tags": [
+      "前端开发",
+      "BOM 操作",
+      "本地存储",
+      "JavaScript",
+      "Web API"
+    ]
+  },
+  {
+    "canonicalSlug": "css-12-bootstrap-864a592a",
+    "aliases": [
+      "CSS 学习笔记（12）：响应式布局与 Bootstrap 框架应用"
+    ],
+    "title": "CSS 学习笔记（12）：响应式布局与 Bootstrap 框架应用",
+    "publishedAt": "2025-11-21T12:30:41.000Z",
+    "publishedLabel": "Nov 21, 2025",
+    "excerpt": "响应式布局方案",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "响应式布局",
+      "Bootstrap 框架应用",
+      "HTML",
+      "CSS"
+    ]
+  },
+  {
+    "canonicalSlug": "ipv4-cf397e6d",
+    "aliases": [
+      "计算机网络网络层：分组转发、IPv4 与路由选择（编辑版）"
+    ],
+    "title": "计算机网络网络层：分组转发、IPv4 与路由选择（编辑版）",
+    "publishedAt": "2025-11-17T11:13:26.000Z",
+    "publishedLabel": "Nov 17, 2025",
+    "excerpt": "网络层是 OSI 体系结构自下而上的第三层，核心任务是将分组从源主机经多个网络和链路传输到目的主机，主要包含分组转发、路由选择两大功能，且能向上层提供两种服务。",
+    "categories": [
+      "计算机基础",
+      "计算机网络"
+    ],
+    "tags": [
+      "网络层",
+      "IPv4",
+      "分组转发",
+      "路由选择",
+      "编辑版"
+    ]
+  },
+  {
+    "canonicalSlug": "ajax-day-01-451f3285",
+    "aliases": [
+      "AJAX 学习笔记（Day 01）：入门"
+    ],
+    "title": "AJAX 学习笔记（Day 01）：入门",
+    "publishedAt": "2025-11-17T08:39:07.000Z",
+    "publishedLabel": "Nov 17, 2025",
+    "excerpt": "小王是个前端新手，他做了个体温登记表单，但发现一个问题：",
+    "categories": [
+      "前端开发",
+      "AJAX"
+    ],
+    "tags": [
+      "AJAX",
+      "入门",
+      "前后端交互"
+    ]
+  },
+  {
+    "canonicalSlug": "css-fa9e8999",
+    "aliases": [
+      "CSS 易错点速查：选择器空格与匹配差异"
+    ],
+    "title": "CSS 易错点速查：选择器空格与匹配差异",
+    "publishedAt": "2025-11-03T13:13:52.000Z",
+    "publishedLabel": "Nov 03, 2025",
+    "excerpt": "| 写法                   | 含义                          | 匹配对象                            | 示例                                                  |\n| -----...",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "CSS",
+      "易错点",
+      "选择器",
+      "后代选择器",
+      "速查表"
+    ]
+  },
+  {
+    "canonicalSlug": "seo-7f0867b5",
+    "aliases": [
+      "小兔鲜儿项目实战：项目目录、SEO 与公共样式搭建"
+    ],
+    "title": "小兔鲜儿项目实战：项目目录、SEO 与公共样式搭建",
+    "publishedAt": "2025-11-03T12:59:53.000Z",
+    "publishedLabel": "Nov 03, 2025",
+    "excerpt": "!1680342815532",
+    "categories": [
+      "前端开发",
+      "项目实战"
+    ],
+    "tags": [
+      "小兔鲜儿",
+      "项目搭建",
+      "SEO标签",
+      "公共样式"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-4-3ebba53e",
+    "aliases": [
+      "JavaScript 学习笔记（4）：函数封装与对象基础"
+    ],
+    "title": "JavaScript 学习笔记（4）：函数封装与对象基础",
+    "publishedAt": "2025-11-03T12:59:42.000Z",
+    "publishedLabel": "Nov 03, 2025",
+    "excerpt": "> 理解封装的意义，能够通过函数的声明实现逻辑的封装，知道对象数据类型的特征，结合数学对象实现简单计算功能。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "前端开发",
+      "函数封装",
+      "JavaScript",
+      "Java",
+      "函数"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-9-this-8f34efbe",
+    "aliases": [
+      "JavaScript 学习笔记（9）：深浅拷贝、异常处理、this 指向与防抖节流"
+    ],
+    "title": "JavaScript 学习笔记（9）：深浅拷贝、异常处理、this 指向与防抖节流",
+    "publishedAt": "2025-11-03T12:39:11.000Z",
+    "publishedLabel": "Nov 03, 2025",
+    "excerpt": "深浅拷贝的概念仅适用于引用类型。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "前端开发",
+      "深浅拷贝",
+      "异常处理",
+      "this 指向",
+      "防抖节流"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-5-4bd184cb",
+    "aliases": [
+      "JavaScript 学习笔记（5）：对象数据类型与内置数学对象"
+    ],
+    "title": "JavaScript 学习笔记（5）：对象数据类型与内置数学对象",
+    "publishedAt": "2025-11-03T12:39:05.000Z",
+    "publishedLabel": "Nov 03, 2025",
+    "excerpt": "> 知道对象数据类型的特征，能够利用数组对象渲染页面",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "前端开发",
+      "对象数据类型",
+      "内置数学对象",
+      "JavaScript",
+      "Java"
+    ]
+  },
+  {
+    "canonicalSlug": "web-api-dom-basics",
+    "aliases": [
+      "Web API 学习笔记（1）：DOM 基础操作"
+    ],
+    "title": "Web API 学习笔记（1）：DOM 基础操作",
+    "publishedAt": "2025-11-03T12:39:05.000Z",
+    "publishedLabel": "Nov 03, 2025",
+    "excerpt": "复习：",
+    "categories": [
+      "前端开发",
+      "Web API"
+    ],
+    "tags": [
+      "前端开发",
+      "HTML",
+      "JavaScript",
+      "Web API",
+      "Java"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-basics-and-data-types",
+    "aliases": [
+      "JavaScript 学习笔记（1）：基础语法与数据类型"
+    ],
+    "title": "JavaScript 学习笔记（1）：基础语法与数据类型",
+    "publishedAt": "2025-11-03T12:38:11.000Z",
+    "publishedLabel": "Nov 03, 2025",
+    "excerpt": "> 了解变量、数据类型、运算符等基础概念，能够实现数据类型的转换，结合四则运算体会如何编程。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "前端开发",
+      "数据类型",
+      "HTML",
+      "JavaScript",
+      "Java"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-prototype-proto-49b77ef2",
+    "aliases": [
+      "JavaScript 易错点：prototype、__proto__ 与原型链"
+    ],
+    "title": "JavaScript 易错点：prototype、__proto__ 与原型链",
+    "publishedAt": "2025-11-03T12:38:11.000Z",
+    "publishedLabel": "Nov 03, 2025",
+    "excerpt": "- prototype（原型对象） = 工厂里的「图纸」\n  图纸上规定了所有产品共有的特性（比如手机图纸规定所有手机都有屏幕、按键）。\n- proto = 每个产品身上的「溯源码」\n  扫一下就能找到它是根据哪张图纸造出来的（通过这个码能找到对应的 prototype）。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "JavaScript",
+      "prototype",
+      "__proto__",
+      "原型链",
+      "易错点"
+    ]
+  },
+  {
+    "canonicalSlug": "ajax-day-04-eb4dc929",
+    "aliases": [
+      "AJAX 学习笔记（Day 04）：进阶"
+    ],
+    "title": "AJAX 学习笔记（Day 04）：进阶",
+    "publishedAt": "2025-10-19T02:42:51.000Z",
+    "publishedLabel": "Oct 19, 2025",
+    "excerpt": "小王在企业工作3年后，遇到了职业发展的瓶颈：",
+    "categories": [
+      "前端开发",
+      "AJAX"
+    ],
+    "tags": [
+      "AJAX",
+      "进阶",
+      "前后端交互"
+    ]
+  },
+  {
+    "canonicalSlug": "ajax-day-03-c813ff99",
+    "aliases": [
+      "AJAX 学习笔记（Day 03）：原理解析"
+    ],
+    "title": "AJAX 学习笔记（Day 03）：原理解析",
+    "publishedAt": "2025-10-19T02:29:38.000Z",
+    "publishedLabel": "Oct 19, 2025",
+    "excerpt": "小张是一名优秀的前端\"司机\"，他已经能熟练地使用axios在各个\"路段\"上驰骋：",
+    "categories": [
+      "前端开发",
+      "AJAX"
+    ],
+    "tags": [
+      "AJAX",
+      "原理",
+      "前后端交互"
+    ]
+  },
+  {
+    "canonicalSlug": "ajax-day-02-a109f4bd",
+    "aliases": [
+      "AJAX 学习笔记（Day 02）：综合案例"
+    ],
+    "title": "AJAX 学习笔记（Day 02）：综合案例",
+    "publishedAt": "2025-10-19T02:11:07.000Z",
+    "publishedLabel": "Oct 19, 2025",
+    "excerpt": "小王成功掌握了AJAX基础，但领导又提出了新要求：",
+    "categories": [
+      "前端开发",
+      "AJAX"
+    ],
+    "tags": [
+      "AJAX",
+      "综合案例",
+      "前后端交互"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-6-d1acaf34",
+    "aliases": [
+      "JavaScript 学习笔记（6）：作用域、闭包与函数进阶"
+    ],
+    "title": "JavaScript 学习笔记（6）：作用域、闭包与函数进阶",
+    "publishedAt": "2025-10-08T00:58:10.000Z",
+    "publishedLabel": "Oct 08, 2025",
+    "excerpt": "> 学习作用域、变量提升、闭包等语言特征，加深对 JavaScript 的理解，掌握变量赋值、函数声明的简洁语法，降低代码的冗余度。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "前端开发",
+      "作用域",
+      "闭包",
+      "函数进阶",
+      "JavaScript"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-8-28f42c26",
+    "aliases": [
+      "JavaScript 学习笔记（8）：面向对象编程与原型机制详解"
+    ],
+    "title": "JavaScript 学习笔记（8）：面向对象编程与原型机制详解",
+    "publishedAt": "2025-10-08T00:55:15.000Z",
+    "publishedLabel": "Oct 08, 2025",
+    "excerpt": "所有的对象里面都有 proto 对象原型 指向原型对象",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "前端开发",
+      "面向对象编程",
+      "JavaScript",
+      "Java",
+      "继承"
+    ]
+  },
+  {
+    "canonicalSlug": "linux-d09e626e",
+    "aliases": [
+      "Linux 基础命令与目录结构笔记"
+    ],
+    "title": "Linux 基础命令与目录结构笔记",
+    "publishedAt": "2025-10-06T12:05:09.000Z",
+    "publishedLabel": "Oct 06, 2025",
+    "excerpt": "!image-20221027214128453",
+    "categories": [
+      "系统与工具",
+      "Linux"
+    ],
+    "tags": [
+      "Linux",
+      "基础命令",
+      "目录结构",
+      "命令行"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-7-6e3d5bf2",
+    "aliases": [
+      "JavaScript 学习笔记（7）：面向对象与内置构造函数"
+    ],
+    "title": "JavaScript 学习笔记（7）：面向对象与内置构造函数",
+    "publishedAt": "2025-09-29T23:58:23.000Z",
+    "publishedLabel": "Sep 29, 2025",
+    "excerpt": "1. 理解面向对象编程的基础概念，明确构造函数的作用。\n2. 体会 JavaScript “一切皆对象” 的语言特性。\n3. 熟练掌握常见对象属性和方法的使用。",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "前端开发",
+      "面向对象",
+      "内置构造函数",
+      "JavaScript",
+      "Java"
+    ]
+  },
+  {
+    "canonicalSlug": "html-1-ccd84682",
+    "aliases": [
+      "HTML 学习笔记（1）：核心标签、文档结构及多媒体应用"
+    ],
+    "title": "HTML 学习笔记（1）：核心标签、文档结构及多媒体应用",
+    "publishedAt": "2025-09-29T11:31:16.000Z",
+    "publishedLabel": "Sep 29, 2025",
+    "excerpt": "- 扩展名：.html 或 .htm（常用 .html）",
+    "categories": [
+      "前端开发",
+      "HTML"
+    ],
+    "tags": [
+      "前端开发",
+      "文档结构",
+      "多媒体应用",
+      "HTML",
+      "前端基础"
+    ]
+  },
+  {
+    "canonicalSlug": "html-2-a16c3b5e",
+    "aliases": [
+      "HTML 学习笔记（2）：列表、表格、表单及布局标签详解"
+    ],
+    "title": "HTML 学习笔记（2）：列表、表格、表单及布局标签详解",
+    "publishedAt": "2025-09-29T11:17:38.000Z",
+    "publishedLabel": "Sep 29, 2025",
+    "excerpt": "作用：布局内容排列整齐的区域",
+    "categories": [
+      "前端开发",
+      "HTML"
+    ],
+    "tags": [
+      "前端开发",
+      "列表",
+      "表格",
+      "表单",
+      "HTML"
+    ]
+  },
+  {
+    "canonicalSlug": "web-api-6-496ace7a",
+    "aliases": [
+      "Web API 学习笔记（6）：正则表达式与表单验证"
+    ],
+    "title": "Web API 学习笔记（6）：正则表达式与表单验证",
+    "publishedAt": "2025-09-26T00:32:03.000Z",
+    "publishedLabel": "Sep 26, 2025",
+    "excerpt": "正则表达式（Regular Expression）是一种字符串匹配的模式（规则）。",
+    "categories": [
+      "前端开发",
+      "Web API"
+    ],
+    "tags": [
+      "前端开发",
+      "正则表达式",
+      "表单验证",
+      "Web API",
+      "vw 适配"
+    ]
+  },
+  {
+    "canonicalSlug": "web-api-4-date-dom-1bf5ee0d",
+    "aliases": [
+      "Web API 学习笔记（4）：Date 对象与 DOM 节点操作要点"
+    ],
+    "title": "Web API 学习笔记（4）：Date 对象与 DOM 节点操作要点",
+    "publishedAt": "2025-09-23T02:48:21.000Z",
+    "publishedLabel": "Sep 23, 2025",
+    "excerpt": "",
+    "categories": [
+      "前端开发",
+      "Web API"
+    ],
+    "tags": [
+      "前端开发",
+      "Date 对象",
+      "DOM 节点操作要点",
+      "Web API",
+      "对象"
+    ]
+  },
+  {
+    "canonicalSlug": "web-api-3-ab2d9122",
+    "aliases": [
+      "Web API 学习笔记（3）：事件流与事件委托"
+    ],
+    "title": "Web API 学习笔记（3）：事件流与事件委托",
+    "publishedAt": "2025-09-22T00:49:51.000Z",
+    "publishedLabel": "Sep 22, 2025",
+    "excerpt": "",
+    "categories": [
+      "前端开发",
+      "Web API"
+    ],
+    "tags": [
+      "前端开发",
+      "事件流",
+      "事件委托",
+      "Web API",
+      "List"
+    ]
+  },
+  {
+    "canonicalSlug": "web-api-2-this-e6e1d9d9",
+    "aliases": [
+      "Web API 学习笔记（2）：事件处理与 this 指向"
+    ],
+    "title": "Web API 学习笔记（2）：事件处理与 this 指向",
+    "publishedAt": "2025-09-22T00:49:49.000Z",
+    "publishedLabel": "Sep 22, 2025",
+    "excerpt": "- 能够判断函数运行的环境并确定 this 所指代的对象。\n- 理解事件的作用，掌握应用事件的基本步骤。",
+    "categories": [
+      "前端开发",
+      "Web API"
+    ],
+    "tags": [
+      "前端开发",
+      "事件处理",
+      "this 指向",
+      "Web API",
+      "List"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-3-726c1c0f",
+    "aliases": [
+      "JavaScript 学习笔记（3）：数组的增删操作方法详解"
+    ],
+    "title": "JavaScript 学习笔记（3）：数组的增删操作方法详解",
+    "publishedAt": "2025-09-21T23:33:17.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "if 多分支语句和 switch的区别：",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "前端开发",
+      "JavaScript",
+      "Java",
+      "数组",
+      "前端基础"
+    ]
+  },
+  {
+    "canonicalSlug": "javascript-2-154d8e5a",
+    "aliases": [
+      "JavaScript 学习笔记（2）：运算符、语句与综合案例"
+    ],
+    "title": "JavaScript 学习笔记（2）：运算符、语句与综合案例",
+    "publishedAt": "2025-09-21T23:33:13.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "> 理解什么是流程控制，知道条件控制的种类并掌握其对应的语法规则，具备利用循环编写简易ATM取款机程序能力",
+    "categories": [
+      "前端开发",
+      "JavaScript"
+    ],
+    "tags": [
+      "前端开发",
+      "运算符",
+      "语句",
+      "综合案例",
+      "JavaScript"
+    ]
+  },
+  {
+    "canonicalSlug": "css-1-a6b2a865",
+    "aliases": [
+      "CSS 学习笔记（1）：引入方式、选择器及文字样式控制"
+    ],
+    "title": "CSS 学习笔记（1）：引入方式、选择器及文字样式控制",
+    "publishedAt": "2025-09-21T23:32:52.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "层叠样式表 (Cascading Style Sheets, 缩写为 CSS) ，是一种 样式表 语言，用来描述 HTML 文档的呈现（美化内容）。",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "引入方式",
+      "选择器",
+      "文字样式控制",
+      "HTML"
+    ]
+  },
+  {
+    "canonicalSlug": "css-5-css-b53d4d8a",
+    "aliases": [
+      "CSS 学习笔记（5）：定位模式、CSS 精灵、字体图标及过渡效果应用"
+    ],
+    "title": "CSS 学习笔记（5）：定位模式、CSS 精灵、字体图标及过渡效果应用",
+    "publishedAt": "2025-09-21T23:32:47.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "作用：灵活改变盒子在网页的位置",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "定位模式",
+      "CSS 精灵",
+      "字体图标",
+      "过渡效果应用"
+    ]
+  },
+  {
+    "canonicalSlug": "css-4-flex-a158720e",
+    "aliases": [
+      "CSS 学习笔记（4）：浮动布局与 Flex 弹性布局详解及应用案例"
+    ],
+    "title": "CSS 学习笔记（4）：浮动布局与 Flex 弹性布局详解及应用案例",
+    "publishedAt": "2025-09-21T23:32:42.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "标准流也叫文档流，指的是标签在页面中默认的排布规则，例如块元素独占一行，行内元素可以一行显示多个。",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "浮动布局",
+      "应用案例",
+      "CSS",
+      "Flex"
+    ]
+  },
+  {
+    "canonicalSlug": "css-11-web-vw-5a54d4ea",
+    "aliases": [
+      "CSS 学习笔记（11）：移动 Web 开发之 vw 适配与酷我音乐案例实践"
+    ],
+    "title": "CSS 学习笔记（11）：移动 Web 开发之 vw 适配与酷我音乐案例实践",
+    "publishedAt": "2025-09-21T23:32:34.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "vw和vh是相对单位，相对视口尺寸计算结果",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "移动 Web 开发之 vw 适配",
+      "酷我音乐案例实践",
+      "HTML",
+      "CSS"
+    ]
+  },
+  {
+    "canonicalSlug": "css-10-web-rem-less-033037f6",
+    "aliases": [
+      "CSS 学习笔记（10）：移动 Web 开发基础与 rem 布局、Less 预处理器"
+    ],
+    "title": "CSS 学习笔记（10）：移动 Web 开发基础与 rem 布局、Less 预处理器",
+    "publishedAt": "2025-09-21T23:32:21.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "less太好用了😋",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "rem 布局",
+      "Less 预处理器",
+      "HTML",
+      "CSS"
+    ]
+  },
+  {
+    "canonicalSlug": "css-3-97a38f77",
+    "aliases": [
+      "CSS 学习笔记（3）：伪类与伪元素选择器、盒子模型及相关特性详解"
+    ],
+    "title": "CSS 学习笔记（3）：伪类与伪元素选择器、盒子模型及相关特性详解",
+    "publishedAt": "2025-09-21T23:32:14.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "作用：根据元素的结构关系查找元素（序号查找）",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "伪类",
+      "伪元素选择器",
+      "盒子模型",
+      "CSS"
+    ]
+  },
+  {
+    "canonicalSlug": "css-7-css-cc2be3c8",
+    "aliases": [
+      "CSS 学习笔记（7）：CSS 优先级叠加计算规则详解"
+    ],
+    "title": "CSS 学习笔记（7）：CSS 优先级叠加计算规则详解",
+    "publishedAt": "2025-09-21T23:32:09.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "公式：行内样式 (1,0,0,0) > ID 选择器 (0,1,0,0) > 类选择器 (0,0,1,0) > 标签选择器 (0,0,0,1)\n每一级之间不存在进位，例如 10 个类选择器的权重仍低于 1 个 ID 选择器。",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "CSS",
+      "选择器",
+      "前端基础"
+    ]
+  },
+  {
+    "canonicalSlug": "css-6-seo-22ea82aa",
+    "aliases": [
+      "CSS 学习笔记（6）：小兔鲜儿项目搭建及基础配置（目录结构、SEO 标签、版心设置）"
+    ],
+    "title": "CSS 学习笔记（6）：小兔鲜儿项目搭建及基础配置（目录结构、SEO 标签、版心设置）",
+    "publishedAt": "2025-09-21T23:32:03.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "!1680342815532",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "小兔鲜儿项目搭建",
+      "SEO 标签",
+      "版心设置",
+      "HTML"
+    ]
+  },
+  {
+    "canonicalSlug": "css-9-web-fa51bb42",
+    "aliases": [
+      "CSS 学习笔记（9）：移动 Web 开发之空间转换与动画效果"
+    ],
+    "title": "CSS 学习笔记（9）：移动 Web 开发之空间转换与动画效果",
+    "publishedAt": "2025-09-21T23:31:55.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "* 空间：是从坐标轴角度定义的 X 、Y 和 Z 三条坐标轴构成了一个立体空间，Z 轴位置与视线方向相同。\n* 空间转换也叫 3D转换\n* 属性：transform",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "移动 Web 开发之空间转换",
+      "动画效果",
+      "CSS",
+      "前端基础"
+    ]
+  },
+  {
+    "canonicalSlug": "css-2-css-fbdfa650",
+    "aliases": [
+      "CSS 学习笔记（2）：复合选择器、CSS 特性及背景与显示模式设置"
+    ],
+    "title": "CSS 学习笔记（2）：复合选择器、CSS 特性及背景与显示模式设置",
+    "publishedAt": "2025-09-21T23:31:43.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "定义：由两个以上的的基础选择器，通过不同的方式组合而成",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "复合选择器",
+      "CSS 特性",
+      "背景",
+      "显示模式设置"
+    ]
+  },
+  {
+    "canonicalSlug": "css-8-web-bdaa2017",
+    "aliases": [
+      "CSS 学习笔记（8）：移动 Web 开发之平面转换与渐变效果"
+    ],
+    "title": "CSS 学习笔记（8）：移动 Web 开发之平面转换与渐变效果",
+    "publishedAt": "2025-09-21T23:31:38.000Z",
+    "publishedLabel": "Sep 21, 2025",
+    "excerpt": "使用位移、缩放、旋转、渐变效果",
+    "categories": [
+      "前端开发",
+      "CSS"
+    ],
+    "tags": [
+      "前端开发",
+      "移动 Web 开发之平面转换",
+      "渐变效果",
+      "HTML",
+      "CSS"
+    ]
+  },
+  {
+    "canonicalSlug": "header-0311f06e",
+    "aliases": [
+      "学成在线页面实战：项目结构、版心布局与 Header 搭建"
+    ],
+    "title": "学成在线页面实战：项目结构、版心布局与 Header 搭建",
+    "publishedAt": "2025-09-13T12:20:39.000Z",
+    "publishedLabel": "Sep 13, 2025",
+    "excerpt": "网站根目录是指存放网站的第一层文件夹，内部包含当前网站的所有素材，包含 HTML、CSS、图片、JavaScript等等。",
+    "categories": [
+      "前端开发",
+      "项目实战"
+    ],
+    "tags": [
+      "学成在线",
+      "页面布局",
+      "版心",
+      "Header"
+    ]
+  },
+  {
+    "canonicalSlug": "post-2268f46f",
+    "aliases": [
+      "中国近代史纲要期末复习重点整理"
+    ],
+    "title": "中国近代史纲要期末复习重点整理",
+    "publishedAt": "2025-09-04T11:29:37.000Z",
+    "publishedLabel": "Sep 04, 2025",
+    "excerpt": "军事侵略\n 政治控制\n 经济掠夺\n 文化渗透",
+    "categories": [
+      "课程复习",
+      "中国近代史"
+    ],
+    "tags": [
+      "中国近代史纲要",
+      "期末复习",
+      "知识点整理",
+      "历史课程"
+    ]
+  },
+  {
+    "canonicalSlug": "java-collection-0ac8b575",
+    "aliases": [
+      "Java Collection：集合体系与遍历方法"
+    ],
+    "title": "Java Collection：集合体系与遍历方法",
+    "publishedAt": "2025-09-02T23:28:49.000Z",
+    "publishedLabel": "Sep 02, 2025",
+    "excerpt": "单列集合",
+    "categories": [
+      "编程语言",
+      "Java"
+    ],
+    "tags": [
+      "Collection",
+      "List",
+      "Set",
+      "Iterator",
+      "Lambda"
+    ]
+  },
+  {
+    "canonicalSlug": "java-070d0be3",
+    "aliases": [
+      "Java 期末复习重点与易错点"
+    ],
+    "title": "Java 期末复习重点与易错点",
+    "publishedAt": "2025-09-02T23:27:32.000Z",
+    "publishedLabel": "Sep 02, 2025",
+    "excerpt": "方法重载满足：",
+    "categories": [
+      "编程语言",
+      "Java"
+    ],
+    "tags": [
+      "Java",
+      "期末复习",
+      "易错点",
+      "面向对象"
+    ]
+  },
+  {
+    "canonicalSlug": "java-0f67133e",
+    "aliases": [
+      "Java的包装类"
+    ],
+    "title": "Java的包装类",
+    "publishedAt": "2025-09-02T22:52:12.000Z",
+    "publishedLabel": "Sep 02, 2025",
+    "excerpt": "- 为了万物皆对象，并且泛型和集合都不支持基本类型，支持包装类\n- 8 种，int -> Integer，char -> Character，其他的都是首字母大写",
+    "categories": [
+      "编程语言",
+      "Java"
+    ],
+    "tags": [
+      "Java",
+      "Java的包装类",
+      "包装类",
+      "对象"
+    ]
+  },
+  {
+    "canonicalSlug": "java-final-35c422ca",
+    "aliases": [
+      "Java的final"
+    ],
+    "title": "Java的final",
+    "publishedAt": "2025-08-29T13:50:04.000Z",
+    "publishedLabel": "Aug 29, 2025",
+    "excerpt": "- 修饰类：该类被称为最终类，特点是不能被继承了。\n- 修饰方法：该方法被称为最终方法，特点是不能被重写了。\n- 修饰变量：该变量有且仅能被赋值一次。",
+    "categories": [
+      "编程语言",
+      "Java"
+    ],
+    "tags": [
+      "Java",
+      "Java的final",
+      "继承",
+      "final",
+      "对象"
+    ]
+  },
+  {
+    "canonicalSlug": "java-list-api-0e9569fc",
+    "aliases": [
+      "Java List 集合：特点与常用 API"
+    ],
+    "title": "Java List 集合：特点与常用 API",
+    "publishedAt": "2025-08-29T13:49:53.000Z",
+    "publishedLabel": "Aug 29, 2025",
+    "excerpt": "List继承了Collection",
+    "categories": [
+      "编程语言",
+      "Java"
+    ],
+    "tags": [
+      "List",
+      "ArrayList",
+      "LinkedList",
+      "集合API"
+    ]
+  },
+  {
+    "canonicalSlug": "java-a090b9bd",
+    "aliases": [
+      "Java的内部类"
+    ],
+    "title": "Java的内部类",
+    "publishedAt": "2025-08-29T13:49:41.000Z",
+    "publishedLabel": "Aug 29, 2025",
+    "excerpt": "成员内部类直接定义在外部类里，与外部类的属性和方法处于同一层级。它能够访问外部类的所有成员，包括私有成员。",
+    "categories": [
+      "编程语言",
+      "Java"
+    ],
+    "tags": [
+      "Java",
+      "Java的内部类",
+      "内部类",
+      "面向对象"
+    ]
+  },
+  {
+    "canonicalSlug": "java-f3bbaab7",
+    "aliases": [
+      "Java的继承"
+    ],
+    "title": "Java的继承",
+    "publishedAt": "2025-08-29T13:49:41.000Z",
+    "publishedLabel": "Aug 29, 2025",
+    "excerpt": "就是用来限制类中的成员 (成员变量、成员方法、构造器) 能够被访问的范围。",
+    "categories": [
+      "编程语言",
+      "Java"
+    ],
+    "tags": [
+      "Java",
+      "Java的继承",
+      "继承",
+      "对象",
+      "面向对象"
+    ]
+  },
+  {
+    "canonicalSlug": "java-a96c2641",
+    "aliases": [
+      "Java的多态"
+    ],
+    "title": "Java的多态",
+    "publishedAt": "2025-08-29T13:49:40.000Z",
+    "publishedLabel": "Aug 29, 2025",
+    "excerpt": "多态是在继承 / 实现情况下的一种现象，表现为：对象多态、行为多态。\n多态的具体代码体现",
+    "categories": [
+      "编程语言",
+      "Java"
+    ],
+    "tags": [
+      "Java",
+      "Java的多态",
+      "继承",
+      "多态",
+      "对象"
+    ]
+  },
+  {
+    "canonicalSlug": "java-33e929b5",
+    "aliases": [
+      "Java的抽象与接口类"
+    ],
+    "title": "Java的抽象与接口类",
+    "publishedAt": "2025-08-29T13:49:40.000Z",
+    "publishedLabel": "Aug 29, 2025",
+    "excerpt": "| 对比维度   | 抽象类(is what)                                   | 接口(can do)                                                 |\n| ---------- | --------------...",
+    "categories": [
+      "编程语言",
+      "Java"
+    ],
+    "tags": [
+      "Java",
+      "Java的抽象",
+      "接口类",
+      "继承",
+      "多态"
+    ]
+  }
+]

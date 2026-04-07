@@ -1,0 +1,23 @@
+{
+  "canonicalSlug": "css-fa9e8999",
+  "aliases": [
+    "CSS 易错点速查：选择器空格与匹配差异"
+  ],
+  "title": "CSS 易错点速查：选择器空格与匹配差异",
+  "publishedAt": "2025-11-03T13:13:52.000Z",
+  "publishedLabel": "Nov 03, 2025",
+  "excerpt": "| 写法                   | 含义                          | 匹配对象                            | 示例                                                  |\n| -----...",
+  "categories": [
+    "前端开发",
+    "CSS"
+  ],
+  "tags": [
+    "CSS",
+    "易错点",
+    "选择器",
+    "后代选择器",
+    "速查表"
+  ],
+  "html": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<table><thead><tr><th>写法</th><th>含义</th><th>匹配对象</th><th>示例</th></tr></thead><tbody><tr><td><code>.recommend a.modify</code></td><td>选中带有<code>modify</code>类的<code>&#x3C;a></code>元素</td><td><code>&#x3C;a class=\"modify\"></code></td><td><code>&#x3C;div class=\"recommend\">&#x3C;a class=\"modify\">&#x3C;/a>&#x3C;/div></code></td></tr><tr><td><code>.recommend a .modify</code></td><td>选中<code>&#x3C;a></code>内部的<code>modify</code>类元素</td><td><code>&#x3C;a>&#x3C;xxx class=\"modify\">&#x3C;/xxx>&#x3C;/a></code></td><td></td></tr></tbody></table>",
+  "toc": []
+}
