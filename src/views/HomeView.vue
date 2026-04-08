@@ -79,7 +79,7 @@
         <Transition name="works-panel" mode="out-in">
           <div
             v-if="siteStore.mode === 'works'"
-            class="pointer-events-auto absolute left-0 top-0 h-[58vh] w-full bg-gradient-to-b from-black/95 via-black/80 to-transparent px-6 pb-8 pt-24 md:h-[56vh] md:px-10 md:pb-10 md:pt-28"
+            class="pointer-events-auto absolute bottom-0 left-0 h-[68vh] w-full bg-gradient-to-t from-black/95 via-black/85 to-transparent p-6 md:h-[62vh] md:p-10"
           >
             <WorksPanel :works="works" />
           </div>

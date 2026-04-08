@@ -8,16 +8,20 @@
 
   const navItems = [
     { id: "home", label: "Home", action: () => siteStore.goHome() },
+    { id: "works", label: "Works", action: () => siteStore.goWorks() },
     { id: "blog", label: "Blog", action: () => siteStore.goBlog() },
     { id: "author", label: "Author", action: () => siteStore.goAuthor() },
     { id: "friend", label: "Friend", action: () => siteStore.goFriend() },
-    { id: "works", label: "Works", action: () => siteStore.goWorks() },
   ] as const;
 
   function handleNav(action: () => void) {
     action();
     siteStore.exitFocus();
     isOpen.value = false;
+  }
+
+  function isActive(id: (typeof navItems)[number]["id"]) {
+    return siteStore.mode === id;
   }
 </script>
 
@@ -30,11 +34,18 @@
       WOODFISH
     </RouterLink>
 
-    <div class="pointer-events-auto hidden gap-8 md:flex">
+    <div data-nav-group="desktop" class="pointer-events-auto hidden gap-8 md:flex">
       <RouterLink v-for="item in navItems" :key="item.id" to="/"
-        :class="siteStore.mode === item.id ? 'text-blue-400' : 'text-gray-400 hover:text-blue-400'"
-        class="text-sm uppercase tracking-widest transition-colors" @click="handleNav(item.action)">
-        {{ item.label }}
+        :aria-current="isActive(item.id) ? 'page' : undefined"
+        :data-nav-item="item.id"
+        :class="isActive(item.id) ? 'text-blue-300' : 'text-gray-400 hover:text-blue-400'"
+        class="relative text-sm uppercase tracking-widest transition-colors" @click="handleNav(item.action)">
+        <span>{{ item.label }}</span>
+        <span
+          v-if="isActive(item.id)"
+          data-testid="nav-active-indicator"
+          class="absolute -bottom-2 left-0 h-px w-full bg-blue-200"
+        />
       </RouterLink>
     </div>
 
@@ -53,9 +64,16 @@
       <div v-if="isOpen"
         class="pointer-events-auto absolute right-6 top-20 flex min-w-[150px] flex-col gap-4 rounded-lg border border-gray-800 bg-black/80 p-4 shadow-lg backdrop-blur-md md:hidden">
         <RouterLink v-for="item in navItems" :key="item.id" to="/"
-          :class="siteStore.mode === item.id ? 'text-blue-400' : 'text-gray-400 hover:text-blue-400'"
-          class="w-full text-left text-sm uppercase tracking-widest transition-colors" @click="handleNav(item.action)">
-          {{ item.label }}
+          :aria-current="isActive(item.id) ? 'page' : undefined"
+          :data-nav-item="item.id"
+          :class="isActive(item.id) ? 'text-blue-300' : 'text-gray-400 hover:text-blue-400'"
+          class="relative w-full text-left text-sm uppercase tracking-widest transition-colors" @click="handleNav(item.action)">
+          <span>{{ item.label }}</span>
+          <span
+            v-if="isActive(item.id)"
+            data-testid="nav-active-indicator"
+            class="absolute -bottom-1 left-0 h-px w-10 bg-blue-200"
+          />
         </RouterLink>
       </div>
     </Transition>

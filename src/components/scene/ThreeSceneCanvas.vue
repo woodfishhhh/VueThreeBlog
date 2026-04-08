@@ -267,11 +267,8 @@
 
         if (store.mode === "home") {
           targetPos.set(0, 0, 10);
-        } else if (store.mode === "blog" || store.mode === "author" || store.mode === "friend") {
+        } else if (store.mode === "blog" || store.mode === "author" || store.mode === "friend" || store.mode === "works") {
           targetPos.set(0, 0, 12);
-        } else if (store.mode === "works") {
-          targetPos.set(0, 1.9, 12.8);
-          targetLook.set(0, 1.1, 0);
         } else if (store.mode === "reading") {
           targetPos.set(0, 0, 15);
         }
@@ -402,9 +399,7 @@
     } else if (store.mode === "friend") {
       targetY = 2.4;
     } else if (store.mode === "works") {
-      targetY = -2.8;
-      targetZ = 0.4;
-      targetScale = mobile ? 0.72 : 0.92;
+      targetY = 2.4;
     } else if (store.mode === "reading") {
       if (mobile) targetY = 3.5; else targetX = 5;
       targetScale = 0.5;
