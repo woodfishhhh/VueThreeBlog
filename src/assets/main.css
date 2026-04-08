@@ -809,3 +809,22 @@ img {
   transform: translateY(80px);
 }
 
+/* Works panel: slide up from bottom with easeOut */
+.works-panel-enter-active {
+  transition:
+    opacity 0.4s cubic-bezier(0.33, 1, 0.68, 1),
+    transform 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.works-panel-leave-active {
+  transition:
+    opacity 0.4s cubic-bezier(0.33, 1, 0.68, 1),
+    transform 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.works-panel-enter-from,
+.works-panel-leave-to {
+  opacity: 0;
+  transform: translateY(80px);
+}
+
