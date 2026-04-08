@@ -400,6 +400,8 @@ img {
 }
 
 .article-toc__card {
+  display: flex;
+  flex-direction: column;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
   background: rgba(8, 11, 22, 0.74);
@@ -409,12 +411,27 @@ img {
   padding: 1rem;
 }
 
+.article-toc__head {
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .article-toc__title {
-  margin-bottom: 0.9rem;
   font-size: 0.88rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: rgba(233, 239, 255, 0.52);
+}
+
+.article-toc__meta {
+  margin-top: 0.45rem;
+  font-size: 0.82rem;
+  color: rgba(233, 239, 255, 0.38);
+}
+
+.article-toc__scroll {
+  margin-top: 0.9rem;
+  overflow-y: auto;
 }
 
 .article-toc__items {
@@ -706,7 +723,10 @@ img {
     position: sticky;
     top: 6rem;
     max-height: calc(100dvh - 8rem);
-    overflow-y: auto;
+  }
+
+  .article-toc__scroll {
+    max-height: calc(100dvh - 13rem);
   }
 }
 

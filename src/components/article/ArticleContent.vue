@@ -44,7 +44,7 @@ const progressStyle = computed(() => ({ width: `${Math.round(Math.max(0, Math.mi
         </div>
       </div>
 
-      <div v-if="tocItems.length > 0" class="article-view__rail">
+      <div v-if="tocItems.length > 0" class="article-view__rail" data-testid="article-toc-rail">
         <ArticleToc :items="tocItems" :active-id="activeId" @jump="jumpToHeading" />
       </div>
     </div>

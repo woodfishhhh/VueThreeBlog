@@ -18,6 +18,8 @@ describe("ArticleToc", () => {
     const items = wrapper.findAll("[data-testid='article-toc-item']");
 
     expect(wrapper.get("[data-testid='article-toc']")).toBeTruthy();
+    expect(wrapper.get("[data-testid='article-toc-header']").text()).toContain("Table of Contents");
+    expect(wrapper.get("[data-testid='article-toc-scroll']")).toBeTruthy();
     expect(items).toHaveLength(2);
     expect(wrapper.get("[data-toc-id='core-concepts']").attributes("aria-current")).toBe("location");
 

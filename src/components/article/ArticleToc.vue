@@ -23,8 +23,12 @@ function handleJump(id: string) {
 <template>
   <aside v-if="props.items.length > 0" class="article-toc" data-testid="article-toc" aria-label="Article table of contents">
     <div class="article-toc__card">
-      <div class="article-toc__title">Table of Contents</div>
-      <div class="article-toc__items">
+      <div class="article-toc__head" data-testid="article-toc-header">
+        <div class="article-toc__title">Table of Contents</div>
+        <div class="article-toc__meta">{{ props.items.length }} sections</div>
+      </div>
+      <div class="article-toc__scroll" data-testid="article-toc-scroll">
+        <div class="article-toc__items">
         <button
           v-for="item in props.items"
           :key="item.id"
@@ -41,6 +45,7 @@ function handleJump(id: string) {
         >
           {{ item.text }}
         </button>
+        </div>
       </div>
     </div>
   </aside>

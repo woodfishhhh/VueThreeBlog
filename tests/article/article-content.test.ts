@@ -67,6 +67,8 @@ describe("ArticleContent", () => {
     expect(wrapper.text()).toContain("6 min read");
     expect(wrapper.get("[data-testid='article-cover']").attributes("src")).toBe(article.coverImage);
     expect(wrapper.get("[data-testid='article-prose']").html()).toContain('id="overview"');
+    expect(wrapper.get("[data-testid='article-toc-rail']")).toBeTruthy();
+    expect(wrapper.get("[data-testid='article-toc-scroll']")).toBeTruthy();
     expect(wrapper.findAll("[data-testid='article-toc-item']")).toHaveLength(2);
     expect(wrapper.get("[data-testid='article-progress-bar']").attributes("style")).toContain("width: 50%");
 
