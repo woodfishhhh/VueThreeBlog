@@ -12,6 +12,7 @@ describe("build-site-content", () => {
     const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-build-"));
     const sourceRoot = path.join(tempRoot, "3Dblog");
     const myblogDir = path.join(sourceRoot, "content", "source", "myblog", "前端");
+    const notesDir = path.join(sourceRoot, "content", "source", "myblog", "笔记");
     const legacyPostDir = path.join(sourceRoot, "content", "posts", "ajax-basics-intro");
     const aboutPath = path.join(sourceRoot, "content", "source", "blog", "source", "_data", "about.yml");
     const linkPath = path.join(sourceRoot, "content", "source", "blog", "source", "_data", "link.yml");
@@ -19,6 +20,7 @@ describe("build-site-content", () => {
     const publicDir = path.join(sourceRoot, "public", "asset");
 
     await mkdir(myblogDir, { recursive: true });
+    await mkdir(notesDir, { recursive: true });
     await mkdir(legacyPostDir, { recursive: true });
     await mkdir(path.dirname(aboutPath), { recursive: true });
     await mkdir(path.dirname(linkPath), { recursive: true });
@@ -49,6 +51,7 @@ describe("build-site-content", () => {
       "---",
       'title: "AJAX 基础入门教程"',
       "date: 2025-12-20 12:00:04",
+      'type: "Tutorial"',
       "tags:",
       '  - "AJAX基础"',
       '  - "axios"',
@@ -75,7 +78,28 @@ describe("build-site-content", () => {
       "```",
     ].join("\n");
 
+    const notesMarkdown = [
+      "---",
+      'title: "Node 观测性随记"',
+      "date: 2025-12-18 08:30:00",
+      "tags:",
+      '  - "Node.js"',
+      '  - "日志"',
+      "categories:",
+      '  - "工程化"',
+      "---",
+      "",
+      "# Node 观测性随记",
+      "",
+      "记录日志、指标、追踪三件套，是排查线上问题时最先要补齐的观测性地基。",
+      "",
+      "## 为什么要有观测性",
+      "",
+      "如果没有统一的日志和追踪链路，定位生产问题时就只能靠猜。",
+    ].join("\n");
+
     await writeFile(path.join(myblogDir, "AJAX 基础入门教程.md"), rawMarkdown);
+    await writeFile(path.join(notesDir, "Node 观测性随记.md"), notesMarkdown);
     await writeFile(path.join(legacyPostDir, "index.md"), rawMarkdown);
     await writeFile(path.join(publicDir, "image.png"), "asset-image");
     await writeFile(
@@ -117,10 +141,18 @@ describe("build-site-content", () => {
         siteBasePath: "/newBlog/",
       });
 
-      expect(result.postIndex).toHaveLength(1);
-      expect(result.postIndex[0]?.canonicalSlug).toBe("ajax-basics-intro");
-      expect(result.postIndex[0]?.aliases).toContain("AJAX 基础入门教程");
-      expect(result.postIndex[0]?.readingMinutes).toBeGreaterThan(0);
+      const ajaxEntry = result.postIndex.find((entry) => entry.title === "AJAX 基础入门教程");
+      const notesEntry = result.postIndex.find((entry) => entry.title === "Node 观测性随记");
+
+      expect(result.postIndex).toHaveLength(2);
+      expect(ajaxEntry?.canonicalSlug).toBe("ajax-basics-intro");
+      expect(ajaxEntry?.aliases).toContain("AJAX 基础入门教程");
+      expect(ajaxEntry?.readingMinutes).toBeGreaterThan(0);
+      expect(ajaxEntry?.type).toBe("Tutorial");
+      expect(ajaxEntry?.searchText).toContain("AJAX");
+      expect(ajaxEntry?.searchText).toContain("请求生命周期");
+      expect(notesEntry?.type).toBe("Notes");
+      expect(notesEntry?.searchText).toContain("观测性");
       expect(result.postsBySlug["ajax-basics-intro"]?.html).toContain('id="核心概念"');
       expect(result.postsBySlug["ajax-basics-intro"]?.coverImage).toBeNull();
       expect(result.postsBySlug["ajax-basics-intro"]?.toc).toEqual([
@@ -131,7 +163,7 @@ describe("build-site-content", () => {
         },
       ]);
       expect(result.author.name).toBe("木鱼");
-      expect(result.author.postsCount).toBe(1);
+      expect(result.author.postsCount).toBe(2);
       expect(result.friendLinks[0]?.name).toBe("Fomalhaut");
       expect(result.friendLinks[0]?.avatar).toMatch(/^\/newBlog\/remote-assets\/[a-f0-9]{40}\.[a-z0-9]+$/);
     } finally {

@@ -12,6 +12,8 @@ const article: PostArticle = {
   publishedAt: "2026-04-08T00:00:00.000Z",
   publishedLabel: "Apr 08, 2026",
   excerpt: "A premium reading surface should feel calm, precise, and slightly theatrical.",
+  type: "Essay",
+  searchText: "Orbiting Interfaces Vue Motion Editorial premium reading surface",
   readingMinutes: 6,
   coverImage: "/newBlog/remote-assets/cover.png",
   categories: ["Design Systems"],

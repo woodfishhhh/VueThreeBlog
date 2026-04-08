@@ -11,6 +11,8 @@ const posts: PostSummary[] = [
     publishedAt: "2025-12-20T12:00:04.000Z",
     publishedLabel: "Dec 20, 2025",
     excerpt: "摘要",
+    type: "Tutorial",
+    searchText: "AJAX 基础入门教程 AJAX基础 前端开发 摘要",
     readingMinutes: 3,
     coverImage: null,
     categories: ["前端开发"],

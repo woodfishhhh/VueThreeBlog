@@ -29,6 +29,8 @@ export interface GeneratedPostIndexEntry {
   publishedAt: string;
   publishedLabel: string;
   excerpt: string;
+  type: string;
+  searchText: string;
   readingMinutes: number;
   coverImage: string | null;
   categories: string[];
@@ -236,6 +238,16 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
     });
     const toc = extractToc(rewritten.markdown);
     const publishedAt = toIsoDate(date);
+    const postType = resolvePostType(parsed.data.type);
+    const categories = toStringArray(parsed.data.categories);
+    const tags = toStringArray(parsed.data.tags);
+    const searchText = createSearchText({
+      title,
+      type: postType,
+      categories,
+      tags,
+      markdown: rewritten.markdown,
+    });
     const readingMinutes = estimateReadingMinutes(rewritten.markdown);
     const coverImage = await resolveContentAssetValue(readString(parsed.data.cover), {
       sourceFilePath: filePath,
@@ -250,10 +262,12 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
       publishedAt,
       publishedLabel: formatPublishedDate(publishedAt),
       excerpt: createExcerpt(rewritten.markdown, title),
+      type: postType,
+      searchText,
       readingMinutes,
       coverImage,
-      categories: toStringArray(parsed.data.categories),
-      tags: toStringArray(parsed.data.tags),
+      categories,
+      tags,
       html: await renderArticleHtml(rewritten.markdown),
       toc,
     };
@@ -266,6 +280,8 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
       publishedAt: entry.publishedAt,
       publishedLabel: entry.publishedLabel,
       excerpt: entry.excerpt,
+      type: entry.type,
+      searchText: entry.searchText,
       readingMinutes: entry.readingMinutes,
       coverImage: entry.coverImage,
       categories: entry.categories,
@@ -391,16 +407,33 @@ function createExcerpt(markdown: string, title: string) {
   return `${plainText.slice(0, 150)}${plainText.length > 150 ? "..." : ""}`;
 }
 
-function estimateReadingMinutes(markdown: string) {
-  const plainText = markdown
-    .replace(/```[\s\S]*?```/g, " ")
-    .replace(/`[^`]+`/g, " ")
-    .replace(/!\[[^\]]*\]\([^)]+\)/g, " ")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, " $1 ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/[#>*_~-]/g, " ")
+function resolvePostType(value: unknown) {
+  return readString(value).trim() || "Notes";
+}
+
+function createSearchText(options: {
+  title: string;
+  type: string;
+  categories: string[];
+  tags: string[];
+  markdown: string;
+}) {
+  return [
+    options.title,
+    options.type,
+    options.categories.join(" "),
+    options.tags.join(" "),
+    toSearchablePlainText(options.markdown),
+  ]
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join(" ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function estimateReadingMinutes(markdown: string) {
+  const plainText = toSearchablePlainText(markdown);
 
   if (!plainText) {
     return 1;
@@ -415,6 +448,18 @@ function estimateReadingMinutes(markdown: string) {
   const wordCount = nonCjkText.split(/\s+/).filter(Boolean).length;
 
   return Math.max(1, Math.ceil((cjkCount + wordCount) / 220));
+}
+
+function toSearchablePlainText(markdown: string) {
+  return markdown
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`[^`]+`/g, " ")
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, " $1 ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/[#>*_~-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 async function resolveContentAssetValue(
