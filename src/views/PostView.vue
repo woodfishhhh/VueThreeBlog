@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, shallowRef, useTemplateRef, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, type LocationQueryValue } from "vue-router";
 
 import ArticleContent from "@/components/article/ArticleContent.vue";
 import { loadPostArticle, resolvePostSlug } from "@/content/posts";
@@ -11,6 +11,25 @@ const pageRoot = useTemplateRef<HTMLElement>("pageRoot");
 const article = shallowRef<PostArticle | null>(null);
 const isLoading = shallowRef(true);
 const resolvedSlug = shallowRef("");
+const blogReturnQuery = computed(() => {
+  const nextQuery: Record<string, string> = {};
+
+  for (const key of ["q", "type", "category", "tag", "sort"] as const) {
+    const value = readQueryValue(route.query[key]);
+    if (value) {
+      nextQuery[key] = value;
+    }
+  }
+
+  return nextQuery;
+});
+const hasBlogReturnContext = computed(() => Object.keys(blogReturnQuery.value).length > 0);
+const backLinkTarget = computed(() =>
+  hasBlogReturnContext.value
+    ? { name: "blog", query: blogReturnQuery.value }
+    : { name: "home" },
+);
+const backLinkLabel = computed(() => (hasBlogReturnContext.value ? "Back to Blog" : "Back Home"));
 
 let requestToken = 0;
 
@@ -44,6 +63,14 @@ watch(
   },
   { immediate: true },
 );
+
+function readQueryValue(value: LocationQueryValue | LocationQueryValue[]) {
+  if (Array.isArray(value)) {
+    return value[0]?.trim() ?? "";
+  }
+
+  return value?.trim() ?? "";
+}
 </script>
 
 <template>
@@ -52,12 +79,12 @@ watch(
     <div class="article-page__ambient article-page__ambient--right" />
 
     <div class="article-page__nav-shell">
-      <RouterLink class="article-page__nav-link" to="/">
+      <RouterLink class="article-page__nav-link" :to="backLinkTarget">
         <svg class="article-page__nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="m12 19-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" />
           <path d="M19 12H5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" />
         </svg>
-        <span>Back Home</span>
+        <span>{{ backLinkLabel }}</span>
       </RouterLink>
 
       <span v-if="resolvedSlug" class="article-page__nav-meta">/ posts / {{ resolvedSlug }}</span>

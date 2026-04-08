@@ -5,7 +5,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   loadPostArticle: vi.fn(),
   resolvePostSlug: vi.fn(),
-  routeState: { slug: "orbiting-interfaces" },
+  routeState: {
+    slug: "orbiting-interfaces",
+    query: {} as Record<string, string>,
+  },
 }));
 
 vi.mock("vue-router", () => ({
@@ -13,6 +16,7 @@ vi.mock("vue-router", () => ({
     params: {
       slug: mocks.routeState.slug,
     },
+    query: mocks.routeState.query,
   }),
 }));
 
@@ -27,7 +31,7 @@ const RouterLinkStub = defineComponent({
   name: "RouterLink",
   props: {
     to: {
-      type: String,
+      type: [String, Object],
       default: "/",
     },
   },
@@ -63,6 +67,7 @@ const article = {
 describe("PostView", () => {
   beforeEach(() => {
     mocks.routeState.slug = "orbiting-interfaces";
+    mocks.routeState.query = {};
     mocks.loadPostArticle.mockReset();
     mocks.resolvePostSlug.mockReset();
     mocks.resolvePostSlug.mockImplementation(async (slug: string) => slug);
@@ -134,5 +139,33 @@ describe("PostView", () => {
     expect(wrapper.get("[data-testid='article-content-stub']").text()).toContain("Orbiting Interfaces");
     expect(wrapper.text()).toContain("/ posts / orbiting-interfaces");
     expect(document.title).toBe("Orbiting Interfaces | WOODFISH");
+  });
+
+  it("preserves the originating blog query in the back link", async () => {
+    mocks.routeState.query = {
+      q: "ajax",
+      type: "Tutorial",
+    };
+    mocks.loadPostArticle.mockResolvedValue(article);
+
+    const wrapper = mount(PostView, {
+      global: {
+        stubs: {
+          ArticleContent: ArticleContentStub,
+          RouterLink: RouterLinkStub,
+        },
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.getComponent(RouterLinkStub).props("to")).toEqual({
+      name: "blog",
+      query: {
+        q: "ajax",
+        type: "Tutorial",
+      },
+    });
+    expect(wrapper.text()).toContain("Back to Blog");
   });
 });
