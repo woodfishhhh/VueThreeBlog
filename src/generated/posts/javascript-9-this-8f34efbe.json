@@ -7,6 +7,8 @@
   "publishedAt": "2025-11-03T12:39:11.000Z",
   "publishedLabel": "Nov 03, 2025",
   "excerpt": "深浅拷贝的概念仅适用于引用类型。",
+  "readingMinutes": 13,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

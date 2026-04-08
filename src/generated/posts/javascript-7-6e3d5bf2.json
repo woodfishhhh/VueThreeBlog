@@ -7,6 +7,8 @@
   "publishedAt": "2025-09-29T23:58:23.000Z",
   "publishedLabel": "Sep 29, 2025",
   "excerpt": "1. 理解面向对象编程的基础概念，明确构造函数的作用。\n2. 体会 JavaScript “一切皆对象” 的语言特性。\n3. 熟练掌握常见对象属性和方法的使用。",
+  "readingMinutes": 7,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

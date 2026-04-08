@@ -7,6 +7,8 @@
   "publishedAt": "2026-01-09T15:47:41.000Z",
   "publishedLabel": "Jan 09, 2026",
   "excerpt": "1. 构建分析表格  \n   需创建4行多列表格，列数=关键字个数+1（预留补充列），各行含义如下：\n   - 第1行（下标）：从0开始依次递增（如关键字有10个，下标为0~9）；\n   - 第2行（关键字）：直接复制题目给定的字符序列（如\"ababacaaad\"）；\n   - 第3行（next数组...",
+  "readingMinutes": 24,
+  "coverImage": null,
   "categories": [
     "计算机基础",
     "数据结构"

@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted } from "vue";
+import { useRouter } from "vue-router";
 
+import { getRouteLocationForSiteMode } from "@/router/site-mode";
 import { useSiteStore } from "@/stores/site";
 
 const siteStore = useSiteStore();
+const router = useRouter();
 let touchStartY = 0;
 let isAnimating = false;
 
 function setModeWithLock(nextMode: "home" | "blog") {
-  if (isAnimating) {
+  if (isAnimating || siteStore.mode === nextMode) {
     return;
   }
 
   isAnimating = true;
-  if (nextMode === "home") {
-    siteStore.goHome();
-  } else {
-    siteStore.goBlog();
-  }
+  siteStore.exitFocus();
+  void router.push(getRouteLocationForSiteMode(nextMode));
 
   window.setTimeout(() => {
     isAnimating = false;

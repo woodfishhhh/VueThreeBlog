@@ -7,6 +7,8 @@
   "publishedAt": "2025-08-29T13:49:41.000Z",
   "publishedLabel": "Aug 29, 2025",
   "excerpt": "成员内部类直接定义在外部类里，与外部类的属性和方法处于同一层级。它能够访问外部类的所有成员，包括私有成员。",
+  "readingMinutes": 1,
+  "coverImage": null,
   "categories": [
     "编程语言",
     "Java"

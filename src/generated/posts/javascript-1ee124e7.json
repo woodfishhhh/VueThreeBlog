@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-25T18:28:57.000Z",
   "publishedLabel": "Dec 25, 2025",
   "excerpt": "本章节聚焦JavaScript中处理数组的现代高阶函数方法,重点讲解forEach、map、filter、reduce四大核心数组方法的语法、参数、返回值及典型应用场景,通过对比传统循环方式,掌握函数式编程思想在数组处理中的应用,提升代码简洁性和可维护性。",
+  "readingMinutes": 7,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

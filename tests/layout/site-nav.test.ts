@@ -10,11 +10,11 @@ const RouterLinkStub = defineComponent({
   name: "RouterLink",
   props: {
     to: {
-      type: String,
+      type: [String, Object],
       default: "/",
     },
   },
-  template: `<a :href="to" v-bind="$attrs"><slot /></a>`,
+  template: `<a v-bind="$attrs"><slot /></a>`,
 });
 
 describe("SiteNav", () => {

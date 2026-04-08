@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-28T12:53:11.000Z",
   "publishedLabel": "Dec 28, 2025",
   "excerpt": "- async/await 语法中，无法像普通 Promise 那样直接使用 .catch() 方法捕获错误，需借助 try...catch 语句实现错误处理\n- try...catch 并非专为 async/await 设计，是 JavaScript 语言原生特性（可能从语言初始阶段就存在），可同...",
+  "readingMinutes": 4,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

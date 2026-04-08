@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-20T12:00:04.000Z",
   "publishedLabel": "Dec 20, 2025",
   "excerpt": "AJAX就像是餐厅的\"传菜员\"，专门负责厨房（服务器）和餐桌（你的网页）之间的沟通。想象一下，如果没有传菜员，每次点菜都要你亲自跑到厨房去告诉厨师，然后等菜做好再端回来——这就是传统的网页刷新方式。",
+  "readingMinutes": 6,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "AJAX"

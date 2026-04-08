@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-28T12:44:03.000Z",
   "publishedLabel": "Dec 28, 2025",
   "excerpt": "- 定义：Async 函数是一种特殊的 JavaScript 函数，通过在 function 关键字前添加 async 关键字声明，专门用于配合 Await 关键字消费 Promise，使异步代码逻辑更接近同步代码的直观形式。\n- 创建语法：",
+  "readingMinutes": 7,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

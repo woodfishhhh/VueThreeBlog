@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 
 export type SiteMode = "home" | "blog" | "author" | "friend" | "works" | "reading";
+export type SitePanelMode = Exclude<SiteMode, "reading">;
 
 interface SiteState {
   mode: SiteMode;
@@ -17,30 +18,32 @@ export const useSiteStore = defineStore("site", {
     cubeStep: 0,
   }),
   actions: {
-    goHome() {
-      this.mode = "home";
+    setPanelMode(mode: SitePanelMode) {
+      this.mode = mode;
       this.isFocusing = false;
       this.activePostSlug = null;
+    },
+    syncRouteMode(mode: SitePanelMode) {
+      this.mode = mode;
+      if (mode !== "home") {
+        this.isFocusing = false;
+      }
+      this.activePostSlug = null;
+    },
+    goHome() {
+      this.setPanelMode("home");
     },
     goBlog() {
-      this.mode = "blog";
-      this.isFocusing = false;
-      this.activePostSlug = null;
+      this.setPanelMode("blog");
     },
     goAuthor() {
-      this.mode = "author";
-      this.isFocusing = false;
-      this.activePostSlug = null;
+      this.setPanelMode("author");
     },
     goFriend() {
-      this.mode = "friend";
-      this.isFocusing = false;
-      this.activePostSlug = null;
+      this.setPanelMode("friend");
     },
     goWorks() {
-      this.mode = "works";
-      this.isFocusing = false;
-      this.activePostSlug = null;
+      this.setPanelMode("works");
     },
     enterReading(slug: string) {
       this.mode = "reading";

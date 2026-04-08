@@ -11,6 +11,8 @@ export interface PostSummary {
   publishedAt: string;
   publishedLabel: string;
   excerpt: string;
+  readingMinutes: number;
+  coverImage?: string | null;
   categories: string[];
   tags: string[];
 }

@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-25T18:24:13.000Z",
   "publishedLabel": "Dec 25, 2025",
   "excerpt": "- 属于 ES6（2015 年）推出的数组遍历新语法，核心作用是简化传统 for 循环的代码逻辑，降低数组遍历的 “模板代码” 成本。\n- 适用场景：需直接访问数组元素、无需手动控制循环计数器的场景（如遍历菜单、商品列表等）。",
+  "readingMinutes": 6,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

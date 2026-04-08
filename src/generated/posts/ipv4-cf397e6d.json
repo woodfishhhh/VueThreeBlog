@@ -7,6 +7,8 @@
   "publishedAt": "2025-11-17T11:13:26.000Z",
   "publishedLabel": "Nov 17, 2025",
   "excerpt": "网络层是 OSI 体系结构自下而上的第三层，核心任务是将分组从源主机经多个网络和链路传输到目的主机，主要包含分组转发、路由选择两大功能，且能向上层提供两种服务。",
+  "readingMinutes": 57,
+  "coverImage": null,
   "categories": [
     "计算机基础",
     "计算机网络"

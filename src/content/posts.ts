@@ -1,21 +1,33 @@
-import postIndexData from "@/generated/post-index.json";
-
 import type { PostArticle, PostSummary } from "@/types/content";
 import { resolvePostSlugFromIndex } from "./post-helpers";
 
-const postIndex = postIndexData as PostSummary[];
 const postModules = import.meta.glob<{ default: PostArticle }>("../generated/posts/*.json");
+const articlePromiseCache = new Map<string, Promise<PostArticle>>();
+let postIndexPromise: Promise<PostSummary[]> | null = null;
 
-export function getPostSummaries() {
-  return postIndex;
+async function loadPostIndex() {
+  if (!postIndexPromise) {
+    postIndexPromise = import("@/generated/post-index.json").then((module) => module.default as PostSummary[]);
+  }
+
+  return postIndexPromise;
 }
 
-export function resolvePostSlug(slug: string) {
+export async function getPostSummaries() {
+  return loadPostIndex();
+}
+
+export function warmPostSummaries() {
+  void loadPostIndex();
+}
+
+export async function resolvePostSlug(slug: string) {
+  const postIndex = await loadPostIndex();
   return resolvePostSlugFromIndex(postIndex, decodeURIComponent(slug));
 }
 
 export async function loadPostArticle(slug: string): Promise<PostArticle | null> {
-  const canonicalSlug = resolvePostSlug(slug);
+  const canonicalSlug = await resolvePostSlug(slug);
 
   if (!canonicalSlug) {
     return null;
@@ -26,6 +38,18 @@ export async function loadPostArticle(slug: string): Promise<PostArticle | null>
     return null;
   }
 
-  const module = await loader();
-  return module.default;
+  const cachedPromise = articlePromiseCache.get(canonicalSlug);
+  if (cachedPromise) {
+    return cachedPromise;
+  }
+
+  const nextPromise = loader()
+    .then((module) => module.default)
+    .catch((error) => {
+      articlePromiseCache.delete(canonicalSlug);
+      throw error;
+    });
+
+  articlePromiseCache.set(canonicalSlug, nextPromise);
+  return nextPromise;
 }

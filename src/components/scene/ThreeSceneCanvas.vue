@@ -1,13 +1,17 @@
 <script setup lang="ts">
   import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+  import { useRouter } from "vue-router";
   import * as THREE from "three";
   import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
   import gsap from "gsap";
+
+  import { getRouteLocationForSiteMode } from "@/router/site-mode";
   import { useSiteStore } from "@/stores/site";
 
   const container = ref<HTMLElement | null>(null);
   const canvasRef = ref<HTMLCanvasElement | null>(null);
   const store = useSiteStore();
+  const router = useRouter();
 
   // UI States
   const isDragging = ref(false);
@@ -363,6 +367,7 @@
       savedFocusRotation.copy(hypercubeGroup.rotation);
       store.goHome();
       store.enterFocus();
+      void router.push(getRouteLocationForSiteMode("home"));
     }
   }
 

@@ -81,10 +81,11 @@ describe("generator-core", () => {
       sourceFilePath,
       canonicalSlug: "ajax-day-01",
       publicDir,
+      siteBasePath: "/newBlog/",
     });
 
-    expect(result.markdown).toContain("/content-assets/ajax-day-01/images/demo.png");
-    expect(result.markdown).toMatch(/\/imported-assets\/[a-f0-9]{40}\.png/);
+    expect(result.markdown).toContain("/newBlog/content-assets/ajax-day-01/images/demo.png");
+    expect(result.markdown).toMatch(/\/newBlog\/imported-assets\/[a-f0-9]{40}\.png/);
     expect(result.warnings).toHaveLength(0);
 
     expect(

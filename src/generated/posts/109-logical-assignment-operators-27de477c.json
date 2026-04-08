@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-25T18:20:45.000Z",
   "publishedLabel": "Dec 25, 2025",
   "excerpt": "- 属于 ES 2021（ECMAScript 2021）标准中新增的语法特性，共包含 3 个运算符，核心作用是简化 “逻辑判断 + 赋值” 的组合操作，提升代码简洁性与可读性。",
+  "readingMinutes": 6,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-27T17:49:23.000Z",
   "publishedLabel": "Dec 27, 2025",
   "excerpt": "- 定义：JavaScript 是单线程语言，异步编程允许代码在等待某个操作（如网络请求、定时器）完成时，不阻塞后续代码执行，而是继续执行其他任务，待操作完成后再处理结果。\n- 应用场景：\n  - 网络请求（如获取 API 数据）\n  - 定时器（setTimeout、setInterval）\n  ...",
+  "readingMinutes": 16,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

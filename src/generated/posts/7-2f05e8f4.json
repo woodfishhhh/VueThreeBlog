@@ -7,6 +7,8 @@
   "publishedAt": "2026-03-16T17:37:26.000Z",
   "publishedLabel": "Mar 16, 2026",
   "excerpt": "一致性示例：银行转账（A转1万至B）\r\n- 正确操作：$A=A-10000$ 且 $B=B+10000$，数据库保持一致性；\r\n- 异常情况：仅执行$A=A-10000$，数据丢失，数据库处于不一致状态。",
+  "readingMinutes": 11,
+  "coverImage": null,
   "categories": [
     "数据库",
     "数据库原理"

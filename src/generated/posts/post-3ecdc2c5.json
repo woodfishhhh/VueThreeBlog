@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-25T18:31:13.000Z",
   "publishedLabel": "Dec 25, 2025",
   "excerpt": "当访问嵌套对象的属性时，若中间某一层属性不存在（值为undefined或null），直接访问会触发类型错误。",
+  "readingMinutes": 8,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

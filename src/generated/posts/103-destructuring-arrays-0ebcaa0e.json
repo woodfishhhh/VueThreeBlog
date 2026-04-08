@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-25T17:54:42.000Z",
   "publishedLabel": "Dec 25, 2025",
   "excerpt": "1. 所属模块：现代 JavaScript 语法学习，聚焦 “内置数据结构与高级运算符”，是后续实战项目的基础铺垫\n2. 案例载体：以意大利餐厅 “Classico Italiano” 模拟配送应用为案例，仅关注 JavaScript 逻辑，不构建 UI（下一节将通过带优质 UI 的项目学习数组方法...",
+  "readingMinutes": 4,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

@@ -8,6 +8,8 @@
     "publishedAt": "2026-03-16T17:37:26.000Z",
     "publishedLabel": "Mar 16, 2026",
     "excerpt": "数据更新包含插入、修改、删除三类核心操作，是SQL对表数据的基础操作，需严格匹配数据类型、遵守完整性约束。",
+    "readingMinutes": 8,
+    "coverImage": null,
     "categories": [
       "数据库",
       "SQL"
@@ -29,6 +31,8 @@
     "publishedAt": "2026-03-16T17:37:26.000Z",
     "publishedLabel": "Mar 16, 2026",
     "excerpt": "- 关键参数：\r\n  - PUBLIC：表示授予所有用户该权限\r\n  - WITH GRANT OPTION：允许被授权用户转授该权限给其他用户\r\n  - 对属性列授权时，必须明确指定列名（如UPDATE(Sno)）\r\n- 授权者范围：数据库管理员（DBA）、数据库对象创建者、拥有WITH GRAN...",
+    "readingMinutes": 10,
+    "coverImage": null,
     "categories": [
       "数据库",
       "数据库原理"
@@ -49,6 +53,8 @@
     "publishedAt": "2026-03-16T17:37:26.000Z",
     "publishedLabel": "Mar 16, 2026",
     "excerpt": "这份笔记紧扣期末考点，聚焦E-R模型核心概念、绘图规范、实体联系类型及实例分析，内容简洁实用，适配期末大题解题需求。",
+    "readingMinutes": 8,
+    "coverImage": null,
     "categories": [
       "数据库",
       "数据库设计"
@@ -69,6 +75,8 @@
     "publishedAt": "2026-03-16T17:37:26.000Z",
     "publishedLabel": "Mar 16, 2026",
     "excerpt": "一致性示例：银行转账（A转1万至B）\r\n- 正确操作：$A=A-10000$ 且 $B=B+10000$，数据库保持一致性；\r\n- 异常情况：仅执行$A=A-10000$，数据丢失，数据库处于不一致状态。",
+    "readingMinutes": 11,
+    "coverImage": null,
     "categories": [
       "数据库",
       "数据库原理"
@@ -89,6 +97,8 @@
     "publishedAt": "2026-03-16T17:37:26.000Z",
     "publishedLabel": "Mar 16, 2026",
     "excerpt": "注：统一符号规则：$Ri(X)$表示事务$Ti$读取数据$X$，$Wi(X)$表示事务$Ti$写入数据$X$。",
+    "readingMinutes": 14,
+    "coverImage": null,
     "categories": [
       "数据库",
       "数据库原理"
@@ -109,6 +119,8 @@
     "publishedAt": "2026-03-14T16:32:59.000Z",
     "publishedLabel": "Mar 14, 2026",
     "excerpt": "1. 考查形式：关系基本概念、关系完整性以选填为主；关系代数为高频考点，选填+简答/计算均会涉及\n2. 核心框架：关系模型基于集合代数，核心围绕「关系概念+完整性约束+关系代数运算」展开",
+    "readingMinutes": 11,
+    "coverImage": null,
     "categories": [
       "数据库",
       "数据库原理"
@@ -129,6 +141,8 @@
     "publishedAt": "2026-03-14T15:45:49.000Z",
     "publishedLabel": "Mar 14, 2026",
     "excerpt": "-- 选课表SC（复合主键，表级约束；外键参照）\nCREATE TABLE SC(\n    SNO CHAR(9),\n    CNO CHAR(6),\n    GRADE INT,\n    PRIMARY KEY(SNO,CNO),     -- 复合主键（表级）\n    FOREIGN KEY(S...",
+    "readingMinutes": 12,
+    "coverImage": null,
     "categories": [
       "数据库",
       "SQL"
@@ -150,6 +164,8 @@
     "publishedAt": "2026-03-14T15:24:34.000Z",
     "publishedLabel": "Mar 14, 2026",
     "excerpt": "定义：长期储存在计算机内、有组织、可共享的大量数据的集合。\n核心特点：①长期存储 ②有组织 ③可共享（基本特点）；④冗余度小 ⑤数据独立性高 ⑥易扩展性（对比人工/文件管理的优势特点）。",
+    "readingMinutes": 15,
+    "coverImage": null,
     "categories": [
       "数据库",
       "数据库原理"
@@ -170,6 +186,8 @@
     "publishedAt": "2026-01-22T15:02:25.000Z",
     "publishedLabel": "Jan 22, 2026",
     "excerpt": "This course was created by Maximilian Schwarzmüller",
+    "readingMinutes": 3,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "Vue"
@@ -190,6 +208,8 @@
     "publishedAt": "2026-01-14T19:31:27.000Z",
     "publishedLabel": "Jan 14, 2026",
     "excerpt": "这是一份根据你提供的《马原》第一、二、三章重点知识点，完全仿照江西财经大学21-22学年期末试卷格式生成的模拟试卷。",
+    "readingMinutes": 12,
+    "coverImage": null,
     "categories": [
       "考试资料",
       "模拟卷"
@@ -210,6 +230,8 @@
     "publishedAt": "2026-01-14T19:28:46.000Z",
     "publishedLabel": "Jan 14, 2026",
     "excerpt": "一、单项选择题(本大题共10小题，每小题2分，共20分)\n| 题号 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |\n| :------: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---...",
+    "readingMinutes": 12,
+    "coverImage": null,
     "categories": [
       "考试资料",
       "模拟卷"
@@ -231,6 +253,8 @@
     "publishedAt": "2026-01-09T15:47:41.000Z",
     "publishedLabel": "Jan 09, 2026",
     "excerpt": "1. 构建分析表格  \n   需创建4行多列表格，列数=关键字个数+1（预留补充列），各行含义如下：\n   - 第1行（下标）：从0开始依次递增（如关键字有10个，下标为0~9）；\n   - 第2行（关键字）：直接复制题目给定的字符序列（如\"ababacaaad\"）；\n   - 第3行（next数组...",
+    "readingMinutes": 24,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "数据结构"
@@ -251,6 +275,8 @@
     "publishedAt": "2025-12-31T02:17:14.000Z",
     "publishedLabel": "Dec 31, 2025",
     "excerpt": "---",
+    "readingMinutes": 19,
+    "coverImage": null,
     "categories": [
       "编程语言",
       "TypeScript"
@@ -272,6 +298,8 @@
     "publishedAt": "2025-12-29T06:12:08.000Z",
     "publishedLabel": "Dec 29, 2025",
     "excerpt": "本章节聚焦“现代JavaScript开发实践”，衔接前文的异步编程（Promise、Async/Await）与ES6模块，后续将系统讲解模块规范、工程化工具（如NPM、Parcel）、代码优化及开发最佳实践，最终帮助学习者从“基础语法掌握”过渡到“企业级项目开发能力”。",
+    "readingMinutes": 25,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "前端工程化"
@@ -292,6 +320,8 @@
     "publishedAt": "2025-12-28T14:10:41.000Z",
     "publishedLabel": "Dec 28, 2025",
     "excerpt": "[TOC]",
+    "readingMinutes": 21,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机组成原理"
@@ -313,6 +343,8 @@
     "publishedAt": "2025-12-28T13:49:53.000Z",
     "publishedLabel": "Dec 28, 2025",
     "excerpt": "[TOC]",
+    "readingMinutes": 60,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机组成原理"
@@ -334,6 +366,8 @@
     "publishedAt": "2025-12-28T13:01:30.000Z",
     "publishedLabel": "Dec 28, 2025",
     "excerpt": "本视频聚焦 JavaScript 中异步函数（Async Functions）返回值的特性、获取方式、错误处理及代码优化，解决“异步函数如何返回数据”“返回值为何是 Promise”“如何优雅处理异步返回结果”等关键问题，是异步编程进阶的核心内容。",
+    "readingMinutes": 5,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -354,6 +388,8 @@
     "publishedAt": "2025-12-28T12:53:11.000Z",
     "publishedLabel": "Dec 28, 2025",
     "excerpt": "- async/await 语法中，无法像普通 Promise 那样直接使用 .catch() 方法捕获错误，需借助 try...catch 语句实现错误处理\n- try...catch 并非专为 async/await 设计，是 JavaScript 语言原生特性（可能从语言初始阶段就存在），可同...",
+    "readingMinutes": 4,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -374,6 +410,8 @@
     "publishedAt": "2025-12-28T12:44:03.000Z",
     "publishedLabel": "Dec 28, 2025",
     "excerpt": "- 定义：Async 函数是一种特殊的 JavaScript 函数，通过在 function 关键字前添加 async 关键字声明，专门用于配合 Await 关键字消费 Promise，使异步代码逻辑更接近同步代码的直观形式。\n- 创建语法：",
+    "readingMinutes": 7,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -394,6 +432,8 @@
     "publishedAt": "2025-12-28T04:22:12.000Z",
     "publishedLabel": "Dec 28, 2025",
     "excerpt": "应用层的定义：应用层是 OSI 体系结构的顶层，是离用户最近的一层，也是设计和建立计算机网络的最终目的。",
+    "readingMinutes": 40,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机网络"
@@ -415,6 +455,8 @@
     "publishedAt": "2025-12-27T18:08:24.000Z",
     "publishedLabel": "Dec 27, 2025",
     "excerpt": "1. 所属课程：Udemy 排名第一的 JavaScript 课程《2023 最新完整 JavaScript 课程 从入门到精通 -- 通过项目、挑战和理论掌握 JS》（中英文字幕版·下）\n2. 视频定位：该课程第 42 集，聚焦 JavaScript 事件循环（Event Loop）的实践应用，是...",
+    "readingMinutes": 5,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -435,6 +477,8 @@
     "publishedAt": "2025-12-27T17:49:23.000Z",
     "publishedLabel": "Dec 27, 2025",
     "excerpt": "- 定义：JavaScript 是单线程语言，异步编程允许代码在等待某个操作（如网络请求、定时器）完成时，不阻塞后续代码执行，而是继续执行其他任务，待操作完成后再处理结果。\n- 应用场景：\n  - 网络请求（如获取 API 数据）\n  - 定时器（setTimeout、setInterval）\n  ...",
+    "readingMinutes": 16,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -455,6 +499,8 @@
     "publishedAt": "2025-12-27T17:08:27.000Z",
     "publishedLabel": "Dec 27, 2025",
     "excerpt": "[TOC]",
+    "readingMinutes": 30,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机组成原理"
@@ -475,6 +521,8 @@
     "publishedAt": "2025-12-26T02:38:44.000Z",
     "publishedLabel": "Dec 26, 2025",
     "excerpt": "- 对复杂项目（如本课程的 Mapty 锻炼记录项目）而言，编码前规划可避免后续代码混乱、功能遗漏等问题。\n- 此前课程项目多直接编码，未深入考虑功能逻辑与架构设计，而实际开发中 “先规划再开发” 是标准流程，能减少返工成本。",
+    "readingMinutes": 10,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "项目规划"
@@ -495,6 +543,8 @@
     "publishedAt": "2025-12-25T18:31:13.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "当访问嵌套对象的属性时，若中间某一层属性不存在（值为undefined或null），直接访问会触发类型错误。",
+    "readingMinutes": 8,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -516,6 +566,8 @@
     "publishedAt": "2025-12-25T18:28:57.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "本章节聚焦JavaScript中处理数组的现代高阶函数方法,重点讲解forEach、map、filter、reduce四大核心数组方法的语法、参数、返回值及典型应用场景,通过对比传统循环方式,掌握函数式编程思想在数组处理中的应用,提升代码简洁性和可维护性。",
+    "readingMinutes": 7,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -537,6 +589,8 @@
     "publishedAt": "2025-12-25T18:27:27.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "- 对象字面量定义：通过{}语法直接在代码中编写的对象，例如const restaurant = { name: 'ABC', address: 'XX街' }，是 JavaScript 中创建对象的常用方式。\n- ES6 增强目的：简化对象字面量的编写语法，提升代码简洁性和可读性，主要包含 3 种...",
+    "readingMinutes": 5,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -558,6 +612,8 @@
     "publishedAt": "2025-12-25T18:24:13.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "- 属于 ES6（2015 年）推出的数组遍历新语法，核心作用是简化传统 for 循环的代码逻辑，降低数组遍历的 “模板代码” 成本。\n- 适用场景：需直接访问数组元素、无需手动控制循环计数器的场景（如遍历菜单、商品列表等）。",
+    "readingMinutes": 6,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -579,6 +635,8 @@
     "publishedAt": "2025-12-25T18:20:45.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "- 属于 ES 2021（ECMAScript 2021）标准中新增的语法特性，共包含 3 个运算符，核心作用是简化 “逻辑判断 + 赋值” 的组合操作，提升代码简洁性与可读性。",
+    "readingMinutes": 6,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -599,6 +657,8 @@
     "publishedAt": "2025-12-25T18:17:47.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "- 核心规则：当使用",
+    "readingMinutes": 3,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -620,6 +680,8 @@
     "publishedAt": "2025-12-25T18:13:09.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "二者均使用 ...（三个英文句点） 作为语法标识，容易混淆，需通过使用场景区分。",
+    "readingMinutes": 5,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -641,6 +703,8 @@
     "publishedAt": "2025-12-25T18:01:02.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "- 定义：扩展运算符（...）是 ES6 及后续版本新增的语法，核心功能是 “解包” 可迭代对象（如数组、字符串等）的元素，将其展开为独立的、以逗号分隔的值，且不创建新变量。",
+    "readingMinutes": 6,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -662,6 +726,8 @@
     "publishedAt": "2025-12-25T17:57:30.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "- 语法格式：使用{}包裹需提取的属性名，等号右侧为目标对象，即const {属性名1, 属性名2,...} = 目标对象。",
+    "readingMinutes": 6,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -683,6 +749,8 @@
     "publishedAt": "2025-12-25T17:54:42.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "1. 所属模块：现代 JavaScript 语法学习，聚焦 “内置数据结构与高级运算符”，是后续实战项目的基础铺垫\n2. 案例载体：以意大利餐厅 “Classico Italiano” 模拟配送应用为案例，仅关注 JavaScript 逻辑，不构建 UI（下一节将通过带优质 UI 的项目学习数组方法...",
+    "readingMinutes": 4,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -703,6 +771,8 @@
     "publishedAt": "2025-12-25T17:52:44.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "结论：原始类型复制后，修改原变量不会影响复制变量，符合直觉。",
+    "readingMinutes": 6,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -724,6 +794,8 @@
     "publishedAt": "2025-12-25T17:43:31.000Z",
     "publishedLabel": "Dec 25, 2025",
     "excerpt": "本章节聚焦 JavaScript 中常规函数与箭头函数的核心差异，重点围绕this关键字指向规则、arguments关键字可用性展开，结合实际代码案例解析常见陷阱，并给出不同场景下的函数选择建议，帮助开发者规避错误、正确运用两种函数。",
+    "readingMinutes": 7,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -745,6 +817,8 @@
     "publishedAt": "2025-12-24T15:58:56.000Z",
     "publishedLabel": "Dec 24, 2025",
     "excerpt": "// 2. std::stack (栈)\n// C++: std::stack<int> s; s.push(1); s.pop();\n// JS: Array (使用 push 和 pop)\nconst stack = [];\nstack.push(1);\nstack.push(2);\nconst...",
+    "readingMinutes": 1,
+    "coverImage": null,
     "categories": [
       "编程语言",
       "JavaScript"
@@ -766,6 +840,8 @@
     "publishedAt": "2025-12-20T17:45:52.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "核心任务：为相互通信的应用进程提供端到端的逻辑通信服务，实现进程到进程的通信（网络层仅提供主机到主机通信）。",
+    "readingMinutes": 31,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机网络"
@@ -786,6 +862,8 @@
     "publishedAt": "2025-12-20T12:00:04.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "AJAX就像是餐厅的\"传菜员\"，专门负责厨房（服务器）和餐桌（你的网页）之间的沟通。想象一下，如果没有传菜员，每次点菜都要你亲自跑到厨房去告诉厨师，然后等菜做好再端回来——这就是传统的网页刷新方式。",
+    "readingMinutes": 6,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "AJAX"
@@ -806,6 +884,8 @@
     "publishedAt": "2025-12-20T12:00:04.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "---",
+    "readingMinutes": 39,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机网络"
@@ -826,6 +906,8 @@
     "publishedAt": "2025-12-20T12:00:03.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "- 操作对象：无符号数",
+    "readingMinutes": 7,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机组成原理"
@@ -846,6 +928,8 @@
     "publishedAt": "2025-12-20T12:00:03.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "指令需提供的四类信息",
+    "readingMinutes": 30,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机组成原理"
@@ -865,6 +949,8 @@
     "publishedAt": "2025-12-20T12:00:03.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "1. 核心前提：计算机内部用二进制表示数据，外部信息（数值、字符、音视频等）需转二进制存入寄存器 / 存储器\n2. 数值数据分类：\n   - 无符号数：无正负，可表存储地址（如门牌号）\n   - 有符号数：含正负，分定点数（整数 / 纯小数，小数点固定）、浮点数（带小数，小数点可移）\n3. 关键概念...",
+    "readingMinutes": 14,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机组成原理"
@@ -885,6 +971,8 @@
     "publishedAt": "2025-12-20T12:00:03.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "当然可以！下面是对 “划分子网”（Subnetting）这一网络核心知识点的系统性讲解，涵盖定义、原理、目的、方法、步骤、实例以及常见误区，适合初学者和需要巩固基础的同学。",
+    "readingMinutes": 8,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机网络"
@@ -905,6 +993,8 @@
     "publishedAt": "2025-12-20T12:00:03.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "在IP路由表中，每条路由通常表示为：",
+    "readingMinutes": 4,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机网络"
@@ -925,6 +1015,8 @@
     "publishedAt": "2025-12-20T12:00:03.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "定义：电话交换机接通电话线的方式就是电路交换（Circuit Switching）",
+    "readingMinutes": 13,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机网络"
@@ -945,6 +1037,8 @@
     "publishedAt": "2025-12-20T12:00:03.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "- 核心功能：在各种传输媒体上传输比特 0 和 1，为数据链路层提供透明传输比特流的服务",
+    "readingMinutes": 12,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机网络"
@@ -965,6 +1059,8 @@
     "publishedAt": "2025-12-20T12:00:03.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "给定一个仅由字符 a 和 b 组成的字符串 s，长度为 n。可以删除一段连续的子串（可以为空），使得剩余字符串中 a 的数量等于 b 的数量。求最少需要删除的字符个数；如果只能把整个字符串全部删掉才能平衡，输出 -1。",
+    "readingMinutes": 2,
+    "coverImage": null,
     "categories": [
       "算法题解",
       "Codeforces"
@@ -986,6 +1082,8 @@
     "publishedAt": "2025-12-20T12:00:03.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "cf 1059\nhttps://codeforces.com/contest/2162",
+    "readingMinutes": 1,
+    "coverImage": null,
     "categories": [
       "算法题解",
       "Codeforces"
@@ -1006,6 +1104,8 @@
     "publishedAt": "2025-12-20T12:00:03.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "by woodfish",
+    "readingMinutes": 4,
+    "coverImage": null,
     "categories": [
       "算法题解",
       "竞赛训练"
@@ -1027,6 +1127,8 @@
     "publishedAt": "2025-12-20T12:00:03.000Z",
     "publishedLabel": "Dec 20, 2025",
     "excerpt": "by woodfish",
+    "readingMinutes": 5,
+    "coverImage": null,
     "categories": [
       "培训讲义",
       "编程入门"
@@ -1048,6 +1150,8 @@
     "publishedAt": "2025-12-14T23:17:07.000Z",
     "publishedLabel": "Dec 14, 2025",
     "excerpt": "网络层是 OSI 体系结构自下而上的第三层，核心任务是将分组从源主机经多个网络和链路传输到目的主机，主要包含分组转发、路由选择两大功能，且能向上层提供两种服务。",
+    "readingMinutes": 64,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机网络"
@@ -1069,6 +1173,8 @@
     "publishedAt": "2025-11-21T12:41:04.000Z",
     "publishedLabel": "Nov 21, 2025",
     "excerpt": "BOM（Browser Object Model）即浏览器对象模型，window对象是 BOM 的顶级对象，也是 JavaScript 中的全局对象。",
+    "readingMinutes": 7,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "Web API"
@@ -1090,6 +1196,8 @@
     "publishedAt": "2025-11-21T12:30:41.000Z",
     "publishedLabel": "Nov 21, 2025",
     "excerpt": "响应式布局方案",
+    "readingMinutes": 3,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1111,6 +1219,8 @@
     "publishedAt": "2025-11-17T11:13:26.000Z",
     "publishedLabel": "Nov 17, 2025",
     "excerpt": "网络层是 OSI 体系结构自下而上的第三层，核心任务是将分组从源主机经多个网络和链路传输到目的主机，主要包含分组转发、路由选择两大功能，且能向上层提供两种服务。",
+    "readingMinutes": 57,
+    "coverImage": null,
     "categories": [
       "计算机基础",
       "计算机网络"
@@ -1132,6 +1242,8 @@
     "publishedAt": "2025-11-17T08:39:07.000Z",
     "publishedLabel": "Nov 17, 2025",
     "excerpt": "小王是个前端新手，他做了个体温登记表单，但发现一个问题：",
+    "readingMinutes": 33,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "AJAX"
@@ -1151,6 +1263,8 @@
     "publishedAt": "2025-11-03T13:13:52.000Z",
     "publishedLabel": "Nov 03, 2025",
     "excerpt": "| 写法                   | 含义                          | 匹配对象                            | 示例                                                  |\n| -----...",
+    "readingMinutes": 1,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1172,6 +1286,8 @@
     "publishedAt": "2025-11-03T12:59:53.000Z",
     "publishedLabel": "Nov 03, 2025",
     "excerpt": "!1680342815532",
+    "readingMinutes": 3,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "项目实战"
@@ -1192,6 +1308,8 @@
     "publishedAt": "2025-11-03T12:59:42.000Z",
     "publishedLabel": "Nov 03, 2025",
     "excerpt": "> 理解封装的意义，能够通过函数的声明实现逻辑的封装，知道对象数据类型的特征，结合数学对象实现简单计算功能。",
+    "readingMinutes": 6,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -1213,6 +1331,8 @@
     "publishedAt": "2025-11-03T12:39:11.000Z",
     "publishedLabel": "Nov 03, 2025",
     "excerpt": "深浅拷贝的概念仅适用于引用类型。",
+    "readingMinutes": 13,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -1234,6 +1354,8 @@
     "publishedAt": "2025-11-03T12:39:05.000Z",
     "publishedLabel": "Nov 03, 2025",
     "excerpt": "> 知道对象数据类型的特征，能够利用数组对象渲染页面",
+    "readingMinutes": 5,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -1255,6 +1377,8 @@
     "publishedAt": "2025-11-03T12:39:05.000Z",
     "publishedLabel": "Nov 03, 2025",
     "excerpt": "复习：",
+    "readingMinutes": 11,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "Web API"
@@ -1276,6 +1400,8 @@
     "publishedAt": "2025-11-03T12:38:11.000Z",
     "publishedLabel": "Nov 03, 2025",
     "excerpt": "> 了解变量、数据类型、运算符等基础概念，能够实现数据类型的转换，结合四则运算体会如何编程。",
+    "readingMinutes": 10,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -1297,6 +1423,8 @@
     "publishedAt": "2025-11-03T12:38:11.000Z",
     "publishedLabel": "Nov 03, 2025",
     "excerpt": "- prototype（原型对象） = 工厂里的「图纸」\n  图纸上规定了所有产品共有的特性（比如手机图纸规定所有手机都有屏幕、按键）。\n- proto = 每个产品身上的「溯源码」\n  扫一下就能找到它是根据哪张图纸造出来的（通过这个码能找到对应的 prototype）。",
+    "readingMinutes": 4,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -1318,6 +1446,8 @@
     "publishedAt": "2025-10-19T02:42:51.000Z",
     "publishedLabel": "Oct 19, 2025",
     "excerpt": "小王在企业工作3年后，遇到了职业发展的瓶颈：",
+    "readingMinutes": 31,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "AJAX"
@@ -1337,6 +1467,8 @@
     "publishedAt": "2025-10-19T02:29:38.000Z",
     "publishedLabel": "Oct 19, 2025",
     "excerpt": "小张是一名优秀的前端\"司机\"，他已经能熟练地使用axios在各个\"路段\"上驰骋：",
+    "readingMinutes": 20,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "AJAX"
@@ -1356,6 +1488,8 @@
     "publishedAt": "2025-10-19T02:11:07.000Z",
     "publishedLabel": "Oct 19, 2025",
     "excerpt": "小王成功掌握了AJAX基础，但领导又提出了新要求：",
+    "readingMinutes": 30,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "AJAX"
@@ -1375,6 +1509,8 @@
     "publishedAt": "2025-10-08T00:58:10.000Z",
     "publishedLabel": "Oct 08, 2025",
     "excerpt": "> 学习作用域、变量提升、闭包等语言特征，加深对 JavaScript 的理解，掌握变量赋值、函数声明的简洁语法，降低代码的冗余度。",
+    "readingMinutes": 19,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -1396,6 +1532,8 @@
     "publishedAt": "2025-10-08T00:55:15.000Z",
     "publishedLabel": "Oct 08, 2025",
     "excerpt": "所有的对象里面都有 proto 对象原型 指向原型对象",
+    "readingMinutes": 7,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -1417,6 +1555,8 @@
     "publishedAt": "2025-10-06T12:05:09.000Z",
     "publishedLabel": "Oct 06, 2025",
     "excerpt": "!image-20221027214128453",
+    "readingMinutes": 7,
+    "coverImage": null,
     "categories": [
       "系统与工具",
       "Linux"
@@ -1437,6 +1577,8 @@
     "publishedAt": "2025-09-29T23:58:23.000Z",
     "publishedLabel": "Sep 29, 2025",
     "excerpt": "1. 理解面向对象编程的基础概念，明确构造函数的作用。\n2. 体会 JavaScript “一切皆对象” 的语言特性。\n3. 熟练掌握常见对象属性和方法的使用。",
+    "readingMinutes": 7,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -1458,6 +1600,8 @@
     "publishedAt": "2025-09-29T11:31:16.000Z",
     "publishedLabel": "Sep 29, 2025",
     "excerpt": "- 扩展名：.html 或 .htm（常用 .html）",
+    "readingMinutes": 5,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "HTML"
@@ -1479,6 +1623,8 @@
     "publishedAt": "2025-09-29T11:17:38.000Z",
     "publishedLabel": "Sep 29, 2025",
     "excerpt": "作用：布局内容排列整齐的区域",
+    "readingMinutes": 6,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "HTML"
@@ -1500,6 +1646,8 @@
     "publishedAt": "2025-09-26T00:32:03.000Z",
     "publishedLabel": "Sep 26, 2025",
     "excerpt": "正则表达式（Regular Expression）是一种字符串匹配的模式（规则）。",
+    "readingMinutes": 5,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "Web API"
@@ -1521,6 +1669,8 @@
     "publishedAt": "2025-09-23T02:48:21.000Z",
     "publishedLabel": "Sep 23, 2025",
     "excerpt": "",
+    "readingMinutes": 5,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "Web API"
@@ -1542,6 +1692,8 @@
     "publishedAt": "2025-09-22T00:49:51.000Z",
     "publishedLabel": "Sep 22, 2025",
     "excerpt": "",
+    "readingMinutes": 8,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "Web API"
@@ -1563,6 +1715,8 @@
     "publishedAt": "2025-09-22T00:49:49.000Z",
     "publishedLabel": "Sep 22, 2025",
     "excerpt": "- 能够判断函数运行的环境并确定 this 所指代的对象。\n- 理解事件的作用，掌握应用事件的基本步骤。",
+    "readingMinutes": 3,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "Web API"
@@ -1584,6 +1738,8 @@
     "publishedAt": "2025-09-21T23:33:17.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "if 多分支语句和 switch的区别：",
+    "readingMinutes": 7,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -1605,6 +1761,8 @@
     "publishedAt": "2025-09-21T23:33:13.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "> 理解什么是流程控制，知道条件控制的种类并掌握其对应的语法规则，具备利用循环编写简易ATM取款机程序能力",
+    "readingMinutes": 12,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "JavaScript"
@@ -1626,6 +1784,8 @@
     "publishedAt": "2025-09-21T23:32:52.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "层叠样式表 (Cascading Style Sheets, 缩写为 CSS) ，是一种 样式表 语言，用来描述 HTML 文档的呈现（美化内容）。",
+    "readingMinutes": 9,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1647,6 +1807,8 @@
     "publishedAt": "2025-09-21T23:32:47.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "作用：灵活改变盒子在网页的位置",
+    "readingMinutes": 7,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1668,6 +1830,8 @@
     "publishedAt": "2025-09-21T23:32:42.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "标准流也叫文档流，指的是标签在页面中默认的排布规则，例如块元素独占一行，行内元素可以一行显示多个。",
+    "readingMinutes": 11,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1689,6 +1853,8 @@
     "publishedAt": "2025-09-21T23:32:34.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "vw和vh是相对单位，相对视口尺寸计算结果",
+    "readingMinutes": 2,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1710,6 +1876,8 @@
     "publishedAt": "2025-09-21T23:32:21.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "less太好用了😋",
+    "readingMinutes": 5,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1731,6 +1899,8 @@
     "publishedAt": "2025-09-21T23:32:14.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "作用：根据元素的结构关系查找元素（序号查找）",
+    "readingMinutes": 9,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1752,6 +1922,8 @@
     "publishedAt": "2025-09-21T23:32:09.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "公式：行内样式 (1,0,0,0) > ID 选择器 (0,1,0,0) > 类选择器 (0,0,1,0) > 标签选择器 (0,0,0,1)\n每一级之间不存在进位，例如 10 个类选择器的权重仍低于 1 个 ID 选择器。",
+    "readingMinutes": 1,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1772,6 +1944,8 @@
     "publishedAt": "2025-09-21T23:32:03.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "!1680342815532",
+    "readingMinutes": 2,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1793,6 +1967,8 @@
     "publishedAt": "2025-09-21T23:31:55.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "* 空间：是从坐标轴角度定义的 X 、Y 和 Z 三条坐标轴构成了一个立体空间，Z 轴位置与视线方向相同。\n* 空间转换也叫 3D转换\n* 属性：transform",
+    "readingMinutes": 4,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1814,6 +1990,8 @@
     "publishedAt": "2025-09-21T23:31:43.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "定义：由两个以上的的基础选择器，通过不同的方式组合而成",
+    "readingMinutes": 10,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1835,6 +2013,8 @@
     "publishedAt": "2025-09-21T23:31:38.000Z",
     "publishedLabel": "Sep 21, 2025",
     "excerpt": "使用位移、缩放、旋转、渐变效果",
+    "readingMinutes": 3,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "CSS"
@@ -1856,6 +2036,8 @@
     "publishedAt": "2025-09-13T12:20:39.000Z",
     "publishedLabel": "Sep 13, 2025",
     "excerpt": "网站根目录是指存放网站的第一层文件夹，内部包含当前网站的所有素材，包含 HTML、CSS、图片、JavaScript等等。",
+    "readingMinutes": 3,
+    "coverImage": null,
     "categories": [
       "前端开发",
       "项目实战"
@@ -1876,6 +2058,8 @@
     "publishedAt": "2025-09-04T11:29:37.000Z",
     "publishedLabel": "Sep 04, 2025",
     "excerpt": "军事侵略\n 政治控制\n 经济掠夺\n 文化渗透",
+    "readingMinutes": 10,
+    "coverImage": null,
     "categories": [
       "课程复习",
       "中国近代史"
@@ -1896,6 +2080,8 @@
     "publishedAt": "2025-09-02T23:28:49.000Z",
     "publishedLabel": "Sep 02, 2025",
     "excerpt": "单列集合",
+    "readingMinutes": 2,
+    "coverImage": null,
     "categories": [
       "编程语言",
       "Java"
@@ -1917,6 +2103,8 @@
     "publishedAt": "2025-09-02T23:27:32.000Z",
     "publishedLabel": "Sep 02, 2025",
     "excerpt": "方法重载满足：",
+    "readingMinutes": 6,
+    "coverImage": null,
     "categories": [
       "编程语言",
       "Java"
@@ -1937,6 +2125,8 @@
     "publishedAt": "2025-09-02T22:52:12.000Z",
     "publishedLabel": "Sep 02, 2025",
     "excerpt": "- 为了万物皆对象，并且泛型和集合都不支持基本类型，支持包装类\n- 8 种，int -> Integer，char -> Character，其他的都是首字母大写",
+    "readingMinutes": 2,
+    "coverImage": null,
     "categories": [
       "编程语言",
       "Java"
@@ -1957,6 +2147,8 @@
     "publishedAt": "2025-08-29T13:50:04.000Z",
     "publishedLabel": "Aug 29, 2025",
     "excerpt": "- 修饰类：该类被称为最终类，特点是不能被继承了。\n- 修饰方法：该方法被称为最终方法，特点是不能被重写了。\n- 修饰变量：该变量有且仅能被赋值一次。",
+    "readingMinutes": 1,
+    "coverImage": null,
     "categories": [
       "编程语言",
       "Java"
@@ -1978,6 +2170,8 @@
     "publishedAt": "2025-08-29T13:49:53.000Z",
     "publishedLabel": "Aug 29, 2025",
     "excerpt": "List继承了Collection",
+    "readingMinutes": 1,
+    "coverImage": null,
     "categories": [
       "编程语言",
       "Java"
@@ -1998,6 +2192,8 @@
     "publishedAt": "2025-08-29T13:49:41.000Z",
     "publishedLabel": "Aug 29, 2025",
     "excerpt": "成员内部类直接定义在外部类里，与外部类的属性和方法处于同一层级。它能够访问外部类的所有成员，包括私有成员。",
+    "readingMinutes": 1,
+    "coverImage": null,
     "categories": [
       "编程语言",
       "Java"
@@ -2018,6 +2214,8 @@
     "publishedAt": "2025-08-29T13:49:41.000Z",
     "publishedLabel": "Aug 29, 2025",
     "excerpt": "就是用来限制类中的成员 (成员变量、成员方法、构造器) 能够被访问的范围。",
+    "readingMinutes": 3,
+    "coverImage": null,
     "categories": [
       "编程语言",
       "Java"
@@ -2039,6 +2237,8 @@
     "publishedAt": "2025-08-29T13:49:40.000Z",
     "publishedLabel": "Aug 29, 2025",
     "excerpt": "多态是在继承 / 实现情况下的一种现象，表现为：对象多态、行为多态。\n多态的具体代码体现",
+    "readingMinutes": 2,
+    "coverImage": null,
     "categories": [
       "编程语言",
       "Java"
@@ -2060,6 +2260,8 @@
     "publishedAt": "2025-08-29T13:49:40.000Z",
     "publishedLabel": "Aug 29, 2025",
     "excerpt": "| 对比维度   | 抽象类(is what)                                   | 接口(can do)                                                 |\n| ---------- | --------------...",
+    "readingMinutes": 3,
+    "coverImage": null,
     "categories": [
       "编程语言",
       "Java"

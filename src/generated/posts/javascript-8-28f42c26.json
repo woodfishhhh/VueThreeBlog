@@ -7,6 +7,8 @@
   "publishedAt": "2025-10-08T00:55:15.000Z",
   "publishedLabel": "Oct 08, 2025",
   "excerpt": "所有的对象里面都有 proto 对象原型 指向原型对象",
+  "readingMinutes": 7,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

@@ -1,38 +1,41 @@
 <script setup lang="ts">
-import { shallowRef } from "vue";
-
 import type { TocItem } from "@/types/content";
 
-const props = defineProps<{
-  items: TocItem[];
+const props = withDefaults(
+  defineProps<{
+    items: TocItem[];
+    activeId?: string;
+  }>(),
+  {
+    activeId: "",
+  },
+);
+
+const emit = defineEmits<{
+  jump: [id: string];
 }>();
 
-const activeId = shallowRef(props.items[0]?.id ?? "");
-
 function handleJump(id: string) {
-  const target = document.getElementById(id);
-  if (!target) {
-    return;
-  }
-
-  activeId.value = id;
-  target.scrollIntoView({ behavior: "smooth", block: "start" });
+  emit("jump", id);
 }
 </script>
 
 <template>
-  <aside v-if="props.items.length > 0" aria-label="文章目录" class="article-toc">
+  <aside v-if="props.items.length > 0" class="article-toc" data-testid="article-toc" aria-label="Article table of contents">
     <div class="article-toc__card">
-      <div class="article-toc__title">文章目录</div>
+      <div class="article-toc__title">Table of Contents</div>
       <div class="article-toc__items">
         <button
           v-for="item in props.items"
           :key="item.id"
+          :aria-current="props.activeId === item.id ? 'location' : undefined"
           :class="[
             'article-toc__item',
             `article-toc__item--level-${item.level}`,
-            { 'is-active': activeId === item.id },
+            { 'is-active': props.activeId === item.id },
           ]"
+          :data-toc-id="item.id"
+          data-testid="article-toc-item"
           type="button"
           @click="handleJump(item.id)"
         >

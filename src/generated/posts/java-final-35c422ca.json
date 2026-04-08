@@ -7,6 +7,8 @@
   "publishedAt": "2025-08-29T13:50:04.000Z",
   "publishedLabel": "Aug 29, 2025",
   "excerpt": "- 修饰类：该类被称为最终类，特点是不能被继承了。\n- 修饰方法：该方法被称为最终方法，特点是不能被重写了。\n- 修饰变量：该变量有且仅能被赋值一次。",
+  "readingMinutes": 1,
+  "coverImage": null,
   "categories": [
     "编程语言",
     "Java"

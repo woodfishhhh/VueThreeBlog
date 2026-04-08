@@ -7,6 +7,8 @@
   "publishedAt": "2025-09-22T00:49:49.000Z",
   "publishedLabel": "Sep 22, 2025",
   "excerpt": "- 能够判断函数运行的环境并确定 this 所指代的对象。\n- 理解事件的作用，掌握应用事件的基本步骤。",
+  "readingMinutes": 3,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "Web API"

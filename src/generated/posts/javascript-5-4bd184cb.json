@@ -7,6 +7,8 @@
   "publishedAt": "2025-11-03T12:39:05.000Z",
   "publishedLabel": "Nov 03, 2025",
   "excerpt": "> 知道对象数据类型的特征，能够利用数组对象渲染页面",
+  "readingMinutes": 5,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

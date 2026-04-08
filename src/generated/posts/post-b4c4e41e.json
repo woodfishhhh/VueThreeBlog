@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-25T17:43:31.000Z",
   "publishedLabel": "Dec 25, 2025",
   "excerpt": "本章节聚焦 JavaScript 中常规函数与箭头函数的核心差异，重点围绕this关键字指向规则、arguments关键字可用性展开，结合实际代码案例解析常见陷阱，并给出不同场景下的函数选择建议，帮助开发者规避错误、正确运用两种函数。",
+  "readingMinutes": 7,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

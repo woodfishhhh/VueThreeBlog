@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-29T06:12:08.000Z",
   "publishedLabel": "Dec 29, 2025",
   "excerpt": "本章节聚焦“现代JavaScript开发实践”，衔接前文的异步编程（Promise、Async/Await）与ES6模块，后续将系统讲解模块规范、工程化工具（如NPM、Parcel）、代码优化及开发最佳实践，最终帮助学习者从“基础语法掌握”过渡到“企业级项目开发能力”。",
+  "readingMinutes": 25,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "前端工程化"

@@ -7,6 +7,8 @@
   "publishedAt": "2025-08-29T13:49:40.000Z",
   "publishedLabel": "Aug 29, 2025",
   "excerpt": "多态是在继承 / 实现情况下的一种现象，表现为：对象多态、行为多态。\n多态的具体代码体现",
+  "readingMinutes": 2,
+  "coverImage": null,
   "categories": [
     "编程语言",
     "Java"

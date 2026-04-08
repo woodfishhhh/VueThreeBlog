@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-25T18:01:02.000Z",
   "publishedLabel": "Dec 25, 2025",
   "excerpt": "- 定义：扩展运算符（...）是 ES6 及后续版本新增的语法，核心功能是 “解包” 可迭代对象（如数组、字符串等）的元素，将其展开为独立的、以逗号分隔的值，且不创建新变量。",
+  "readingMinutes": 6,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

@@ -7,6 +7,8 @@
   "publishedAt": "2025-08-29T13:49:41.000Z",
   "publishedLabel": "Aug 29, 2025",
   "excerpt": "就是用来限制类中的成员 (成员变量、成员方法、构造器) 能够被访问的范围。",
+  "readingMinutes": 3,
+  "coverImage": null,
   "categories": [
     "编程语言",
     "Java"

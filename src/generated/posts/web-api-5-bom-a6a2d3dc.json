@@ -7,6 +7,8 @@
   "publishedAt": "2025-11-21T12:41:04.000Z",
   "publishedLabel": "Nov 21, 2025",
   "excerpt": "BOM（Browser Object Model）即浏览器对象模型，window对象是 BOM 的顶级对象，也是 JavaScript 中的全局对象。",
+  "readingMinutes": 7,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "Web API"

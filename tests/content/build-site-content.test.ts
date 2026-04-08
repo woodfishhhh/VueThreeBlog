@@ -60,7 +60,13 @@ describe("build-site-content", () => {
       "",
       "这是文章摘要第一段。",
       "",
+      "这里补充一段更完整的正文内容，用来验证阅读时长会被正确估算，而不是遗漏掉文章正文元信息。",
+      "",
       "## 核心概念",
+      "",
+      "AJAX 让浏览器可以在不刷新整个页面的情况下与服务端交换数据，因此前端体验会更流畅。",
+      "",
+      "理解请求生命周期、响应处理以及错误兜底，是写好异步界面的基础能力。",
       "",
       "![Local](/asset/image.png)",
       "",
@@ -108,12 +114,15 @@ describe("build-site-content", () => {
       const result = await buildSiteContent({
         sourceProjectRoot: sourceRoot,
         targetPublicDir,
+        siteBasePath: "/newBlog/",
       });
 
       expect(result.postIndex).toHaveLength(1);
       expect(result.postIndex[0]?.canonicalSlug).toBe("ajax-basics-intro");
       expect(result.postIndex[0]?.aliases).toContain("AJAX 基础入门教程");
+      expect(result.postIndex[0]?.readingMinutes).toBeGreaterThan(0);
       expect(result.postsBySlug["ajax-basics-intro"]?.html).toContain('id="核心概念"');
+      expect(result.postsBySlug["ajax-basics-intro"]?.coverImage).toBeNull();
       expect(result.postsBySlug["ajax-basics-intro"]?.toc).toEqual([
         {
           id: "核心概念",
@@ -124,7 +133,7 @@ describe("build-site-content", () => {
       expect(result.author.name).toBe("木鱼");
       expect(result.author.postsCount).toBe(1);
       expect(result.friendLinks[0]?.name).toBe("Fomalhaut");
-      expect(result.friendLinks[0]?.avatar).toMatch(/^\/remote-assets\/[a-f0-9]{40}\.[a-z0-9]+$/);
+      expect(result.friendLinks[0]?.avatar).toMatch(/^\/newBlog\/remote-assets\/[a-f0-9]{40}\.[a-z0-9]+$/);
     } finally {
       await new Promise<void>((resolve, reject) => {
         avatarServer.close((error) => {

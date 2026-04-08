@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-25T18:13:09.000Z",
   "publishedLabel": "Dec 25, 2025",
   "excerpt": "二者均使用 ...（三个英文句点） 作为语法标识，容易混淆，需通过使用场景区分。",
+  "readingMinutes": 5,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

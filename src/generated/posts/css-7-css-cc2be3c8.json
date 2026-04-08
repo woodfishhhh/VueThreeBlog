@@ -7,6 +7,8 @@
   "publishedAt": "2025-09-21T23:32:09.000Z",
   "publishedLabel": "Sep 21, 2025",
   "excerpt": "公式：行内样式 (1,0,0,0) > ID 选择器 (0,1,0,0) > 类选择器 (0,0,1,0) > 标签选择器 (0,0,0,1)\n每一级之间不存在进位，例如 10 个类选择器的权重仍低于 1 个 ID 选择器。",
+  "readingMinutes": 1,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "CSS"

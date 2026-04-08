@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-25T18:27:27.000Z",
   "publishedLabel": "Dec 25, 2025",
   "excerpt": "- 对象字面量定义：通过{}语法直接在代码中编写的对象，例如const restaurant = { name: 'ABC', address: 'XX街' }，是 JavaScript 中创建对象的常用方式。\n- ES6 增强目的：简化对象字面量的编写语法，提升代码简洁性和可读性，主要包含 3 种...",
+  "readingMinutes": 5,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

@@ -7,6 +7,8 @@
   "publishedAt": "2025-11-03T12:38:11.000Z",
   "publishedLabel": "Nov 03, 2025",
   "excerpt": "- prototype（原型对象） = 工厂里的「图纸」\n  图纸上规定了所有产品共有的特性（比如手机图纸规定所有手机都有屏幕、按键）。\n- proto = 每个产品身上的「溯源码」\n  扫一下就能找到它是根据哪张图纸造出来的（通过这个码能找到对应的 prototype）。",
+  "readingMinutes": 4,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

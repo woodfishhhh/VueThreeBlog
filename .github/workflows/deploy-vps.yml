@@ -31,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate content
+        run: npm run generate:content
+
       - name: Unit tests
         run: npm run test
 

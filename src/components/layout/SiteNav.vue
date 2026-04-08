@@ -1,21 +1,21 @@
 <script setup lang="ts">
   import { shallowRef } from "vue";
 
+  import { getRouteLocationForSiteMode } from "@/router/site-mode";
   import { useSiteStore } from "@/stores/site";
 
   const siteStore = useSiteStore();
   const isOpen = shallowRef(false);
 
   const navItems = [
-    { id: "home", label: "Home", action: () => siteStore.goHome() },
-    { id: "works", label: "Works", action: () => siteStore.goWorks() },
-    { id: "blog", label: "Blog", action: () => siteStore.goBlog() },
-    { id: "author", label: "Author", action: () => siteStore.goAuthor() },
-    { id: "friend", label: "Friend", action: () => siteStore.goFriend() },
+    { id: "home", label: "Home", to: getRouteLocationForSiteMode("home") },
+    { id: "works", label: "Works", to: getRouteLocationForSiteMode("works") },
+    { id: "blog", label: "Blog", to: getRouteLocationForSiteMode("blog") },
+    { id: "author", label: "Author", to: getRouteLocationForSiteMode("author") },
+    { id: "friend", label: "Friend", to: getRouteLocationForSiteMode("friend") },
   ] as const;
 
-  function handleNav(action: () => void) {
-    action();
+  function handleNav() {
     siteStore.exitFocus();
     isOpen.value = false;
   }
@@ -28,18 +28,18 @@
 <template>
   <nav
     class="pointer-events-none fixed left-0 top-0 z-50 flex w-full items-center justify-between bg-gradient-to-b from-black/50 to-transparent p-6">
-    <RouterLink to="/"
+    <RouterLink :to="getRouteLocationForSiteMode('home')"
       class="pointer-events-auto cursor-pointer text-xl font-bold tracking-widest text-white mix-blend-difference"
-      @click="handleNav(() => siteStore.goHome())">
+      @click="handleNav()">
       WOODFISH
     </RouterLink>
 
     <div data-nav-group="desktop" class="pointer-events-auto hidden gap-8 md:flex">
-      <RouterLink v-for="item in navItems" :key="item.id" to="/"
+      <RouterLink v-for="item in navItems" :key="item.id" :to="item.to"
         :aria-current="isActive(item.id) ? 'page' : undefined"
         :data-nav-item="item.id"
-        :class="isActive(item.id) ? 'text-blue-300' : 'text-gray-400 hover:text-blue-400'"
-        class="relative text-sm uppercase tracking-widest transition-colors" @click="handleNav(item.action)">
+        :class="isActive(item.id) ? 'text-blue-300' : 'text-gray-400 hover:text-blue-400'" class="relative text-sm uppercase tracking-widest transition-colors"
+        @click="handleNav()">
         <span>{{ item.label }}</span>
         <span
           v-if="isActive(item.id)"
@@ -63,11 +63,11 @@
     <Transition name="fade-slide">
       <div v-if="isOpen"
         class="pointer-events-auto absolute right-6 top-20 flex min-w-[150px] flex-col gap-4 rounded-lg border border-gray-800 bg-black/80 p-4 shadow-lg backdrop-blur-md md:hidden">
-        <RouterLink v-for="item in navItems" :key="item.id" to="/"
+        <RouterLink v-for="item in navItems" :key="item.id" :to="item.to"
           :aria-current="isActive(item.id) ? 'page' : undefined"
           :data-nav-item="item.id"
           :class="isActive(item.id) ? 'text-blue-300' : 'text-gray-400 hover:text-blue-400'"
-          class="relative w-full text-left text-sm uppercase tracking-widest transition-colors" @click="handleNav(item.action)">
+          class="relative w-full text-left text-sm uppercase tracking-widest transition-colors" @click="handleNav()">
           <span>{{ item.label }}</span>
           <span
             v-if="isActive(item.id)"

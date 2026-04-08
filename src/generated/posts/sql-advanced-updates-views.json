@@ -7,6 +7,8 @@
   "publishedAt": "2026-03-16T17:37:26.000Z",
   "publishedLabel": "Mar 16, 2026",
   "excerpt": "数据更新包含插入、修改、删除三类核心操作，是SQL对表数据的基础操作，需严格匹配数据类型、遵守完整性约束。",
+  "readingMinutes": 8,
+  "coverImage": null,
   "categories": [
     "数据库",
     "SQL"

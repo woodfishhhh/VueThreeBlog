@@ -11,6 +11,7 @@ const IMPORTED_ASSET_DIR = "imported-assets";
 const CONTENT_ASSET_DIR = "content-assets";
 const MAX_REMOTE_REDIRECTS = 5;
 const MAX_REMOTE_ASSET_BYTES = 20 * 1024 * 1024;
+const MAX_REMOTE_DOWNLOAD_ATTEMPTS = 3;
 const INSECURE_TLS_HOSTS = new Set(["www.woodfishhhh.xyz", "woodfishhhh.xyz"]);
 const LOCAL_MIRROR_HOSTS = new Set(["www.woodfishhhh.xyz", "woodfishhhh.xyz"]);
 const LOCAL_MIRROR_ENV = "VUECUBEBLOG_LOCAL_ASSET_MIRROR_DIRS";
@@ -55,11 +56,19 @@ export interface RewriteMarkdownAssetOptions {
   sourceFilePath: string;
   canonicalSlug: string;
   publicDir: string;
+  siteBasePath?: string;
 }
 
 export interface RewriteMarkdownAssetResult {
   markdown: string;
   warnings: string[];
+}
+
+export interface ResolveAssetReferenceOptions {
+  sourceFilePath: string;
+  publicDir: string;
+  siteBasePath?: string;
+  canonicalSlug?: string;
 }
 
 export function buildLegacySlugIndex(entries: readonly LegacySlugSource[]): Map<string, string> {
@@ -114,11 +123,11 @@ export async function rewriteMarkdownAssetPaths(
   options: RewriteMarkdownAssetOptions,
 ): Promise<RewriteMarkdownAssetResult> {
   const warnings: string[] = [];
-  const sourceDir = path.dirname(options.sourceFilePath);
-  const matches = Array.from(markdown.matchAll(/!\[[^\]]*\]\(([^)]+)\)/g));
   let nextMarkdown = markdown;
 
-  for (const match of matches) {
+  const markdownImageMatches = Array.from(markdown.matchAll(/!\[[^\]]*\]\(([^)]+)\)/g));
+
+  for (const match of markdownImageMatches) {
     const rawReference = match[1];
     const matchedExpression = match[0];
     const originalReference = rawReference.trim();
@@ -127,51 +136,16 @@ export async function rewriteMarkdownAssetPaths(
       continue;
     }
 
-    if (isRemoteAssetReference(originalReference)) {
-      const localizedRemoteAsset = await localizeRemoteAsset(originalReference, options.publicDir);
+    const rewrittenUrl = await resolveAssetReference(originalReference, options);
 
-      if (!localizedRemoteAsset) {
-        warnings.push(`Failed to localize remote asset: ${originalReference}`);
-        continue;
-      }
-
-      nextMarkdown = replaceMarkdownImageReference(
-        nextMarkdown,
-        matchedExpression,
-        rawReference,
-        originalReference,
-        localizedRemoteAsset,
+    if (!rewrittenUrl) {
+      warnings.push(
+        isRemoteAssetReference(originalReference)
+          ? `Failed to localize remote asset: ${originalReference}`
+          : `Missing local asset: ${originalReference}`,
       );
       continue;
     }
-
-    if (originalReference.startsWith("/")) {
-      const rootedAbsolutePath = path.resolve(sourceDir, originalReference);
-      if (await fileExists(rootedAbsolutePath)) {
-        const rewrittenUrl = await copyAbsoluteAsset(rootedAbsolutePath, options.publicDir);
-        nextMarkdown = replaceMarkdownImageReference(
-          nextMarkdown,
-          matchedExpression,
-          rawReference,
-          originalReference,
-          rewrittenUrl,
-        );
-      }
-      continue;
-    }
-
-    const resolvedPath = path.isAbsolute(originalReference)
-      ? originalReference
-      : path.resolve(sourceDir, originalReference);
-
-    if (!(await fileExists(resolvedPath))) {
-      warnings.push(`Missing local asset: ${originalReference}`);
-      continue;
-    }
-
-    const rewrittenUrl = path.isAbsolute(originalReference)
-      ? await copyAbsoluteAsset(resolvedPath, options.publicDir)
-      : await copyRelativeAsset(resolvedPath, originalReference, options.publicDir, options.canonicalSlug);
 
     nextMarkdown = replaceMarkdownImageReference(
       nextMarkdown,
@@ -182,10 +156,85 @@ export async function rewriteMarkdownAssetPaths(
     );
   }
 
+  const htmlImageMatches = Array.from(
+    nextMarkdown.matchAll(/<img\b[^>]*?\bsrc=(["'])([^"']+)\1[^>]*>/gi),
+  );
+
+  for (const match of htmlImageMatches) {
+    const matchedExpression = match[0];
+    const originalReference = match[2]?.trim() ?? "";
+
+    if (shouldSkipAssetReference(originalReference)) {
+      continue;
+    }
+
+    const rewrittenUrl = await resolveAssetReference(originalReference, options);
+    if (!rewrittenUrl) {
+      warnings.push(
+        isRemoteAssetReference(originalReference)
+          ? `Failed to localize remote asset: ${originalReference}`
+          : `Missing local asset: ${originalReference}`,
+      );
+      continue;
+    }
+
+    nextMarkdown = replaceHtmlImageReference(nextMarkdown, matchedExpression, originalReference, rewrittenUrl);
+  }
+
   return {
     markdown: nextMarkdown,
     warnings,
   };
+}
+
+export async function resolveAssetReference(
+  reference: string,
+  options: ResolveAssetReferenceOptions,
+): Promise<string | null> {
+  const originalReference = reference.trim();
+
+  if (!originalReference || shouldSkipAssetReference(originalReference)) {
+    return null;
+  }
+
+  const sourceDir = path.dirname(options.sourceFilePath);
+
+  if (isRemoteAssetReference(originalReference)) {
+    return localizeRemoteAsset(originalReference, options.publicDir, options.siteBasePath);
+  }
+
+  if (originalReference.startsWith("/")) {
+    const rootedAbsolutePath = path.resolve(sourceDir, originalReference);
+    if (await fileExists(rootedAbsolutePath)) {
+      return copyAbsoluteAsset(rootedAbsolutePath, options.publicDir, options.siteBasePath);
+    }
+
+    return toSitePublicUrl(originalReference, options.siteBasePath);
+  }
+
+  const resolvedPath = path.isAbsolute(originalReference)
+    ? originalReference
+    : path.resolve(sourceDir, originalReference);
+
+  if (!(await fileExists(resolvedPath))) {
+    return null;
+  }
+
+  if (path.isAbsolute(originalReference)) {
+    return copyAbsoluteAsset(resolvedPath, options.publicDir, options.siteBasePath);
+  }
+
+  if (!options.canonicalSlug) {
+    return null;
+  }
+
+  return copyRelativeAsset(
+    resolvedPath,
+    originalReference,
+    options.publicDir,
+    options.canonicalSlug,
+    options.siteBasePath,
+  );
 }
 
 function replaceMarkdownImageReference(
@@ -195,14 +244,23 @@ function replaceMarkdownImageReference(
   originalReference: string,
   rewrittenReference: string,
 ) {
-  const rewrittenRawReference = rawReference.replace(originalReference, rewrittenReference);
-  const rewrittenExpression = matchedExpression.replace(rawReference, rewrittenRawReference);
+  const escapedRawReference = escapeRegExp(rawReference);
+  const rewrittenExpression = matchedExpression.replace(
+    new RegExp(`\\(${escapedRawReference}\\)`),
+    `(${rewrittenReference})`,
+  );
 
   if (rewrittenExpression !== matchedExpression) {
     return markdown.replace(matchedExpression, rewrittenExpression);
   }
 
   return markdown.replace(`(${originalReference})`, `(${rewrittenReference})`);
+}
+
+function replaceHtmlImageReference(markdown: string, matchedExpression: string, originalReference: string, rewrittenReference: string) {
+  const escapedReference = escapeRegExp(originalReference);
+  const rewrittenExpression = matchedExpression.replace(new RegExp(escapedReference, "g"), rewrittenReference);
+  return markdown.replace(matchedExpression, rewrittenExpression);
 }
 
 function buildContentFingerprint(title: string, date: string, rawMarkdown: string) {
@@ -223,6 +281,10 @@ function uniqueStrings(values: readonly string[]) {
 
 function sha1(value: string) {
   return createHash("sha1").update(value).digest("hex");
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function shouldSkipAssetReference(reference: string) {
@@ -249,6 +311,7 @@ async function copyRelativeAsset(
   originalReference: string,
   publicDir: string,
   canonicalSlug: string,
+  siteBasePath?: string,
 ) {
   const safeRelativePath = toSafeRelativeAssetPath(originalReference);
   const targetPath = path.join(publicDir, CONTENT_ASSET_DIR, canonicalSlug, ...safeRelativePath.split("/"));
@@ -256,10 +319,10 @@ async function copyRelativeAsset(
   await mkdir(path.dirname(targetPath), { recursive: true });
   await copyFile(resolvedPath, targetPath);
 
-  return `/${CONTENT_ASSET_DIR}/${canonicalSlug}/${safeRelativePath}`;
+  return toPublicAssetUrl(siteBasePath, CONTENT_ASSET_DIR, canonicalSlug, safeRelativePath);
 }
 
-async function copyAbsoluteAsset(resolvedPath: string, publicDir: string) {
+async function copyAbsoluteAsset(resolvedPath: string, publicDir: string, siteBasePath?: string) {
   const extension = path.extname(resolvedPath) || ".bin";
   const assetFileName = `${sha1(resolvedPath)}${extension}`;
   const targetPath = path.join(publicDir, IMPORTED_ASSET_DIR, assetFileName);
@@ -267,7 +330,7 @@ async function copyAbsoluteAsset(resolvedPath: string, publicDir: string) {
   await mkdir(path.dirname(targetPath), { recursive: true });
   await copyFile(resolvedPath, targetPath);
 
-  return `/${IMPORTED_ASSET_DIR}/${assetFileName}`;
+  return toPublicAssetUrl(siteBasePath, IMPORTED_ASSET_DIR, assetFileName);
 }
 
 function toSafeRelativeAssetPath(originalReference: string) {
@@ -302,7 +365,11 @@ function isRemoteAssetReference(reference: string) {
   }
 }
 
-export async function localizeRemoteAsset(reference: string, publicDir: string): Promise<string | null> {
+export async function localizeRemoteAsset(
+  reference: string,
+  publicDir: string,
+  siteBasePath?: string,
+): Promise<string | null> {
   if (!isRemoteAssetReference(reference)) {
     return null;
   }
@@ -310,17 +377,14 @@ export async function localizeRemoteAsset(reference: string, publicDir: string):
   const parsed = new URL(reference);
   const knownExtension = getPathExtensionFromUrl(reference);
   const baseName = sha1(reference);
-  const initialFileName = knownExtension ? `${baseName}${knownExtension}` : null;
 
-  if (initialFileName) {
-    const initialPath = path.join(publicDir, REMOTE_ASSET_DIR, initialFileName);
-    if (await fileExists(initialPath)) {
-      return `/${REMOTE_ASSET_DIR}/${initialFileName}`;
-    }
+  const existingAssetFileName = await findExistingLocalizedRemoteAssetFileName(publicDir, baseName, knownExtension);
+  if (existingAssetFileName) {
+    return toPublicAssetUrl(siteBasePath, REMOTE_ASSET_DIR, existingAssetFileName);
   }
 
   if (LOCAL_MIRROR_HOSTS.has(parsed.hostname)) {
-    const mirroredAsset = await localizeAssetFromLocalMirror(reference, publicDir, knownExtension);
+    const mirroredAsset = await localizeAssetFromLocalMirror(reference, publicDir, knownExtension, siteBasePath);
     if (mirroredAsset) {
       return mirroredAsset;
     }
@@ -328,7 +392,7 @@ export async function localizeRemoteAsset(reference: string, publicDir: string):
 
   const downloaded = await downloadRemoteAsset(reference);
   if (!downloaded) {
-    const mirroredAsset = await localizeAssetFromLocalMirror(reference, publicDir, knownExtension);
+    const mirroredAsset = await localizeAssetFromLocalMirror(reference, publicDir, knownExtension, siteBasePath);
     if (mirroredAsset) {
       return mirroredAsset;
     }
@@ -343,13 +407,14 @@ export async function localizeRemoteAsset(reference: string, publicDir: string):
   await mkdir(path.dirname(targetPath), { recursive: true });
   await writeFile(targetPath, downloaded.bytes);
 
-  return `/${REMOTE_ASSET_DIR}/${assetFileName}`;
+  return toPublicAssetUrl(siteBasePath, REMOTE_ASSET_DIR, assetFileName);
 }
 
 async function localizeAssetFromLocalMirror(
   reference: string,
   publicDir: string,
   knownExtension: string,
+  siteBasePath?: string,
 ): Promise<string | null> {
   const sourcePath = await resolveLocalMirrorSource(reference);
   if (!sourcePath) {
@@ -362,13 +427,87 @@ async function localizeAssetFromLocalMirror(
   const targetPath = path.join(publicDir, REMOTE_ASSET_DIR, targetFileName);
 
   if (await fileExists(targetPath)) {
-    return `/${REMOTE_ASSET_DIR}/${targetFileName}`;
+    return toPublicAssetUrl(siteBasePath, REMOTE_ASSET_DIR, targetFileName);
   }
 
   await mkdir(path.dirname(targetPath), { recursive: true });
   await copyFile(sourcePath, targetPath);
 
-  return `/${REMOTE_ASSET_DIR}/${targetFileName}`;
+  return toPublicAssetUrl(siteBasePath, REMOTE_ASSET_DIR, targetFileName);
+}
+
+async function findExistingLocalizedRemoteAssetFileName(
+  publicDir: string,
+  baseName: string,
+  knownExtension: string,
+) {
+  const remoteAssetsRoot = path.join(publicDir, REMOTE_ASSET_DIR);
+
+  if (knownExtension) {
+    const exactFileName = `${baseName}${knownExtension}`;
+    const exactPath = path.join(remoteAssetsRoot, exactFileName);
+    if (await fileExists(exactPath)) {
+      return exactFileName;
+    }
+  }
+
+  let entries: { name: string; isFile: () => boolean }[];
+  try {
+    entries = await readdir(remoteAssetsRoot, { withFileTypes: true });
+  } catch {
+    return null;
+  }
+
+  const prefix = `${baseName}.`;
+  const matchedEntry = entries.find((entry) => entry.isFile() && entry.name.startsWith(prefix));
+  return matchedEntry?.name ?? null;
+}
+
+export function toSitePublicUrl(reference: string, siteBasePath?: string) {
+  if (!reference) {
+    return "";
+  }
+
+  if (
+    shouldSkipAssetReference(reference) ||
+    reference.startsWith("//") ||
+    isRemoteAssetReference(reference) ||
+    !reference.startsWith("/")
+  ) {
+    return reference;
+  }
+
+  return toPublicAssetUrl(siteBasePath, reference);
+}
+
+function normalizeSiteBasePath(siteBasePath?: string) {
+  if (!siteBasePath) {
+    return "/";
+  }
+
+  const trimmed = siteBasePath.trim();
+  if (!trimmed || trimmed === "/") {
+    return "/";
+  }
+
+  const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return withLeadingSlash.endsWith("/") ? withLeadingSlash : `${withLeadingSlash}/`;
+}
+
+function toPublicAssetUrl(siteBasePath: string | undefined, ...segments: string[]) {
+  const normalizedBase = normalizeSiteBasePath(siteBasePath);
+  const normalizedPath = segments
+    .map((segment) => segment.trim())
+    .filter((segment) => segment.length > 0)
+    .map((segment) => segment.replace(/^\/+|\/+$/g, ""))
+    .filter((segment) => segment.length > 0)
+    .join("/");
+
+  if (!normalizedPath) {
+    return normalizedBase;
+  }
+
+  return normalizedBase === "/" ? `/${normalizedPath}` : `${normalizedBase}${normalizedPath}`;
 }
 
 async function resolveLocalMirrorSource(reference: string): Promise<string | null> {
@@ -484,7 +623,11 @@ async function directoryExists(directoryPath: string) {
   }
 }
 
-async function downloadRemoteAsset(initialUrl: string, redirectCount = 0): Promise<RemoteAssetDownload | null> {
+async function downloadRemoteAsset(
+  initialUrl: string,
+  redirectCount = 0,
+  attempt = 1,
+): Promise<RemoteAssetDownload | null> {
   if (redirectCount > MAX_REMOTE_REDIRECTS) {
     return null;
   }
@@ -502,6 +645,11 @@ async function downloadRemoteAsset(initialUrl: string, redirectCount = 0): Promi
   }
 
   if (statusCode < 200 || statusCode >= 300) {
+    if (attempt < MAX_REMOTE_DOWNLOAD_ATTEMPTS && shouldRetryRemoteAssetDownload(statusCode)) {
+      await waitBeforeRetry(attempt);
+      return downloadRemoteAsset(initialUrl, redirectCount, attempt + 1);
+    }
+
     return null;
   }
 
@@ -510,6 +658,14 @@ async function downloadRemoteAsset(initialUrl: string, redirectCount = 0): Promi
     contentType: contentTypeFromHeaders(response.headers),
     finalUrl: parsedUrl.toString(),
   };
+}
+
+function shouldRetryRemoteAssetDownload(statusCode: number) {
+  return statusCode === 0 || statusCode === 408 || statusCode === 425 || statusCode === 429 || statusCode >= 500;
+}
+
+async function waitBeforeRetry(attempt: number) {
+  await new Promise((resolve) => setTimeout(resolve, attempt * 400));
 }
 
 async function requestRemoteAsset(url: URL) {

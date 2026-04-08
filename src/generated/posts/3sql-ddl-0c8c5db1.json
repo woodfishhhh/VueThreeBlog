@@ -7,6 +7,8 @@
   "publishedAt": "2026-03-14T15:45:49.000Z",
   "publishedLabel": "Mar 14, 2026",
   "excerpt": "-- 选课表SC（复合主键，表级约束；外键参照）\nCREATE TABLE SC(\n    SNO CHAR(9),\n    CNO CHAR(6),\n    GRADE INT,\n    PRIMARY KEY(SNO,CNO),     -- 复合主键（表级）\n    FOREIGN KEY(S...",
+  "readingMinutes": 12,
+  "coverImage": null,
   "categories": [
     "数据库",
     "SQL"

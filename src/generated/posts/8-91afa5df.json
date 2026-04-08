@@ -7,6 +7,8 @@
   "publishedAt": "2026-03-16T17:37:26.000Z",
   "publishedLabel": "Mar 16, 2026",
   "excerpt": "注：统一符号规则：$Ri(X)$表示事务$Ti$读取数据$X$，$Wi(X)$表示事务$Ti$写入数据$X$。",
+  "readingMinutes": 14,
+  "coverImage": null,
   "categories": [
     "数据库",
     "数据库原理"

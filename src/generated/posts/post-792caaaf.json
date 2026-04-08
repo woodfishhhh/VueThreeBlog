@@ -7,6 +7,8 @@
   "publishedAt": "2025-12-25T17:57:30.000Z",
   "publishedLabel": "Dec 25, 2025",
   "excerpt": "- 语法格式：使用{}包裹需提取的属性名，等号右侧为目标对象，即const {属性名1, 属性名2,...} = 目标对象。",
+  "readingMinutes": 6,
+  "coverImage": null,
   "categories": [
     "前端开发",
     "JavaScript"

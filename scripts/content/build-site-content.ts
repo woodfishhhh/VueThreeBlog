@@ -15,9 +15,10 @@ import rehypeStringify from "rehype-stringify";
 
 import {
   buildLegacySlugIndex,
-  localizeRemoteAsset,
   normalizeMarkdownBody,
+  resolveAssetReference,
   resolveCanonicalSlug,
+  toSitePublicUrl,
   rewriteMarkdownAssetPaths,
 } from "./generator-core";
 
@@ -28,6 +29,8 @@ export interface GeneratedPostIndexEntry {
   publishedAt: string;
   publishedLabel: string;
   excerpt: string;
+  readingMinutes: number;
+  coverImage: string | null;
   categories: string[];
   tags: string[];
 }
@@ -163,6 +166,7 @@ export interface SiteContentBuildResult {
 export interface BuildSiteContentOptions {
   sourceProjectRoot: string;
   targetPublicDir?: string;
+  siteBasePath?: string;
 }
 
 const dateFormatter = new Intl.DateTimeFormat("en", {
@@ -202,6 +206,7 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
   const linkPath = path.join(sourceProjectRoot, "content", "source", "blog", "source", "_data", "link.yml");
   const configPath = path.join(sourceProjectRoot, "content", "source", "blog", "_config.yml");
   const targetPublicDir = options.targetPublicDir ?? path.join(process.cwd(), "public");
+  const siteBasePath = options.siteBasePath;
 
   const legacyIndex = buildLegacySlugIndex(await readLegacyEntries(legacyPostsRoot));
   const markdownFiles = await collectMarkdownFiles(myblogRoot);
@@ -227,9 +232,17 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
       sourceFilePath: filePath,
       canonicalSlug: slugResult.canonicalSlug,
       publicDir: targetPublicDir,
+      siteBasePath,
     });
     const toc = extractToc(rewritten.markdown);
     const publishedAt = toIsoDate(date);
+    const readingMinutes = estimateReadingMinutes(rewritten.markdown);
+    const coverImage = await resolveContentAssetValue(readString(parsed.data.cover), {
+      sourceFilePath: filePath,
+      canonicalSlug: slugResult.canonicalSlug,
+      targetPublicDir,
+      siteBasePath,
+    });
     const entry: GeneratedPostArticle = {
       canonicalSlug: slugResult.canonicalSlug,
       aliases: slugResult.aliases,
@@ -237,6 +250,8 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
       publishedAt,
       publishedLabel: formatPublishedDate(publishedAt),
       excerpt: createExcerpt(rewritten.markdown, title),
+      readingMinutes,
+      coverImage,
       categories: toStringArray(parsed.data.categories),
       tags: toStringArray(parsed.data.tags),
       html: await renderArticleHtml(rewritten.markdown),
@@ -251,6 +266,8 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
       publishedAt: entry.publishedAt,
       publishedLabel: entry.publishedLabel,
       excerpt: entry.excerpt,
+      readingMinutes: entry.readingMinutes,
+      coverImage: entry.coverImage,
       categories: entry.categories,
       tags: entry.tags,
     });
@@ -261,8 +278,8 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
   return {
     postIndex,
     postsBySlug,
-    author: await buildAuthorProfile({ aboutPath, configPath, posts: postIndex, targetPublicDir }),
-    friendLinks: await readFriendLinks(linkPath, targetPublicDir),
+    author: await buildAuthorProfile({ aboutPath, configPath, posts: postIndex, targetPublicDir, siteBasePath }),
+    friendLinks: await readFriendLinks(linkPath, targetPublicDir, siteBasePath),
   };
 }
 
@@ -374,11 +391,82 @@ function createExcerpt(markdown: string, title: string) {
   return `${plainText.slice(0, 150)}${plainText.length > 150 ? "..." : ""}`;
 }
 
+function estimateReadingMinutes(markdown: string) {
+  const plainText = markdown
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`[^`]+`/g, " ")
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, " $1 ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/[#>*_~-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!plainText) {
+    return 1;
+  }
+
+  const cjkCount = (plainText.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu) ?? [])
+    .length;
+  const nonCjkText = plainText.replace(
+    /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu,
+    " ",
+  );
+  const wordCount = nonCjkText.split(/\s+/).filter(Boolean).length;
+
+  return Math.max(1, Math.ceil((cjkCount + wordCount) / 220));
+}
+
+async function resolveContentAssetValue(
+  rawValue: string,
+  options: {
+    sourceFilePath: string;
+    targetPublicDir: string;
+    siteBasePath?: string;
+    canonicalSlug?: string;
+  },
+) {
+  if (!rawValue) {
+    return options.canonicalSlug ? null : "";
+  }
+
+  const resolved = await resolveAssetReference(rawValue, {
+    sourceFilePath: options.sourceFilePath,
+    publicDir: options.targetPublicDir,
+    siteBasePath: options.siteBasePath,
+    canonicalSlug: options.canonicalSlug,
+  });
+
+  if (resolved) {
+    return resolved;
+  }
+
+  const normalized = toSitePublicUrl(rawValue, options.siteBasePath);
+  if (normalized !== rawValue) {
+    return normalized;
+  }
+
+  return options.canonicalSlug ? null : rawValue;
+}
+
+async function resolveContentAssetText(
+  rawValue: string,
+  options: {
+    sourceFilePath: string;
+    targetPublicDir: string;
+    siteBasePath?: string;
+    canonicalSlug?: string;
+  },
+) {
+  return (await resolveContentAssetValue(rawValue, options)) ?? "";
+}
+
 async function buildAuthorProfile(options: {
   aboutPath: string;
   configPath: string;
   posts: GeneratedPostIndexEntry[];
   targetPublicDir: string;
+  siteBasePath?: string;
 }): Promise<GeneratedAuthorProfile> {
   const tagsSet = new Set<string>();
   const categoriesSet = new Set<string>();
@@ -401,7 +489,11 @@ async function buildAuthorProfile(options: {
     .filter((tag) => !tagsToRemove.some((forbiddenTag) => tag.includes(forbiddenTag)));
 
   const rawAvatar = readString(aboutData.authorinfo?.image);
-  const avatar = (await localizeRemoteAsset(rawAvatar, options.targetPublicDir)) || rawAvatar;
+  const avatar = await resolveContentAssetText(rawAvatar, {
+    sourceFilePath: options.aboutPath,
+    targetPublicDir: options.targetPublicDir,
+    siteBasePath: options.siteBasePath,
+  });
 
   // 提取 leftTags 和 rightTags
   const leftTags = (Array.isArray(aboutData.authorinfo?.leftTags) ? aboutData.authorinfo.leftTags : [])
@@ -425,11 +517,19 @@ async function buildAuthorProfile(options: {
     title: readString(personalitiesRaw.title),
     color: readString(personalitiesRaw.color),
     type: readString(personalitiesRaw.type),
-    image: await localizeRemoteAsset(readString(personalitiesRaw.image), options.targetPublicDir) || readString(personalitiesRaw.image),
+    image: await resolveContentAssetText(readString(personalitiesRaw.image), {
+      sourceFilePath: options.aboutPath,
+      targetPublicDir: options.targetPublicDir,
+      siteBasePath: options.siteBasePath,
+    }),
     linkText: readString(personalitiesRaw.linkText),
     typeLink: readString(personalitiesRaw.typeLink),
     typeName: readString(personalitiesRaw.typeName),
-    myphoto: await localizeRemoteAsset(readString(personalitiesRaw.myphoto), options.targetPublicDir) || readString(personalitiesRaw.myphoto),
+    myphoto: await resolveContentAssetText(readString(personalitiesRaw.myphoto), {
+      sourceFilePath: options.aboutPath,
+      targetPublicDir: options.targetPublicDir,
+      siteBasePath: options.siteBasePath,
+    }),
   };
 
   // 提取 motto
@@ -455,7 +555,11 @@ async function buildAuthorProfile(options: {
   const game = await Promise.all(gameRaw.map(async (item: any) => ({
     title: readString(item?.title),
     subtitle: readString(item?.subtitle),
-    img: await localizeRemoteAsset(readString(item?.img), options.targetPublicDir) || readString(item?.img),
+    img: await resolveContentAssetText(readString(item?.img), {
+      sourceFilePath: options.aboutPath,
+      targetPublicDir: options.targetPublicDir,
+      siteBasePath: options.siteBasePath,
+    }),
     box_shadow: readString(item?.box_shadow),
     tips_left: readString(item?.tips_left),
     tips_right: readString(item?.tips_right),
@@ -474,11 +578,19 @@ async function buildAuthorProfile(options: {
       normalized.list = await Promise.all(item.list.map(async (listItem: any) => ({
         name: readString(listItem?.name),
         href: readString(listItem?.href),
-        cover: await localizeRemoteAsset(readString(listItem?.cover), options.targetPublicDir) || readString(listItem?.cover),
+        cover: await resolveContentAssetText(readString(listItem?.cover), {
+          sourceFilePath: options.aboutPath,
+          targetPublicDir: options.targetPublicDir,
+          siteBasePath: options.siteBasePath,
+        }),
       })));
     }
     if (item?.bg) {
-      normalized.bg = await localizeRemoteAsset(readString(item.bg), options.targetPublicDir) || readString(item.bg);
+      normalized.bg = await resolveContentAssetText(readString(item.bg), {
+        sourceFilePath: options.aboutPath,
+        targetPublicDir: options.targetPublicDir,
+        siteBasePath: options.siteBasePath,
+      });
     }
     if (item?.button) normalized.button = item.button;
     if (item?.button_link) normalized.button_link = readString(item.button_link);
@@ -490,8 +602,16 @@ async function buildAuthorProfile(options: {
   const oneselfRaw = aboutData.oneself || {};
   const oneself = {
     map: {
-      light: await localizeRemoteAsset(readString(oneselfRaw.map?.light), options.targetPublicDir) || readString(oneselfRaw.map?.light),
-      dark: await localizeRemoteAsset(readString(oneselfRaw.map?.dark), options.targetPublicDir) || readString(oneselfRaw.map?.dark),
+      light: await resolveContentAssetText(readString(oneselfRaw.map?.light), {
+        sourceFilePath: options.aboutPath,
+        targetPublicDir: options.targetPublicDir,
+        siteBasePath: options.siteBasePath,
+      }),
+      dark: await resolveContentAssetText(readString(oneselfRaw.map?.dark), {
+        sourceFilePath: options.aboutPath,
+        targetPublicDir: options.targetPublicDir,
+        siteBasePath: options.siteBasePath,
+      }),
     },
     location: readString(oneselfRaw.location),
     birthYear: typeof oneselfRaw.birthYear === "number" ? oneselfRaw.birthYear : 2006,
@@ -543,7 +663,7 @@ async function buildAuthorProfile(options: {
     postsCount: options.posts.length,
     tagsCount: tagsSet.size,
     categoriesCount: categoriesSet.size,
-    skills: await normalizeSkills(aboutData.skills?.tags, options.targetPublicDir),
+    skills: await normalizeSkills(aboutData.skills?.tags, options.aboutPath, options.targetPublicDir, options.siteBasePath),
     tags: filteredTags,
     // 新增字段
     leftTags,
@@ -562,7 +682,11 @@ async function buildAuthorProfile(options: {
   };
 }
 
-async function readFriendLinks(linkPath: string, targetPublicDir: string): Promise<GeneratedFriendLink[]> {
+async function readFriendLinks(
+  linkPath: string,
+  targetPublicDir: string,
+  siteBasePath?: string,
+): Promise<GeneratedFriendLink[]> {
   const raw = await safeReadFile(linkPath);
   const data = (yaml.load(raw) as { links?: unknown } | undefined) ?? {};
   const result: GeneratedFriendLink[] = [];
@@ -583,7 +707,11 @@ async function readFriendLinks(linkPath: string, targetPublicDir: string): Promi
 
       const rawAvatar = readString(typedItem?.avatar);
       const avatar = rawAvatar
-        ? (await localizeRemoteAsset(rawAvatar, targetPublicDir)) || rawAvatar
+        ? (await resolveContentAssetValue(rawAvatar, {
+            sourceFilePath: linkPath,
+            targetPublicDir,
+            siteBasePath,
+          })) ?? undefined
         : undefined;
 
       result.push({
@@ -607,7 +735,12 @@ async function safeReadFile(filePath: string) {
   }
 }
 
-async function normalizeSkills(value: unknown, targetPublicDir: string) {
+async function normalizeSkills(
+  value: unknown,
+  sourceFilePath: string,
+  targetPublicDir: string,
+  siteBasePath?: string,
+) {
   if (!Array.isArray(value)) {
     return [];
   }
@@ -622,7 +755,11 @@ async function normalizeSkills(value: unknown, targetPublicDir: string) {
 
       const rawImage = readString(typedItem?.img);
       const image = rawImage
-        ? (await localizeRemoteAsset(rawImage, targetPublicDir)) || rawImage
+        ? await resolveContentAssetText(rawImage, {
+            sourceFilePath,
+            targetPublicDir,
+            siteBasePath,
+          })
         : "";
 
       return {
@@ -706,5 +843,21 @@ function formatPublishedDate(value: string) {
 
 async function renderArticleHtml(markdown: string) {
   const rendered = await markdownProcessor.process(markdown);
-  return String(rendered.value);
+  return addLazyImageAttributes(String(rendered.value));
+}
+
+function addLazyImageAttributes(html: string) {
+  return html.replace(/<img\b([^>]*?)>/g, (_match, attributes) => {
+    let nextAttributes = attributes;
+
+    if (!/\sloading=/.test(nextAttributes)) {
+      nextAttributes += ' loading="lazy"';
+    }
+
+    if (!/\sdecoding=/.test(nextAttributes)) {
+      nextAttributes += ' decoding="async"';
+    }
+
+    return `<img${nextAttributes}>`;
+  });
 }

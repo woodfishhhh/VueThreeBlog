@@ -1,7 +1,11 @@
-import friendLinkData from "@/generated/friends.json";
-
 import type { FriendLinkData } from "@/types/content";
 
-export function getFriendLinks() {
-  return friendLinkData as FriendLinkData[];
+let friendLinksPromise: Promise<FriendLinkData[]> | null = null;
+
+export async function loadFriendLinks() {
+  if (!friendLinksPromise) {
+    friendLinksPromise = import("@/generated/friends.json").then((module) => module.default as FriendLinkData[]);
+  }
+
+  return friendLinksPromise;
 }

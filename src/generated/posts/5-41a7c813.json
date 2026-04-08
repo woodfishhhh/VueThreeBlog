@@ -7,6 +7,8 @@
   "publishedAt": "2026-03-16T17:37:26.000Z",
   "publishedLabel": "Mar 16, 2026",
   "excerpt": "- 关键参数：\r\n  - PUBLIC：表示授予所有用户该权限\r\n  - WITH GRANT OPTION：允许被授权用户转授该权限给其他用户\r\n  - 对属性列授权时，必须明确指定列名（如UPDATE(Sno)）\r\n- 授权者范围：数据库管理员（DBA）、数据库对象创建者、拥有WITH GRAN...",
+  "readingMinutes": 10,
+  "coverImage": null,
   "categories": [
     "数据库",
     "数据库原理"

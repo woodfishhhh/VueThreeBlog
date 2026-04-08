@@ -1,7 +1,11 @@
-import authorData from "@/generated/author.json";
-
 import type { AuthorProfileData } from "@/types/content";
 
-export function getAuthorProfile() {
-  return authorData as AuthorProfileData;
+let authorProfilePromise: Promise<AuthorProfileData> | null = null;
+
+export async function loadAuthorProfile() {
+  if (!authorProfilePromise) {
+    authorProfilePromise = import("@/generated/author.json").then((module) => module.default as AuthorProfileData);
+  }
+
+  return authorProfilePromise;
 }
