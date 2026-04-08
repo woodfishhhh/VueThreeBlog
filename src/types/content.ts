@@ -129,3 +129,12 @@ export interface FriendLinkData {
   descr?: string;
   className?: string;
 }
+
+export interface WorkProjectData {
+  slug: string;
+  name: string;
+  description: string;
+  kind: string;
+  liveUrl: string;
+  githubUrl: string;
+}

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export type SiteMode = "home" | "blog" | "author" | "friend" | "reading";
+export type SiteMode = "home" | "blog" | "author" | "friend" | "works" | "reading";
 
 interface SiteState {
   mode: SiteMode;
@@ -34,6 +34,11 @@ export const useSiteStore = defineStore("site", {
     },
     goFriend() {
       this.mode = "friend";
+      this.isFocusing = false;
+      this.activePostSlug = null;
+    },
+    goWorks() {
+      this.mode = "works";
       this.isFocusing = false;
       this.activePostSlug = null;
     },

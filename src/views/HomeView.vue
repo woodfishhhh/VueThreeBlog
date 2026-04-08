@@ -6,17 +6,20 @@
   import PostPanel from "@/components/home/PostPanel.vue";
   import ReadingOverlay from "@/components/home/ReadingOverlay.vue";
   import SlideController from "@/components/home/SlideController.vue";
+  import WorksPanel from "@/components/home/WorksPanel.vue";
   import SiteNav from "@/components/layout/SiteNav.vue";
   import ThreeSceneCanvas from "@/components/scene/ThreeSceneCanvas.vue";
   import { getAuthorProfile } from "@/content/author";
   import { getFriendLinks } from "@/content/friends";
   import { getPostSummaries } from "@/content/posts";
+  import { getWorkProjects } from "@/content/works";
   import { useSiteStore } from "@/stores/site";
 
   const siteStore = useSiteStore();
   const posts = getPostSummaries();
   const author = getAuthorProfile();
   const friendLinks = getFriendLinks();
+  const works = getWorkProjects();
 
   const homeHint = computed(() => siteStore.mode === "home" && !siteStore.isFocusing);
   const focusHint = computed(() => siteStore.isFocusing);
@@ -70,6 +73,15 @@
           <div v-if="siteStore.mode === 'friend'"
             class="pointer-events-auto absolute bottom-0 left-0 h-[62vh] w-full bg-gradient-to-t from-black/95 via-black/85 to-transparent p-6 md:h-[58vh] md:p-10">
             <FriendPanel :links="friendLinks" />
+          </div>
+        </Transition>
+
+        <Transition name="works-panel" mode="out-in">
+          <div
+            v-if="siteStore.mode === 'works'"
+            class="pointer-events-auto absolute left-0 top-0 h-[58vh] w-full bg-gradient-to-b from-black/95 via-black/80 to-transparent px-6 pb-8 pt-24 md:h-[56vh] md:px-10 md:pb-10 md:pt-28"
+          >
+            <WorksPanel :works="works" />
           </div>
         </Transition>
       </div>

@@ -11,6 +11,7 @@
     { id: "blog", label: "Blog", action: () => siteStore.goBlog() },
     { id: "author", label: "Author", action: () => siteStore.goAuthor() },
     { id: "friend", label: "Friend", action: () => siteStore.goFriend() },
+    { id: "works", label: "Works", action: () => siteStore.goWorks() },
   ] as const;
 
   function handleNav(action: () => void) {
