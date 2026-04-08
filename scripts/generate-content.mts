@@ -1,4 +1,4 @@
-import { cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -7,11 +7,10 @@ import { buildSiteContent } from "./content/build-site-content";
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFilePath);
 const projectRoot = path.resolve(currentDir, "..");
-const sourceProjectRoot = path.resolve(projectRoot, "..", "3Dblog");
+const sourceProjectRoot = projectRoot;
 const generatedRoot = path.join(projectRoot, "src", "generated");
 const generatedPostsRoot = path.join(generatedRoot, "posts");
 const publicRoot = path.join(projectRoot, "public");
-const sourcePublicRoot = path.join(sourceProjectRoot, "public");
 
 async function main() {
   await mkdir(generatedRoot, { recursive: true });
@@ -32,8 +31,6 @@ async function main() {
   for (const [slug, article] of Object.entries(siteContent.postsBySlug)) {
     await writeJson(path.join(generatedPostsRoot, `${slug}.json`), article);
   }
-
-  await cp(sourcePublicRoot, publicRoot, { recursive: true, force: true });
 
   console.log(`Generated ${siteContent.postIndex.length} posts into ${generatedRoot}`);
 }
