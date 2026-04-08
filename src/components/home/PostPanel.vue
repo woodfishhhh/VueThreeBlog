@@ -1,24 +1,77 @@
 <script setup lang="ts">
-  import type { PostSummary } from "@/types/content";
+import { computed } from "vue";
 
-  const props = defineProps<{
-    posts: PostSummary[];
-  }>();
+import {
+  buildBlogFacets,
+  filterBlogPosts,
+  sortBlogPosts,
+} from "@/content/blog-hub";
+import BlogFilterRail from "@/components/home/blog/BlogFilterRail.vue";
+import BlogResults from "@/components/home/blog/BlogResults.vue";
+import BlogSearchBar from "@/components/home/blog/BlogSearchBar.vue";
+import { useBlogQueryState } from "@/composables/useBlogQueryState";
+import type { PostSummary } from "@/types/content";
+
+const props = defineProps<{
+  posts: PostSummary[];
+}>();
+
+const {
+  searchQuery,
+  selectedType,
+  selectedCategory,
+  selectedTag,
+  sortKey,
+  filters,
+  activeQuery,
+  hasActiveFilters,
+  clearFilters,
+} = useBlogQueryState();
+
+const facets = computed(() => buildBlogFacets(props.posts));
+const filteredPosts = computed(() => filterBlogPosts(props.posts, filters.value));
+const sortedPosts = computed(() => sortBlogPosts(filteredPosts.value, sortKey.value));
+
+function toggleType(value: string) {
+  selectedType.value = selectedType.value === value ? "" : value;
+}
+
+function toggleCategory(value: string) {
+  selectedCategory.value = selectedCategory.value === value ? "" : value;
+}
+
+function toggleTag(value: string) {
+  selectedTag.value = selectedTag.value === value ? "" : value;
+}
 </script>
 
 <template>
-  <div class="space-y-8 text-left">
-    <h2 class="mb-8 border-b border-white/20 pb-2 text-3xl font-light text-white">Recent Posts</h2>
-    <div id="post-list-container" class="max-h-[60vh] space-y-6 overflow-y-auto pr-4">
-      <RouterLink v-for="post in props.posts" :key="post.canonicalSlug"
-        :to="{ name: 'post', params: { slug: post.canonicalSlug } }"
-        class="group block cursor-pointer rounded-xl border border-transparent px-3 py-2 transition-colors hover:border-white/10 hover:bg-white/[0.03] active:bg-white/[0.05]">
-        <div class="mb-1 text-xs text-blue-400">{{ post.publishedLabel }}</div>
-        <h3 class="mb-2 text-xl font-bold text-gray-100 transition-colors group-hover:text-blue-300">
-          {{ post.title }}
-        </h3>
-        <p class="line-clamp-2 text-sm text-gray-400">{{ post.excerpt }}</p>
-      </RouterLink>
+  <div class="space-y-6 text-left">
+    <BlogSearchBar
+      :query="searchQuery"
+      :total-count="props.posts.length"
+      :result-count="sortedPosts.length"
+      :has-active-filters="hasActiveFilters"
+      @update:query="searchQuery = $event"
+      @clear="clearFilters"
+    />
+
+    <div class="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(18rem,0.95fr)]">
+      <BlogResults :posts="sortedPosts" :blog-query="activeQuery" />
+
+      <BlogFilterRail
+        :types="facets.types"
+        :categories="facets.categories"
+        :tags="facets.tags"
+        :selected-type="selectedType"
+        :selected-category="selectedCategory"
+        :selected-tag="selectedTag"
+        :sort="sortKey"
+        @toggle:type="toggleType"
+        @toggle:category="toggleCategory"
+        @toggle:tag="toggleTag"
+        @update:sort="sortKey = $event"
+      />
     </div>
   </div>
 </template>
