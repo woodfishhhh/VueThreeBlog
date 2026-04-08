@@ -46,7 +46,7 @@ function toggleTag(value: string) {
 </script>
 
 <template>
-  <div class="space-y-6 text-left">
+  <div class="space-y-6 pb-10 text-left">
     <BlogSearchBar
       :query="searchQuery"
       :total-count="props.posts.length"
@@ -56,22 +56,26 @@ function toggleTag(value: string) {
       @clear="clearFilters"
     />
 
-    <div class="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(18rem,0.95fr)]">
-      <BlogResults :posts="sortedPosts" :blog-query="activeQuery" />
+    <div class="grid gap-6 2xl:grid-cols-[minmax(0,2fr)_minmax(18rem,0.95fr)] 2xl:items-start">
+      <div class="min-w-0">
+        <BlogResults :posts="sortedPosts" :blog-query="activeQuery" />
+      </div>
 
-      <BlogFilterRail
-        :types="facets.types"
-        :categories="facets.categories"
-        :tags="facets.tags"
-        :selected-type="selectedType"
-        :selected-category="selectedCategory"
-        :selected-tag="selectedTag"
-        :sort="sortKey"
-        @toggle:type="toggleType"
-        @toggle:category="toggleCategory"
-        @toggle:tag="toggleTag"
-        @update:sort="sortKey = $event"
-      />
+      <div class="self-start 2xl:sticky 2xl:top-6">
+        <BlogFilterRail
+          :types="facets.types"
+          :categories="facets.categories"
+          :tags="facets.tags"
+          :selected-type="selectedType"
+          :selected-category="selectedCategory"
+          :selected-tag="selectedTag"
+          :sort="sortKey"
+          @toggle:type="toggleType"
+          @toggle:category="toggleCategory"
+          @toggle:tag="toggleTag"
+          @update:sort="sortKey = $event"
+        />
+      </div>
     </div>
   </div>
 </template>

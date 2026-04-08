@@ -139,11 +139,13 @@ export async function rewriteMarkdownAssetPaths(
     const rewrittenUrl = await resolveAssetReference(originalReference, options);
 
     if (!rewrittenUrl) {
-      warnings.push(
-        isRemoteAssetReference(originalReference)
-          ? `Failed to localize remote asset: ${originalReference}`
-          : `Missing local asset: ${originalReference}`,
-      );
+      if (shouldRemoveUnresolvedLocalAsset(originalReference)) {
+        warnings.push(`Removed unresolved local image: ${originalReference}`);
+        nextMarkdown = removeMatchedImageExpression(nextMarkdown, matchedExpression);
+        continue;
+      }
+
+      warnings.push(`Failed to localize remote asset: ${originalReference}`);
       continue;
     }
 
@@ -170,11 +172,13 @@ export async function rewriteMarkdownAssetPaths(
 
     const rewrittenUrl = await resolveAssetReference(originalReference, options);
     if (!rewrittenUrl) {
-      warnings.push(
-        isRemoteAssetReference(originalReference)
-          ? `Failed to localize remote asset: ${originalReference}`
-          : `Missing local asset: ${originalReference}`,
-      );
+      if (shouldRemoveUnresolvedLocalAsset(originalReference)) {
+        warnings.push(`Removed unresolved local image: ${originalReference}`);
+        nextMarkdown = removeMatchedImageExpression(nextMarkdown, matchedExpression);
+        continue;
+      }
+
+      warnings.push(`Failed to localize remote asset: ${originalReference}`);
       continue;
     }
 
@@ -255,6 +259,10 @@ function replaceMarkdownImageReference(
   }
 
   return markdown.replace(`(${originalReference})`, `(${rewrittenReference})`);
+}
+
+function removeMatchedImageExpression(markdown: string, matchedExpression: string) {
+  return markdown.replace(matchedExpression, "");
 }
 
 function replaceHtmlImageReference(markdown: string, matchedExpression: string, originalReference: string, rewrittenReference: string) {
@@ -363,6 +371,10 @@ function isRemoteAssetReference(reference: string) {
   } catch {
     return false;
   }
+}
+
+function shouldRemoveUnresolvedLocalAsset(reference: string) {
+  return !isRemoteAssetReference(reference);
 }
 
 export async function localizeRemoteAsset(

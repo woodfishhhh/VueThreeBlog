@@ -5,6 +5,7 @@
   import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
   import gsap from "gsap";
 
+  import { normalizeRotationForTween } from "@/components/scene/hypercube-rotation";
   import { getRouteLocationForSiteMode } from "@/router/site-mode";
   import { useSiteStore } from "@/stores/site";
 
@@ -80,6 +81,7 @@
   const { vertices, edges } = generateHypercubeData();
 
   let rotationTween: any = null;
+  const defaultRotation = { x: 0.5, y: 0.5, z: 0 };
 
   // To save focus rotation when leaving focus
   const savedFocusRotation = new THREE.Euler(0.5, 0.5, 0);
@@ -417,12 +419,30 @@
       ease: "power2.out",
     });
 
+    const rotationTarget = store.isFocusing
+      ? {
+          x: savedFocusRotation.x,
+          y: savedFocusRotation.y,
+          z: savedFocusRotation.z,
+        }
+      : defaultRotation;
+    const normalizedRotation = normalizeRotationForTween(
+      {
+        x: hypercubeGroup.rotation.x,
+        y: hypercubeGroup.rotation.y,
+        z: hypercubeGroup.rotation.z,
+      },
+      rotationTarget,
+    );
+
+    hypercubeGroup.rotation.set(normalizedRotation.x, normalizedRotation.y, normalizedRotation.z);
+
     if (store.isFocusing) {
       if (rotationTween) rotationTween.kill();
       rotationTween = gsap.to(hypercubeGroup.rotation, {
-        x: savedFocusRotation.x,
-        y: savedFocusRotation.y,
-        z: savedFocusRotation.z,
+        x: rotationTarget.x,
+        y: rotationTarget.y,
+        z: rotationTarget.z,
         duration: 0.8,
         ease: "power2.out",
         onComplete: () => {
@@ -432,9 +452,9 @@
     } else {
       if (rotationTween) rotationTween.kill();
       rotationTween = gsap.to(hypercubeGroup.rotation, {
-        x: 0.5,
-        y: 0.5,
-        z: 0,
+        x: rotationTarget.x,
+        y: rotationTarget.y,
+        z: rotationTarget.z,
         duration: 0.8,
         ease: "power2.out",
         onComplete: () => {

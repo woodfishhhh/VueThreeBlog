@@ -74,16 +74,17 @@ function confirmIssueRedirect() {
 </script>
 
 <template>
-  <section class="rounded-[32px] border border-white/12 bg-white/[0.04] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
-    <div class="max-w-3xl">
+  <section class="relative overflow-hidden rounded-[30px] border border-white/12 bg-black/20 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)] md:p-8">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.11),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(244,114,182,0.12),_transparent_28%)]" />
+    <div class="relative max-w-3xl">
       <div class="text-[11px] uppercase tracking-[0.36em] text-cyan-200/65">Apply For Link Exchange</div>
-      <h3 class="mt-3 text-3xl font-light text-white">投递你的星球坐标</h3>
+      <h3 class="mt-3 text-3xl font-light text-white md:text-4xl">投递你的星球坐标</h3>
       <p class="mt-3 text-sm leading-7 text-white/60">
         填完这张卡片后，我们会先提醒你即将跳到 GitHub issue 页面，再带着预填信息过去完成提交。
       </p>
     </div>
 
-    <form class="mt-6 grid gap-4 md:grid-cols-2" @submit.prevent="handleSubmit">
+    <form class="relative mt-8 grid gap-4 md:grid-cols-2" @submit.prevent="handleSubmit">
       <label class="space-y-2">
         <span class="text-xs uppercase tracking-[0.22em] text-white/45">Site Name</span>
         <input
@@ -160,7 +161,7 @@ function confirmIssueRedirect() {
     <div
       v-if="showReminder"
       data-testid="friend-application-reminder"
-      class="mt-5 rounded-[28px] border border-fuchsia-300/25 bg-fuchsia-400/8 p-5"
+      class="relative mt-6 rounded-[28px] border border-fuchsia-300/25 bg-fuchsia-400/8 p-5"
     >
       <div class="text-[11px] uppercase tracking-[0.32em] text-fuchsia-100/70">Reminder</div>
       <p class="mt-3 text-sm leading-7 text-white/75">

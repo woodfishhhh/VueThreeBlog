@@ -1,4 +1,5 @@
 import type { PostArticle, PostSummary } from "@/types/content";
+import { normalizeContentPayload } from "./content-url-normalizer";
 import { resolvePostSlugFromIndex } from "./post-helpers";
 
 const postModules = import.meta.glob<{ default: PostArticle }>("../generated/posts/*.json");
@@ -7,7 +8,9 @@ let postIndexPromise: Promise<PostSummary[]> | null = null;
 
 async function loadPostIndex() {
   if (!postIndexPromise) {
-    postIndexPromise = import("@/generated/post-index.json").then((module) => module.default as PostSummary[]);
+    postIndexPromise = import("@/generated/post-index.json").then((module) =>
+      normalizeContentPayload(module.default as PostSummary[]),
+    );
   }
 
   return postIndexPromise;
@@ -44,7 +47,7 @@ export async function loadPostArticle(slug: string): Promise<PostArticle | null>
   }
 
   const nextPromise = loader()
-    .then((module) => module.default)
+    .then((module) => normalizeContentPayload(module.default))
     .catch((error) => {
       articlePromiseCache.delete(canonicalSlug);
       throw error;

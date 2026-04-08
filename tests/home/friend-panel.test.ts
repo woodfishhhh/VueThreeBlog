@@ -33,6 +33,10 @@ describe("FriendPanel", () => {
     });
 
     expect(wrapper.text()).toContain("Friend Links");
+    expect(wrapper.get("[data-testid='friend-panel-root']")).toBeTruthy();
+    expect(wrapper.get("[data-testid='friend-panel-hero']")).toBeTruthy();
+    expect(wrapper.get("[data-testid='friend-panel-grid']")).toBeTruthy();
+    expect(wrapper.get("[data-testid='friend-panel-application']")).toBeTruthy();
     expect(wrapper.findAll("[data-testid='friend-link-card']")).toHaveLength(2);
     expect(wrapper.get("[data-testid='friend-application-site-name']")).toBeTruthy();
     expect(wrapper.get("[data-testid='friend-application-site-url']")).toBeTruthy();

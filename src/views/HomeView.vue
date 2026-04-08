@@ -50,8 +50,8 @@
 
         <Transition name="blog-panel" mode="out-in">
           <div v-if="siteStore.mode === 'blog'"
-            class="pointer-events-auto absolute bottom-0 left-0 h-[65vh] w-full bg-gradient-to-t from-black/95 via-black/80 to-transparent p-6 pt-10 md:top-0 md:h-screen md:w-1/2 md:bg-gradient-to-r md:from-black/95 md:via-black/40 md:p-10 md:pl-20">
-            <div class="flex h-full w-full flex-col justify-center">
+            class="pointer-events-auto absolute bottom-0 left-0 h-[65vh] w-full overflow-y-auto overscroll-contain bg-gradient-to-t from-black/95 via-black/80 to-transparent p-6 pt-10 md:top-0 md:h-screen md:w-1/2 md:bg-gradient-to-r md:from-black/95 md:via-black/40 md:p-10 md:pl-20">
+            <div class="flex min-h-full w-full flex-col justify-start">
               <PostPanel v-if="posts.length > 0" :posts="posts" />
               <div v-else class="rounded-[28px] border border-white/10 bg-white/[0.04] px-6 py-7 text-white/60">
                 <div class="text-[11px] uppercase tracking-[0.36em] text-white/35">
@@ -84,15 +84,19 @@
 
         <Transition name="friend-panel" mode="out-in">
           <div v-if="siteStore.mode === 'friend'"
-            class="pointer-events-auto absolute bottom-0 left-0 h-[62vh] w-full bg-gradient-to-t from-black/95 via-black/85 to-transparent p-6 md:h-[58vh] md:p-10">
-            <FriendPanel v-if="friendLinks.length > 0" :links="friendLinks" />
-            <div v-else class="rounded-[28px] border border-white/10 bg-white/[0.04] px-6 py-7 text-white/60">
-              <div class="text-[11px] uppercase tracking-[0.36em] text-white/35">
-                {{ isFriendLinksLoading ? "Loading network" : "Network standby" }}
+            class="pointer-events-auto absolute inset-0 overflow-y-auto">
+            <div class="min-h-full w-full bg-[linear-gradient(180deg,rgba(4,6,16,0.72)_0%,rgba(3,4,12,0.84)_26%,rgba(3,4,12,0.92)_100%)] px-5 pb-24 pt-20 md:px-10 md:pb-28 md:pt-24">
+              <div class="mx-auto w-full max-w-[1500px]">
+                <FriendPanel v-if="friendLinks.length > 0" :links="friendLinks" />
+                <div v-else class="rounded-[28px] border border-white/10 bg-white/[0.04] px-6 py-7 text-white/60">
+                  <div class="text-[11px] uppercase tracking-[0.36em] text-white/35">
+                    {{ isFriendLinksLoading ? "Loading network" : "Network standby" }}
+                  </div>
+                  <p class="mt-4 max-w-md text-sm leading-7 text-white/60">
+                    {{ isFriendLinksLoading ? "友情链接正在按需接入，稍后会完整出现。" : "友情链接会在你进入 Friend 面板时即时载入。" }}
+                  </p>
+                </div>
               </div>
-              <p class="mt-4 max-w-md text-sm leading-7 text-white/60">
-                {{ isFriendLinksLoading ? "友情链接正在按需接入，稍后会完整出现。" : "友情链接会在你进入 Friend 面板时即时载入。" }}
-              </p>
             </div>
           </div>
         </Transition>

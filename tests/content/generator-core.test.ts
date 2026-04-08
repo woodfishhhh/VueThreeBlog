@@ -190,4 +190,34 @@ describe("generator-core", () => {
       }
     }
   });
+
+  it("removes unresolved local image references from markdown and html while keeping warnings traceable", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-broken-local-"));
+    const sourceDir = path.join(tempRoot, "source");
+    const publicDir = path.join(tempRoot, "public");
+    const sourceFilePath = path.join(sourceDir, "Broken 图片测试.md");
+
+    await mkdir(sourceDir, { recursive: true });
+
+    const result = await rewriteMarkdownAssetPaths(
+      [
+        "![broken-relative](assets/1680342815532.png)",
+        "<img src=\"D:%5CBaiduNetdiskDownload%5Cday09%5Cassets%5C1680342859110.png\" alt=\"broken-html\">",
+      ].join("\n\n"),
+      {
+        sourceFilePath,
+        canonicalSlug: "broken-local-images",
+        publicDir,
+        siteBasePath: "/newBlog/",
+      },
+    );
+
+    expect(result.markdown).not.toContain("assets/1680342815532.png");
+    expect(result.markdown).not.toContain("D:%5CBaiduNetdiskDownload");
+    expect(result.markdown).not.toContain("<img");
+    expect(result.warnings).toEqual([
+      "Removed unresolved local image: assets/1680342815532.png",
+      "Removed unresolved local image: D:%5CBaiduNetdiskDownload%5Cday09%5Cassets%5C1680342859110.png",
+    ]);
+  });
 });
