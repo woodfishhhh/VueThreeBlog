@@ -7,6 +7,8 @@
   "publishedAt": "2025-09-21T23:32:03.000Z",
   "publishedLabel": "Sep 21, 2025",
   "excerpt": "!1680342815532",
+  "type": "Notes",
+  "searchText": "CSS 学习笔记（6）：小兔鲜儿项目搭建及基础配置（目录结构、SEO 标签、版心设置） Notes 前端开发 CSS 前端开发 小兔鲜儿项目搭建 SEO 标签 版心设置 HTML day09 小兔鲜儿 01 搭建项目目录 xtx pc images 文件夹：存放固定使用的图片素材，例如：logo、样式修饰图等等 uploads 文件夹：存放非固定使用的图片素材，例如：商品图、宣传图需要上传的图片 iconfont 文件夹：字体图标素材 css 文件夹：存放 CSS 文件（link 标签引入） base.css：基础公共样式 common.css：各个网页相同模块的重复样式，例如：头部、底部 index.css：首页 CSS 样式 index.html：首页 HTML 文件 引入样式表 02 网页头部SEO三大标签 SEO：搜索引擎优化，提升网站百度搜索排名 提升SEO的常见方法： 1. 竞价排名 2. 将网页制作成html后缀 3. 标签语义化（在合适的地方使用合适的标签） 4. …… 网页头部 SEO 标签： title：网页标题标签 description：网页描述 keywords：网页关键词 03 Favicon图标 Favicon 图标：网页图标，出现在浏览器标题栏，增加网站辨识度。 图标： favicon.ico ，一般存放到网站的 根目录 里面 04 版心 common.css",
   "readingMinutes": 2,
   "coverImage": null,
   "categories": [

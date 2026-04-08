@@ -7,6 +7,8 @@
   "publishedAt": "2025-09-02T22:52:12.000Z",
   "publishedLabel": "Sep 02, 2025",
   "excerpt": "- 为了万物皆对象，并且泛型和集合都不支持基本类型，支持包装类\n- 8 种，int -> Integer，char -> Character，其他的都是首字母大写",
+  "type": "Notes",
+  "searchText": "Java的包装类 Notes 编程语言 Java Java Java的包装类 包装类 对象 为什么要有包装类，包装类有哪些？ 为了万物皆对象，并且泛型和集合都不支持基本类型，支持包装类 8 种，int Integer，char Character，其他的都是首字母大写 包装类提供了哪些常用的功能？ 可以把基本类型的数据转换成字符串类型。 public static String toString(double d) public String toString() 可以把字符串类型的数值转换成真实的数据类型。 public static int parseInt(String s) public static Integer valueOf(String s) 装箱与拆箱 装箱：将一个基本数据类型变为包装类称为装箱操作 拆箱：将一个包装类变回基本数据类型，称为拆箱操作，转换的方法由Number类提供 下面看具体操作，这里以整形为例： JDK1.5之后，增加了自动装箱和拆箱的操作 包装类的valueOf和parseInt简略介绍 valueOf 平时应该多用用静态的valueOf方法创建实例，通过valueOf创造的实例可以被共享，这没有问题，因为包装对象是不可变的。 课本原题 以下哪个语句可以编译成功 答案",
   "readingMinutes": 2,
   "coverImage": null,
   "categories": [

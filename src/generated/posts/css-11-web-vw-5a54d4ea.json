@@ -7,6 +7,8 @@
   "publishedAt": "2025-09-21T23:32:34.000Z",
   "publishedLabel": "Sep 21, 2025",
   "excerpt": "vw和vh是相对单位，相对视口尺寸计算结果",
+  "type": "Notes",
+  "searchText": "CSS 学习笔记（11）：移动 Web 开发之 vw 适配与酷我音乐案例实践 Notes 前端开发 CSS 前端开发 移动 Web 开发之 vw 适配 酷我音乐案例实践 HTML CSS 01 vw适配方案 vw和vh基本使用 vw和vh是相对单位，相对视口尺寸计算结果 vw：viewport width（1vw = 1/100视口宽度 ） vh：viewport height ( 1vh = 1/100视口高度 ) vw布局 vw单位的尺寸 = px 单位数值 / ( 1/100 视口宽度 ) vh问题 vh是1/100视口高度，全面屏视口高度尺寸大，如果混用可能会导致盒子变形 02 综合案例 酷我音乐 准备工作 HTML 结构 less 样式 头部布局 HTML 结构 less 样式 头部内容 less 样式 搜索区域 HTML 结构 less 样式 banner 区域 HTML 结构 less 样式 标题公共样式 HTML 结构 less 样式 排行榜内容 HTML 结构 less 样式 推荐歌单布局 HTML 结构 less 样式 推荐歌单内容 HTML 结构 less 样式 下载区域 HTML 结构 less 样式 头部固定 less 样式",
   "readingMinutes": 2,
   "coverImage": null,
   "categories": [

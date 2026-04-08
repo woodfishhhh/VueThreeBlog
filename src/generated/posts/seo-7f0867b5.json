@@ -7,6 +7,8 @@
   "publishedAt": "2025-11-03T12:59:53.000Z",
   "publishedLabel": "Nov 03, 2025",
   "excerpt": "!1680342815532",
+  "type": "Notes",
+  "searchText": "小兔鲜儿项目实战：项目目录、SEO 与公共样式搭建 Notes 前端开发 项目实战 小兔鲜儿 项目搭建 SEO标签 公共样式 01 搭建项目目录 xtx pc images 文件夹：存放固定使用的图片素材，例如：logo、样式修饰图等等 uploads 文件夹：存放非固定使用的图片素材，例如：商品图、宣传图需要上传的图片 iconfont 文件夹：字体图标素材 css 文件夹：存放 CSS 文件（link 标签引入） base.css：基础公共样式 common.css：各个网页相同模块的重复样式，例如：头部、底部 index.css：首页 CSS 样式 index.html：首页 HTML 文件 引入样式表 02 网页头部SEO三大标签 SEO：搜索引擎优化，提升网站百度搜索排名 提升SEO的常见方法： 1. 竞价排名 2. 将网页制作成html后缀 3. 标签语义化（在合适的地方使用合适的标签） 4. …… 网页头部 SEO 标签： title：网页标题标签 description：网页描述 keywords：网页关键词 03 Favicon图标 Favicon 图标：网页图标，出现在浏览器标题栏，增加网站辨识度。 图标： favicon.ico ，一般存放到网站的 根目录 里面 04 版心 common.css 05 快捷导航 布局 HTML结构 CSS样式 06 快捷导航 内容 HTML结构 CSS样式 07 头部 布局 HTML结构 CSS样式 08 头部 logo HTML结构 CSS样式 09 头部 导航 HTML结构 CSS样式 10 头部 搜索 HTML结构 CSS样式 11 头部 购物车 HTML结构 CSS样式 12 底部 布局 HTML结构 CSS样式 13 底部 服务区域 HTML结构 CSS结构 14 底部 帮助中心 左侧 HTML结构 CSS样式 15 底部 帮助中心 右侧 HTML结构 CSS样式 16 底部 版权 HTML结构 CSS样式 day10 小兔鲜儿 01 banner 轮播图 index.css HTML结构 CSS样式 02 banner 侧导航 HTML结构 CSS样式 03 banner 圆点指示器 HTML结构 CSS样式 04 新鲜好物 标题 考虑公共样式 HTML结构 CSS样式 05 新鲜好物 内容 HTML结构 CSS样式 06 人气推荐 HTML结构 CSS样式 07 热门品牌 布局 HTML结构 CSS样式 08 热门品牌 内容 HTML结构 CSS样式 09 生鲜 标题 HTML结构 CSS样式 10 生鲜 内容布局 HTML结构 CSS样式 11 生鲜 产品内容 HTML结构 CSS样式 12 生鲜 过渡效果 HTML结构 CSS样式 13 最新专题 布局 HTML结构 CSS样式 14 最新专题 内容 HTML结构 CSS样式 15 最新专题 定位文字 HTML结构 CSS样式",
   "readingMinutes": 3,
   "coverImage": null,
   "categories": [
