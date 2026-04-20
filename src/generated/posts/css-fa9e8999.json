@@ -22,6 +22,6 @@
     "后代选择器",
     "速查表"
   ],
-  "html": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<table><thead><tr><th>写法</th><th>含义</th><th>匹配对象</th><th>示例</th></tr></thead><tbody><tr><td><code>.recommend a.modify</code></td><td>选中带有<code>modify</code>类的<code>&#x3C;a></code>元素</td><td><code>&#x3C;a class=\"modify\"></code></td><td><code>&#x3C;div class=\"recommend\">&#x3C;a class=\"modify\">&#x3C;/a>&#x3C;/div></code></td></tr><tr><td><code>.recommend a .modify</code></td><td>选中<code>&#x3C;a></code>内部的<code>modify</code>类元素</td><td><code>&#x3C;a>&#x3C;xxx class=\"modify\">&#x3C;/xxx>&#x3C;/a></code></td><td></td></tr></tbody></table>",
+  "html": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<table><thead><tr><th>写法</th><th>含义</th><th>匹配对象</th><th>示例</th></tr></thead><tbody><tr><td><code>.recommend a.modify</code></td><td>选中带有<code>modify</code>类的<code>&lt;a&gt;</code>元素</td><td><code>&lt;a class=\"modify\"&gt;</code></td><td><code>&lt;div class=\"recommend\"&gt;&lt;a class=\"modify\"&gt;&lt;/a&gt;&lt;/div&gt;</code></td></tr><tr><td><code>.recommend a .modify</code></td><td>选中<code>&lt;a&gt;</code>内部的<code>modify</code>类元素</td><td><code>&lt;a&gt;&lt;xxx class=\"modify\"&gt;&lt;/xxx&gt;&lt;/a&gt;</code></td><td></td></tr></tbody></table>",
   "toc": []
 }

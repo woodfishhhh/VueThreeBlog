@@ -21,6 +21,6 @@
     "区间问题",
     "题解"
   ],
-  "html": "<p>cf 1059\r\n<a href=\"https://codeforces.com/contest/2162\">https://codeforces.com/contest/2162</a></p>\n<p>涉及mex的题，一般会考虑枚举出现mex的地方</p>",
+  "html": "<p>cf 1059\n<a href=\"https://codeforces.com/contest/2162\">https://codeforces.com/contest/2162</a></p>\n<p>涉及mex的题，一般会考虑枚举出现mex的地方</p>",
   "toc": []
 }

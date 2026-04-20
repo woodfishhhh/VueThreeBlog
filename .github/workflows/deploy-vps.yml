@@ -37,6 +37,9 @@ jobs:
       - name: Unit tests
         run: npm run test
 
+      - name: Type check
+        run: npm run typecheck
+
       - name: Build
         run: npm run build
 
@@ -54,6 +57,10 @@ jobs:
         run: |
           scp "${{ env.DEPLOY_ARCHIVE }}" "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ env.DEPLOY_REMOTE_ARCHIVE }}"
 
+      - name: Upload nginx config
+        run: |
+          scp deploy/nginx.conf "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/default.conf"
+
       - name: Activate release
         run: |
           ssh "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" <<EOF
@@ -63,6 +70,10 @@ jobs:
           target_dir="${{ secrets.DEPLOY_DIR }}"
           next_dir="\${target_dir}.next"
           backup_dir="\${target_dir}.bak"
+
+          # 同步 nginx 配置并重载
+          cp /tmp/default.conf /opt/blog-stack/nginx/conf.d/default.conf
+          docker exec blog-nginx nginx -s reload || true
 
           rm -rf "\$next_dir" "\$backup_dir"
           mkdir -p "\$next_dir"
@@ -77,4 +88,5 @@ jobs:
 
           rm -f "\$archive"
           rm -rf "\$backup_dir"
+          rm -f /tmp/default.conf
           EOF
