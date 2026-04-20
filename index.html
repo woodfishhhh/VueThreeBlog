@@ -5,6 +5,38 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!--
+      性能优化：内联关键 CSS
+      ================================
+      几行最基础的样式内联到 <head>，在 JS 加载之前就能渲染：
+      - 背景色 (#050510 深空黑)
+      - 文字颜色 (白色)
+      - 防止闪屏 (FOUC - Flash of Unstyled Content)
+
+      完整 CSS 仍然由 Vite 加载（异步，不阻塞渲染）
+    -->
+    <style>
+      /* 关键 CSS：防止页面加载时闪烁 */
+      body { background-color: #050510; color: #ffffff; margin: 0; }
+      #app { min-height: 100vh; }
+    </style>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      />
+    </noscript>
+
     <!-- Google Fonts: Inter -->
     <!--
       性能优化：用 preload + onload 异步加载字体

@@ -1,12 +1,24 @@
 <script setup lang="ts">
 import type { LocationQueryRaw } from "vue-router";
 
+import { loadPostArticle } from "@/content/posts";
 import type { PostSummary } from "@/types/content";
 
 const props = defineProps<{
   post: PostSummary;
   blogQuery: LocationQueryRaw;
 }>();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 文章 Prefetch（鼠标悬停预加载）
+//
+// 原理：当鼠标悬停在文章卡片上时，悄悄下载这篇文章的完整 JSON。
+// 等用户点击时，内容已经在浏览器缓存里了，实现"瞬时打开"效果。
+// 这是 Google Chrome 推荐的性能优化模式，叫 "Signed Exchange" 或简单版 Prefetch。
+// ─────────────────────────────────────────────────────────────────────────────
+function prefetchArticle() {
+  void loadPostArticle(props.post.canonicalSlug);
+}
 </script>
 
 <template>
@@ -14,6 +26,7 @@ const props = defineProps<{
     data-testid="blog-result-card"
     :to="{ name: 'post', params: { slug: props.post.canonicalSlug }, query: props.blogQuery }"
     class="group block rounded-[28px] border border-white/10 bg-white/[0.04] p-5 transition-colors hover:border-cyan-300/35 hover:bg-white/[0.06]"
+    @mouseenter="prefetchArticle"
   >
     <div class="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/45">
       <span>{{ props.post.publishedLabel }}</span>

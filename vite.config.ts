@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
+import { visualizer } from "rollup-plugin-visualizer";
 
 function normalizeBase(value: string | undefined) {
   if (!value) {
@@ -20,7 +21,12 @@ function normalizeBase(value: string | undefined) {
 
 export default defineConfig({
   base: normalizeBase(process.env.VITE_BASE_PATH),
-  plugins: [vue(), tailwindcss()],
+  plugins: [
+    vue(),
+    tailwindcss(),
+    // 构建分析：运行 ANALYZE=true npm run build 会自动打开可视化报告
+    process.env.ANALYZE === "true" ? visualizer({ filename: "dist/stats.html", open: true }) : null,
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

@@ -11,6 +11,7 @@
     "build": "npm run typecheck && vite build",
     "build:with-content": "npm run generate:content && npm run build",
     "preview": "vite preview",
+    "analyze": "ANALYZE=true npm run build",
     "test": "vitest run",
     "test:e2e": "playwright test"
   },
@@ -23,6 +24,7 @@
     "@vue/test-utils": "^2.4.6",
     "isomorphic-dompurify": "^3.9.0",
     "jsdom": "^29.0.1",
+    "rollup-plugin-visualizer": "^7.0.1",
     "sharp": "^0.34.5",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
