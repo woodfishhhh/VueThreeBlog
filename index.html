@@ -15,6 +15,38 @@
     <meta
       name="description"
       content="WOODFISH | Vue-powered immersive 3D blog experience." />
+
+    <!--
+      Content Security Policy (CSP)
+      ==============================
+      CSP 是浏览器安全的第一道防线。它告诉浏览器：
+      - script-src: 只允许从 'self'（同源）和内联脚本加载 JS
+      - style-src: 只允许内联样式和 Google Fonts
+      - font-src: 只允许从 fonts.gstatic.com 加载字体
+      - img-src: 只允许同源图片、data: URL、和 public/ 目录下的资源
+      - connect-src: 只允许同源请求
+      - frame-ancestors: 防止网站被嵌入到 iframe 中（防点击劫持）
+
+      为什么禁止 'unsafe-inline'？
+      -----------------------------
+      如果允许内联脚本（unsafe-inline），攻击者通过 XSS 注入的 <script> 标签就能执行。
+      但 Three.js 和 Vue 的构建产物本身是安全的内联脚本，所以 'unsafe-inline' + 'unsafe-eval'
+      只能作为 fallback。注意：这是静态博客，风险可控。
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval';
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src https://fonts.gstatic.com;
+        img-src 'self' data: blob:;
+        connect-src 'self';
+        frame-ancestors 'none';
+        base-uri 'self';
+        form-action 'self' https://github.com;
+      " />
+
     <title>WOODFISH | VueCubeBlog</title>
   </head>
   <body>

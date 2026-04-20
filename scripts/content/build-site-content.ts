@@ -1,6 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
+import DOMPurify from "isomorphic-dompurify";
 import GithubSlugger from "github-slugger";
 import matter from "gray-matter";
 import yaml from "js-yaml";
@@ -888,7 +889,39 @@ function formatPublishedDate(value: string) {
 
 async function renderArticleHtml(markdown: string) {
   const rendered = await markdownProcessor.process(markdown);
-  return addLazyImageAttributes(String(rendered.value));
+  const rawHtml = String(rendered.value);
+  // ─────────────────────────────────────────────────────────────────────────────
+  // XSS 防护：构建时用 DOMPurify 消毒生成的 HTML
+  //
+  // DOMPurify 配置说明：
+  //   ALLOWED_TAGS:  允许的 HTML 标签黑名单之外的标签会被删除
+  //   ALLOWED_ATTR:  允许的 HTML 属性黑名单之外的属性会被移除
+  //   ALLOW_DATA_ATTR: 允许 data-* 自定义属性（常用于组件库）
+  //
+  // 这样即使 Markdown 里有人埋了 <script> 或 <img onerror=...>
+  // 也会在构建时被清除，不会进入最终产物的 JSON 文件。
+  // ─────────────────────────────────────────────────────────────────────────────
+  const sanitizedHtml = DOMPurify.sanitize(rawHtml, {
+    ALLOWED_TAGS: [
+      "h1", "h2", "h3", "h4", "h5", "h6",
+      "p", "br", "hr",
+      "ul", "ol", "li",
+      "blockquote", "pre", "code",
+      "strong", "em", "del", "s", "mark", "sup", "sub",
+      "a", "img", "figure", "figcaption",
+      "table", "thead", "tbody", "tr", "th", "td",
+      "div", "span",
+      "details", "summary",
+    ],
+    ALLOWED_ATTR: [
+      "href", "src", "alt", "title", "class",
+      "id", "loading", "decoding",
+      "target", "rel", "width", "height",
+      "colspan", "rowspan",
+    ],
+    ALLOW_DATA_ATTR: false,
+  });
+  return addLazyImageAttributes(sanitizedHtml);
 }
 
 function addLazyImageAttributes(html: string) {
