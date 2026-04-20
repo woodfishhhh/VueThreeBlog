@@ -1,6 +1,7 @@
 import { computed } from "vue";
 import { useRoute, useRouter, type LocationQuery, type LocationQueryRaw, type LocationQueryValue } from "vue-router";
 
+import { sanitizeFilterValue, sanitizeSearchQuery } from "@/utils/input-validator";
 import type { BlogFilters, BlogSortKey } from "@/content/blog-hub";
 
 type BlogQueryKey = "q" | "type" | "category" | "tag" | "sort";
@@ -12,28 +13,28 @@ export function useBlogQueryState() {
   const router = useRouter();
 
   const searchQuery = computed({
-    get: () => readQueryValue(route.query.q),
+    get: () => readAndSanitizeQueryValue(route.query.q, "search"),
     set: (value: string) => {
       void replaceQuery({ q: value });
     },
   });
 
   const selectedType = computed({
-    get: () => readQueryValue(route.query.type),
+    get: () => readAndSanitizeQueryValue(route.query.type, "filter"),
     set: (value: string) => {
       void replaceQuery({ type: value });
     },
   });
 
   const selectedCategory = computed({
-    get: () => readQueryValue(route.query.category),
+    get: () => readAndSanitizeQueryValue(route.query.category, "filter"),
     set: (value: string) => {
       void replaceQuery({ category: value });
     },
   });
 
   const selectedTag = computed({
-    get: () => readQueryValue(route.query.tag),
+    get: () => readAndSanitizeQueryValue(route.query.tag, "filter"),
     set: (value: string) => {
       void replaceQuery({ tag: value });
     },
@@ -130,6 +131,18 @@ function readQueryValue(value: LocationQueryValue | LocationQueryValue[]) {
   }
 
   return value?.trim() ?? "";
+}
+
+/**
+ * 读取并校验 query 值（用于 computed getter）
+ * 过滤控制字符并截断到最大长度
+ */
+function readAndSanitizeQueryValue(value: LocationQueryValue | LocationQueryValue[], type: "search" | "filter"): string {
+  const raw = readQueryValue(value);
+  if (type === "search") {
+    return sanitizeSearchQuery(raw);
+  }
+  return sanitizeFilterValue(raw);
 }
 
 function isBlogSortKey(value: string): value is BlogSortKey {

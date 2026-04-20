@@ -1,9 +1,45 @@
+import { isSafeUrl } from "@/utils/input-validator";
+
 export interface FriendLinkIssueInput {
   siteName: string;
   siteUrl: string;
   avatarUrl: string;
   description: string;
   contact: string;
+}
+
+export interface FriendLinkValidationResult {
+  isValid: boolean;
+  invalidFields: (keyof FriendLinkIssueInput)[];
+}
+
+export function validateFriendLinkInput(input: FriendLinkIssueInput): FriendLinkValidationResult {
+  const invalidFields: (keyof FriendLinkIssueInput)[] = [];
+
+  if (!input.siteName.trim()) {
+    invalidFields.push("siteName");
+  }
+
+  if (!isSafeUrl(input.siteUrl)) {
+    invalidFields.push("siteUrl");
+  }
+
+  if (input.avatarUrl && !isSafeUrl(input.avatarUrl)) {
+    invalidFields.push("avatarUrl");
+  }
+
+  if (!input.description.trim()) {
+    invalidFields.push("description");
+  }
+
+  if (!input.contact.trim()) {
+    invalidFields.push("contact");
+  }
+
+  return {
+    isValid: invalidFields.length === 0,
+    invalidFields,
+  };
 }
 
 const FRIEND_LINK_ISSUE_BASE_URL = "https://github.com/woodfishhhh/VueThreeBlog/issues/new";

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, shallowRef } from "vue";
 
-import { buildFriendLinkIssueUrl } from "@/utils/friend-link-issue";
+import { buildFriendLinkIssueUrl, validateFriendLinkInput } from "@/utils/friend-link-issue";
 
 interface FriendLinkApplicationDraft {
   siteName: string;
@@ -22,6 +22,8 @@ const draft = reactive<FriendLinkApplicationDraft>({
 const showReminder = shallowRef(false);
 
 const validationMessage = computed(() => {
+  const result = validateFriendLinkInput(draft);
+
   if (!draft.siteName.trim()) {
     return "请先填写 Site Name。";
   }
@@ -30,8 +32,30 @@ const validationMessage = computed(() => {
     return "请先填写 Site URL。";
   }
 
-  if (!draft.avatarUrl.trim()) {
-    return "请先填写 Avatar URL。";
+  if (!result.invalidFields.includes("siteUrl")) {
+    // URL 格式合法，但额外检查安全性（防 SSRF / 恶意协议）
+    try {
+      const parsed = new URL(draft.siteUrl);
+      if (!["http:", "https:"].includes(parsed.protocol)) {
+        return "Site URL 必须是 http:// 或 https:// 开头的合法地址。";
+      }
+      if (["localhost", "127.0.0.1", "::1", "0.0.0.0"].includes(parsed.hostname)) {
+        return "Site URL 不能使用本地地址。";
+      }
+    } catch {
+      return "Site URL 格式不正确。";
+    }
+  }
+
+  if (draft.avatarUrl.trim() && !result.invalidFields.includes("avatarUrl")) {
+    try {
+      const parsed = new URL(draft.avatarUrl);
+      if (!["http:", "https:"].includes(parsed.protocol)) {
+        return "Avatar URL 必须是 http:// 或 https:// 开头的合法地址。";
+      }
+    } catch {
+      return "Avatar URL 格式不正确。";
+    }
   }
 
   if (!draft.description.trim()) {

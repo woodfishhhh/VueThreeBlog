@@ -4,6 +4,7 @@ import { useRoute, type LocationQueryValue } from "vue-router";
 
 import ArticleContent from "@/components/article/ArticleContent.vue";
 import { loadPostArticle, resolvePostSlug } from "@/content/posts";
+import { sanitizeSlug } from "@/utils/input-validator";
 import type { PostArticle } from "@/types/content";
 
 const route = useRoute();
@@ -33,7 +34,8 @@ const backLinkLabel = computed(() => (hasBlogReturnContext.value ? "Back to Blog
 
 let requestToken = 0;
 
-const incomingSlug = computed(() => String(route.params.slug ?? ""));
+// slug 校验：先 sanitize 再用，防止超长或含控制字符的 slug 引发问题
+const incomingSlug = computed(() => sanitizeSlug(String(route.params.slug ?? "")));
 
 watch(
   incomingSlug,
