@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 .omx/
 dist-manual-deploy.tar.gz
+AGENTS.md
+**/AGENTS.md
