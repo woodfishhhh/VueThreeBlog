@@ -34,9 +34,13 @@ export default defineConfig({
             return "three-core";
           }
 
-          if (id.includes("/node_modules/three/examples/")) {
-            return "three-addons";
-          }
+          if (id.includes("/node_modules/three/examples/jsm/controls/")) {
+          return "three-addons";
+        }
+
+        if (id.includes("/node_modules/three/examples/")) {
+          return "three-examples-unused";
+        }
 
           if (
             id.includes("/node_modules/vue/") ||

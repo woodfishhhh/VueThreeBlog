@@ -6,11 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Google Fonts: Inter -->
+    <!--
+      性能优化：用 preload + onload 异步加载字体
+      ================================
+      rel="preconnect" 提前建立连接（节省 DNS + TCP + TLS 时间）
+      rel="preload"   提前请求字体文件，但不阻塞渲染
+      onload="this.onload=null" 当字体加载完成后切换为正式 stylesheet
+
+      这样：浏览器先渲染（用系统字体）→ 字体下载完 → 无闪烁切换到 Inter
+      相比直接 rel="stylesheet"，FCP（首次内容绘制）提前约 200-500ms
+    -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-      rel="stylesheet" />
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      />
+    </noscript>
 
     <meta
       name="description"

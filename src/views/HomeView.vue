@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed } from "vue";
+  import { computed, defineAsyncComponent } from "vue";
 
   import AuthorPanel from "@/components/home/AuthorPanel.vue";
   import FriendPanel from "@/components/home/FriendPanel.vue";
@@ -9,8 +9,23 @@
   import WorksPanel from "@/components/home/WorksPanel.vue";
   import SiteNav from "@/components/layout/SiteNav.vue";
   import { useHomePanels } from "@/composables/useHomePanels";
-  import ThreeSceneCanvas from "@/components/scene/ThreeSceneCanvas.vue";
   import { useSiteStore } from "@/stores/site";
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Three.js 场景懒加载
+  //
+  // 为什么用 defineAsyncComponent？
+  // Three.js + OrbitControls + GSAP 约 1MB+。
+  // 之前是静态 import，意味着即使访问 /posts/xxx（完全不需要 3D）也要下载这些代码。
+  //
+  // 改成异步 import 后：
+  // - 首页 / 依然会自动加载（HomeView 挂载时就加载）
+  // - /posts/xxx 不会加载任何 Three.js 代码
+  // - 等效减少 ~1MB 的 JS 执行时间
+  // ─────────────────────────────────────────────────────────────────────────────
+  const ThreeSceneCanvas = defineAsyncComponent(
+    () => import("@/components/scene/ThreeSceneCanvas.vue"),
+  );
 
   const siteStore = useSiteStore();
   const currentMode = computed(() => siteStore.mode);

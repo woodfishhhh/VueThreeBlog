@@ -2,7 +2,7 @@
   import { ref, onMounted, onBeforeUnmount, watch } from "vue";
   import { useRouter } from "vue-router";
   import * as THREE from "three";
-  import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+  // OrbitControls 动态引入，不在顶层 import（节省 three-addons chunk 体积）
   import gsap from "gsap";
 
   import { normalizeRotationForTween } from "@/components/scene/hypercube-rotation";
@@ -59,7 +59,7 @@
   let renderer: THREE.WebGLRenderer;
   let scene: THREE.Scene;
   let camera: THREE.PerspectiveCamera;
-  let controls: OrbitControls;
+  let controls: any;
   let animationFrameId: number;
   let hypercubeGroup: THREE.Group;
   let hypercubeLine: THREE.LineSegments;
@@ -102,7 +102,7 @@
   }
 
   // Initialize Three.js
-  onMounted(() => {
+  onMounted(async () => {
     if (!container.value || !canvasRef.value) return;
 
     const width = container.value.clientWidth;
@@ -201,7 +201,8 @@
 
     scene.add(hypercubeGroup);
 
-    // Controls
+    // Controls（OrbitControls 动态 import，不阻塞页面加载）
+    const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls.js");
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableZoom = true;
     controls.enablePan = false;
