@@ -27,7 +27,12 @@ async function main() {
     siteBasePath,
   });
 
-  await writeJson(path.join(generatedRoot, "post-index.json"), siteContent.postIndex);
+  // Emit post-index.json into public/ so the runtime can fetch() it without
+  // pulling the entire payload into a JS chunk. The Vite PWA service worker
+  // already caches `/post-index.*\.json` with NetworkFirst.
+  await writeJson(path.join(publicRoot, "post-index.json"), siteContent.postIndex);
+  // Remove any stale copy that may still live under src/generated.
+  await rm(path.join(generatedRoot, "post-index.json"), { force: true });
   await writeJson(path.join(generatedRoot, "author.json"), siteContent.author);
   await writeJson(path.join(generatedRoot, "friends.json"), siteContent.friendLinks);
 

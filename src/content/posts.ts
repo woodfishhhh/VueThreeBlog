@@ -8,9 +8,19 @@ let postIndexPromise: Promise<PostSummary[]> | null = null;
 
 async function loadPostIndex() {
   if (!postIndexPromise) {
-    postIndexPromise = import("@/generated/post-index.json").then((module) =>
-      normalizeContentPayload(module.default as PostSummary[]),
-    );
+    const indexUrl = `${import.meta.env.BASE_URL}post-index.json`;
+    postIndexPromise = fetch(indexUrl, { credentials: "same-origin" })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to load post index: ${response.status}`);
+        }
+        return response.json() as Promise<PostSummary[]>;
+      })
+      .then((payload) => normalizeContentPayload(payload))
+      .catch((error) => {
+        postIndexPromise = null;
+        throw error;
+      });
   }
 
   return postIndexPromise;

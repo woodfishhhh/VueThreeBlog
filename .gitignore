@@ -23,7 +23,13 @@ dist-ssr
 *.sln
 *.sw?
 .omx/
+.superpowers/
+.playwright-mcp/
 dist-manual-deploy.tar.gz
 AGENTS.md
 **/AGENTS.md
 .claude/settings.local.json
+
+# 历史会话遗留(本地保留可,但不入仓)
+Everything_Claude_Code_使用指南.docx
+generate_ecc_guide.py

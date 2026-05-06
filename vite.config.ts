@@ -141,6 +141,11 @@ export default defineConfig({
     },
   },
   build: {
+    target: "es2020",
+    cssCodeSplit: true,
+    reportCompressedSize: false,
+    chunkSizeWarningLimit: 600,
+    minify: "esbuild",
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -172,6 +177,10 @@ export default defineConfig({
       },
     },
   },
+  esbuild:
+    process.env.NODE_ENV === "production"
+      ? { drop: ["console", "debugger"] }
+      : undefined,
   test: {
     environment: "jsdom",
     globals: true,
