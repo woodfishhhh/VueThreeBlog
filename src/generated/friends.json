@@ -43,7 +43,7 @@
   },
   {
     "name": "程序设计竞赛协会",
-    "link": "http://47.99.92.213",
+    "link": "https://jxufe-acm.cn/",
     "avatar": "/remote-assets/6f00bdbe998e31190629211684dad6b21328ff04.png",
     "descr": "江西财经大学程序设计竞赛协会",
     "className": "友情链接"
@@ -53,6 +53,20 @@
     "link": "https://csec.jxufe.edu.cn",
     "avatar": "/remote-assets/e421ef9772aa03533b0377159f44ebe46754177b.png",
     "descr": "江西财经大学网络安全协会",
+    "className": "友情链接"
+  },
+  {
+    "name": "Cloud09_Space",
+    "link": "http://cloud09.space/",
+    "avatar": "/remote-assets/a7665a1911aa9862b2b28a3da20fd1fc2000876c.png",
+    "descr": "主题风格：受明日方舟：终末地官方网站启发所设计的NotionNext博客主题。主要内容：主要是个人的创作内容和搬运内容",
+    "className": "友情链接"
+  },
+  {
+    "name": "糖糖毬",
+    "link": "https://tantanchugasuki.cn/",
+    "avatar": "/remote-assets/2754ec0e080fba5428d8c804958f88f3ef77632c.avif",
+    "descr": "可爱就对了",
     "className": "友情链接"
   },
   {
