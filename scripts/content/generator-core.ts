@@ -12,8 +12,18 @@ const CONTENT_ASSET_DIR = "content-assets";
 const MAX_REMOTE_REDIRECTS = 5;
 const MAX_REMOTE_ASSET_BYTES = 20 * 1024 * 1024;
 const MAX_REMOTE_DOWNLOAD_ATTEMPTS = 3;
-const INSECURE_TLS_HOSTS = new Set(["www.woodfishhhh.xyz", "woodfishhhh.xyz"]);
-const LOCAL_MIRROR_HOSTS = new Set(["www.woodfishhhh.xyz", "woodfishhhh.xyz"]);
+const INSECURE_TLS_HOSTS = new Set([
+  "www.woodfishhhh.xyz",
+  "woodfishhhh.xyz",
+  "www.woodfish.site",
+  "woodfish.site",
+]);
+const LOCAL_MIRROR_HOSTS = new Set([
+  "www.woodfishhhh.xyz",
+  "woodfishhhh.xyz",
+  "www.woodfish.site",
+  "woodfish.site",
+]);
 const LOCAL_MIRROR_ENV = "VUECUBEBLOG_LOCAL_ASSET_MIRROR_DIRS";
 const DEFAULT_LOCAL_MIRROR_DIRS = [
   path.resolve(process.cwd(), "../Blog/public/images"),
