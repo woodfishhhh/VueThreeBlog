@@ -25,11 +25,11 @@ const validationMessage = computed(() => {
   const result = validateFriendLinkInput(draft);
 
   if (!draft.siteName.trim()) {
-    return "请先填写 Site Name。";
+    return "请先填写站点名称。";
   }
 
   if (!draft.siteUrl.trim()) {
-    return "请先填写 Site URL。";
+    return "请先填写站点链接。";
   }
 
   if (!result.invalidFields.includes("siteUrl")) {
@@ -37,13 +37,13 @@ const validationMessage = computed(() => {
     try {
       const parsed = new URL(draft.siteUrl);
       if (!["http:", "https:"].includes(parsed.protocol)) {
-        return "Site URL 必须是 http:// 或 https:// 开头的合法地址。";
+        return "站点链接必须是 http:// 或 https:// 开头的合法地址。";
       }
       if (["localhost", "127.0.0.1", "::1", "0.0.0.0"].includes(parsed.hostname)) {
-        return "Site URL 不能使用本地地址。";
+        return "站点链接不能使用本地地址。";
       }
     } catch {
-      return "Site URL 格式不正确。";
+      return "站点链接格式不正确。";
     }
   }
 
@@ -51,19 +51,19 @@ const validationMessage = computed(() => {
     try {
       const parsed = new URL(draft.avatarUrl);
       if (!["http:", "https:"].includes(parsed.protocol)) {
-        return "Avatar URL 必须是 http:// 或 https:// 开头的合法地址。";
+        return "头像链接必须是 http:// 或 https:// 开头的合法地址。";
       }
     } catch {
-      return "Avatar URL 格式不正确。";
+      return "头像链接格式不正确。";
     }
   }
 
   if (!draft.description.trim()) {
-    return "请先填写 Short Description。";
+    return "请先填写简短介绍。";
   }
 
   if (!draft.contact.trim()) {
-    return "请先填写 Your Name / Contact。";
+    return "请先填写称呼或联系方式。";
   }
 
   return "";
@@ -98,110 +98,116 @@ function confirmIssueRedirect() {
 </script>
 
 <template>
-  <section class="relative overflow-hidden rounded-[30px] border border-white/12 bg-black/20 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)] md:p-8">
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.11),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(244,114,182,0.12),_transparent_28%)]" />
-    <div class="relative max-w-3xl">
-      <div class="text-[11px] uppercase tracking-[0.36em] text-cyan-200/65">Apply For Link Exchange</div>
-      <h3 class="mt-3 text-3xl font-light text-white md:text-4xl">投递你的星球坐标</h3>
-      <p class="mt-3 text-sm leading-7 text-white/60">
-        填完这张卡片后，我们会先提醒你即将跳到 GitHub issue 页面，再带着预填信息过去完成提交。
+  <section class="friend-application-card">
+    <div class="friend-application-card__pin" aria-hidden="true" />
+    <div class="friend-application-card__inner">
+      <div class="relative max-w-3xl">
+        <div class="text-[11px] tracking-[0.18em] text-[var(--stage-hint-strong)]">提交友链</div>
+        <h3 class="mt-2 text-2xl font-semibold text-[var(--stage-fg)]">投递你的站点</h3>
+        <p class="mt-2 text-sm leading-6 text-[var(--stage-hint)]">
+          填完后会先确认，再打开预填好的 GitHub 提交草稿。
       </p>
     </div>
 
-    <form class="relative mt-8 grid gap-4 md:grid-cols-2" @submit.prevent="handleSubmit">
-      <label class="space-y-2">
-        <span class="text-xs uppercase tracking-[0.22em] text-white/45">Site Name</span>
+      <form class="relative mt-5 grid gap-3 md:grid-cols-2" @submit.prevent="handleSubmit">
+        <label class="space-y-1.5">
+          <span class="text-xs tracking-[0.08em] text-[var(--stage-hint)]">站点名称</span>
         <input
           v-model="draft.siteName"
           data-testid="friend-application-site-name"
-          class="w-full rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-sm text-white outline-none transition-colors focus:border-cyan-300/55"
+            class="friend-application-input"
+          name="siteName"
           type="text"
-          placeholder="Orbiting Notes"
+            placeholder="你的博客名"
         />
       </label>
 
-      <label class="space-y-2">
-        <span class="text-xs uppercase tracking-[0.22em] text-white/45">Site URL</span>
+        <label class="space-y-1.5">
+          <span class="text-xs tracking-[0.08em] text-[var(--stage-hint)]">站点链接</span>
         <input
           v-model="draft.siteUrl"
           data-testid="friend-application-site-url"
-          class="w-full rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-sm text-white outline-none transition-colors focus:border-cyan-300/55"
+            class="friend-application-input"
+          name="siteUrl"
           type="url"
           placeholder="https://example.com"
         />
       </label>
 
-      <label class="space-y-2">
-        <span class="text-xs uppercase tracking-[0.22em] text-white/45">Avatar URL</span>
+        <label class="space-y-1.5">
+          <span class="text-xs tracking-[0.08em] text-[var(--stage-hint)]">头像链接</span>
         <input
           v-model="draft.avatarUrl"
           data-testid="friend-application-avatar-url"
-          class="w-full rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-sm text-white outline-none transition-colors focus:border-cyan-300/55"
+            class="friend-application-input"
+          name="avatarUrl"
           type="url"
           placeholder="https://example.com/avatar.png"
         />
       </label>
 
-      <label class="space-y-2">
-        <span class="text-xs uppercase tracking-[0.22em] text-white/45">Your Name / Contact</span>
+        <label class="space-y-1.5">
+          <span class="text-xs tracking-[0.08em] text-[var(--stage-hint)]">称呼或联系方式</span>
         <input
           v-model="draft.contact"
           data-testid="friend-application-contact"
-          class="w-full rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-sm text-white outline-none transition-colors focus:border-cyan-300/55"
+            class="friend-application-input"
+          name="contact"
           type="text"
           placeholder="@woodfishhhh"
         />
       </label>
 
-      <label class="space-y-2 md:col-span-2">
-        <span class="text-xs uppercase tracking-[0.22em] text-white/45">Short Description</span>
+        <label class="space-y-1.5 md:col-span-2">
+          <span class="text-xs tracking-[0.08em] text-[var(--stage-hint)]">简短介绍</span>
         <textarea
           v-model="draft.description"
           data-testid="friend-application-description"
-          class="min-h-32 w-full rounded-3xl border border-white/10 bg-black/25 px-4 py-3 text-sm leading-7 text-white outline-none transition-colors focus:border-cyan-300/55"
-          placeholder="介绍一下你的网站主题、风格和主要内容。"
+            class="friend-application-input min-h-24 leading-6"
+          name="description"
+            placeholder="写一句网站主题或你想说的话。"
         />
       </label>
 
-      <div class="md:col-span-2 flex flex-col gap-3">
-        <p v-if="validationMessage" class="text-sm text-amber-200/80">
+        <div class="md:col-span-2 flex flex-col gap-3">
+          <p v-if="validationMessage" class="text-sm text-amber-500">
           {{ validationMessage }}
         </p>
 
         <div class="flex flex-wrap items-center gap-3">
           <button
             data-testid="friend-application-submit"
-            class="rounded-full border border-cyan-300/40 bg-cyan-400/10 px-5 py-3 text-sm text-cyan-100 transition-colors hover:border-cyan-200/80 hover:bg-cyan-300/16"
+              class="friend-application-submit"
             type="button"
             @click="handleSubmit"
           >
-            生成 GitHub issue
+              生成提交草稿
           </button>
-          <span class="text-xs uppercase tracking-[0.2em] text-white/35">Pure frontend · no token · issue draft only</span>
+            <span class="text-xs text-[var(--stage-hint)]">仅前端生成，不需要令牌。</span>
         </div>
       </div>
     </form>
 
-    <div
-      v-if="showReminder"
-      data-testid="friend-application-reminder"
-      class="relative mt-6 rounded-[28px] border border-fuchsia-300/25 bg-fuchsia-400/8 p-5"
-    >
-      <div class="text-[11px] uppercase tracking-[0.32em] text-fuchsia-100/70">Reminder</div>
-      <p class="mt-3 text-sm leading-7 text-white/75">
-        即将跳到 GitHub issue 页面提交。确认后会打开预填好的 issue 草稿，你可以在 GitHub 页面做最后检查再正式提交。
+      <div
+        v-if="showReminder"
+        data-testid="friend-application-reminder"
+        class="friend-application-reminder"
+      >
+        <div class="text-[11px] tracking-[0.16em] text-[var(--stage-hint-strong)]">确认跳转</div>
+        <p class="mt-2 text-sm leading-6 text-[var(--stage-hint)]">
+          将打开 GitHub 提交草稿，你可以检查内容后再提交。
       </p>
       <div class="mt-4 flex flex-wrap gap-3">
         <button
           data-testid="friend-application-confirm"
-          class="rounded-full border border-fuchsia-200/45 bg-fuchsia-300/14 px-4 py-2 text-sm text-fuchsia-50 transition-colors hover:border-fuchsia-100/80"
+            class="friend-application-submit"
           type="button"
           @click="confirmIssueRedirect"
         >
           继续前往 GitHub
         </button>
         <button
-          class="rounded-full border border-white/10 px-4 py-2 text-sm text-white/70 transition-colors hover:border-white/30 hover:text-white"
+            class="friend-application-secondary"
           type="button"
           @click="closeReminder"
         >
@@ -209,5 +215,115 @@ function confirmIssueRedirect() {
         </button>
       </div>
     </div>
+    </div>
   </section>
 </template>
+
+<style scoped>
+.friend-application-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(76, 61, 43, 0.16);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 253, 246, 0.62), rgba(244, 235, 217, 0.38)),
+    var(--surface-soft);
+  box-shadow: 0 24px 52px rgba(37, 28, 16, 0.16);
+  backdrop-filter: blur(18px) saturate(155%);
+  -webkit-backdrop-filter: blur(18px) saturate(155%);
+}
+
+.friend-application-card__inner {
+  position: relative;
+  z-index: 1;
+  padding: 1.2rem;
+}
+
+.friend-application-card__pin {
+  position: absolute;
+  top: 0.7rem;
+  left: 50%;
+  z-index: 2;
+  height: 0.6rem;
+  width: 0.6rem;
+  border-radius: 999px;
+  background: rgba(155, 101, 24, 0.42);
+  box-shadow: 0 2px 8px rgba(37, 28, 16, 0.24);
+  transform: translateX(-50%);
+}
+
+.friend-application-input {
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.36);
+  padding: 0.55rem 0.7rem;
+  color: var(--stage-fg);
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.friend-application-input:focus {
+  border-color: var(--border-strong);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.friend-application-submit,
+.friend-application-secondary {
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 0.58rem 0.86rem;
+  font-size: 0.82rem;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+.friend-application-submit {
+  background: rgba(53, 88, 204, 0.12);
+  color: var(--stage-fg);
+}
+
+.friend-application-secondary {
+  color: var(--stage-hint);
+}
+
+.friend-application-submit:hover,
+.friend-application-secondary:hover {
+  border-color: var(--border-strong);
+  color: var(--stage-fg);
+}
+
+.friend-application-reminder {
+  position: relative;
+  margin-top: 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.22);
+  padding: 0.95rem;
+}
+
+:root[data-theme="night"] .friend-application-card {
+  border-color: var(--border-subtle);
+  background:
+    linear-gradient(135deg, rgba(18, 24, 40, 0.38), rgba(8, 12, 24, 0.26)),
+    var(--surface-soft);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(20px) saturate(155%);
+  -webkit-backdrop-filter: blur(20px) saturate(155%);
+}
+
+:root[data-theme="night"] .friend-application-card__pin {
+  background: rgba(138, 178, 255, 0.44);
+}
+
+:root[data-theme="night"] .friend-application-input,
+:root[data-theme="night"] .friend-application-reminder {
+  background: rgba(8, 12, 24, 0.34);
+}
+
+@media (min-width: 768px) {
+  .friend-application-card__inner {
+    padding: 1.35rem;
+  }
+}
+</style>

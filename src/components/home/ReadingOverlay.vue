@@ -51,7 +51,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", handleEsc));
       class="article-overlay-scroll-root fixed inset-0 z-50 overflow-y-auto bg-[rgba(5,5,16,0.34)] p-6 backdrop-blur-sm md:p-20"
     >
       <button
-        class="fixed right-8 top-8 z-[60] flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/50 transition-all hover:border-white/40 hover:text-white"
+        class="fixed right-8 top-8 z-[60] flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--surface-1)] text-[var(--stage-hint)] transition-all hover:border-[var(--border-strong)] hover:text-[var(--stage-fg)]"
         type="button"
         @click="handleClose"
       >

@@ -29,8 +29,12 @@ const {
 } = useBlogQueryState();
 
 const facets = computed(() => buildBlogFacets(props.posts));
-const filteredPosts = computed(() => filterBlogPosts(props.posts, filters.value));
-const sortedPosts = computed(() => sortBlogPosts(filteredPosts.value, sortKey.value));
+const filteredPosts = computed(() =>
+  filterBlogPosts(props.posts, filters.value),
+);
+const sortedPosts = computed(() =>
+  sortBlogPosts(filteredPosts.value, sortKey.value),
+);
 
 function toggleType(value: string) {
   selectedType.value = selectedType.value === value ? "" : value;
@@ -46,35 +50,38 @@ function toggleTag(value: string) {
 </script>
 
 <template>
-  <div class="space-y-6 pb-10 text-left">
+  <div class="space-y-6 text-left">
     <BlogSearchBar
       :query="searchQuery"
+      :sort="sortKey"
       :total-count="props.posts.length"
       :result-count="sortedPosts.length"
       :has-active-filters="hasActiveFilters"
       @update:query="searchQuery = $event"
-      @clear="clearFilters"
-    />
+      @update:sort="sortKey = $event" />
 
-    <div class="grid gap-6 2xl:grid-cols-[minmax(0,2fr)_minmax(18rem,0.95fr)] 2xl:items-start">
-      <div class="min-w-0">
+    <div
+      data-testid="blog-editorial-layout"
+      class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)] lg:items-start xl:gap-8">
+      <div class="order-2 min-w-0 lg:order-none">
         <BlogResults :posts="sortedPosts" :blog-query="activeQuery" />
       </div>
 
-      <div class="self-start 2xl:sticky 2xl:top-6">
+      <div class="order-1 self-start lg:order-none lg:sticky lg:top-0">
         <BlogFilterRail
           :types="facets.types"
           :categories="facets.categories"
           :tags="facets.tags"
+          :total-count="props.posts.length"
+          :result-count="sortedPosts.length"
+          :has-active-filters="hasActiveFilters"
           :selected-type="selectedType"
           :selected-category="selectedCategory"
           :selected-tag="selectedTag"
-          :sort="sortKey"
           @toggle:type="toggleType"
           @toggle:category="toggleCategory"
           @toggle:tag="toggleTag"
-          @update:sort="sortKey = $event"
-        />
+          @clear="clearFilters" />
       </div>
     </div>
   </div>

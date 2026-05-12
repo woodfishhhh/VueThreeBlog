@@ -4,6 +4,22 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (() => {
+        const KEY = "vuecubeblog-theme";
+        const DEFAULT = "night";
+
+        let nextTheme = DEFAULT;
+        try {
+          const stored = window.localStorage.getItem(KEY);
+          if (stored === "night" || stored === "day") nextTheme = stored;
+        } catch {}
+
+        const root = document.documentElement;
+        root.dataset.theme = nextTheme;
+        root.style.colorScheme = nextTheme === "day" ? "light" : "dark";
+      })();
+    </script>
 
     <!--
       性能优化：内联关键 CSS
@@ -16,36 +32,20 @@
       完整 CSS 仍然由 Vite 加载（异步，不阻塞渲染）
     -->
     <style>
+      :root {
+        --stage-bg: #050510;
+        --stage-fg: #f6f8ff;
+      }
+
+      :root[data-theme="day"] {
+        --stage-bg: #fafaf7;
+        --stage-fg: #17191f;
+      }
+
       /* 关键 CSS：防止页面加载时闪烁 */
-      body { background-color: #050510; color: #ffffff; margin: 0; }
+      body { background-color: var(--stage-bg); color: var(--stage-fg); margin: 0; }
       #app { min-height: 100vh; }
     </style>
-
-    <!-- Google Fonts: Inter -->
-    <!--
-      性能优化：用 preload + onload 异步加载字体
-      ================================
-      rel="preconnect" 提前建立连接（节省 DNS + TCP + TLS 时间）
-      rel="preload"   提前请求字体文件，但不阻塞渲染
-      onload="this.onload=null" 当字体加载完成后切换为正式 stylesheet
-
-      这样：浏览器先渲染（用系统字体）→ 字体下载完 → 无闪烁切换到 Inter
-      相比直接 rel="stylesheet"，FCP（首次内容绘制）提前约 200-500ms
-    -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-      />
-    </noscript>
 
     <!-- SEO & Social Meta -->
     <meta
@@ -72,11 +72,11 @@
       ==============================
       CSP 是浏览器安全的第一道防线。它告诉浏览器：
       - script-src: 只允许从 'self'（同源）和内联脚本加载 JS
-      - style-src: 只允许内联样式和 Google Fonts
-      - font-src: 只允许从 fonts.gstatic.com 加载字体
+      - style-src: 只允许同源和内联样式
+      - font-src: 只允许同源字体
       - img-src: 只允许同源图片、data: URL、和 public/ 目录下的资源
       - connect-src: 只允许同源请求
-      - frame-ancestors: 防止网站被嵌入到 iframe 中（防点击劫持）
+      - frame-ancestors: 只能通过 HTTP 响应头配置，不能放在 meta CSP 中
 
       为什么禁止 'unsafe-inline'？
       -----------------------------
@@ -89,11 +89,10 @@
       content="
         default-src 'self';
         script-src 'self' 'unsafe-inline' 'unsafe-eval';
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-        font-src https://fonts.gstatic.com;
+        style-src 'self' 'unsafe-inline';
+        font-src 'self';
         img-src 'self' data: blob:;
         connect-src 'self';
-        frame-ancestors 'none';
         base-uri 'self';
         form-action 'self' https://github.com;
       " />

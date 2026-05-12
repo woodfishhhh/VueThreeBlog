@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import WorksPanel from "@/components/home/WorksPanel.vue";
 
@@ -30,8 +30,30 @@ const works = [
   },
 ];
 
+function installMatchMedia(matches: boolean) {
+  Object.defineProperty(window, "matchMedia", {
+    value: vi.fn().mockImplementation((query: string) => ({
+      addEventListener: vi.fn(),
+      addListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+      matches,
+      media: query,
+      onchange: null,
+      removeEventListener: vi.fn(),
+      removeListener: vi.fn(),
+    })),
+    writable: true,
+  });
+}
+
 describe("WorksPanel", () => {
-  it("renders three works cards with card links, website links, and github badges", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("keeps desktop visual cards out of the DOM because WebGL owns the orbit", () => {
+    installMatchMedia(true);
+
     const wrapper = mount(WorksPanel, {
       props: {
         works,
@@ -39,11 +61,25 @@ describe("WorksPanel", () => {
     });
 
     expect(wrapper.text()).toContain("Selected Works");
-    expect(wrapper.findAll("[data-testid='works-card']")).toHaveLength(3);
-    expect(wrapper.findAll("a[data-kind='card']")).toHaveLength(3);
+    expect(wrapper.find("[data-testid='works-view-orbit']").exists()).toBe(false);
+    expect(wrapper.find("[data-testid='works-view-case']").exists()).toBe(false);
+    expect(wrapper.findAll("[data-testid='works-item']")).toHaveLength(0);
+    expect(wrapper.findAll("a")).toHaveLength(6);
+  });
+
+  it("uses case mode on mobile-sized screens", () => {
+    installMatchMedia(false);
+
+    const wrapper = mount(WorksPanel, {
+      props: {
+        works,
+      },
+    });
+
+    expect(wrapper.find("[data-testid='works-view-orbit']").exists()).toBe(false);
+    expect(wrapper.find("[data-testid='works-view-case']").exists()).toBe(true);
+    expect(wrapper.findAll("[data-testid='works-item']")).toHaveLength(3);
     expect(wrapper.findAll("a[data-kind='live']")).toHaveLength(3);
     expect(wrapper.findAll("a[data-kind='github']")).toHaveLength(3);
-    expect(wrapper.findAll("[data-testid='github-icon']")).toHaveLength(3);
-    expect(wrapper.text()).toContain("进入网站");
   });
 });

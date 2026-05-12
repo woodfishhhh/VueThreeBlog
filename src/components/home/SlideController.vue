@@ -34,16 +34,25 @@ function scrollElement(element: HTMLElement, top: number, behavior: ScrollBehavi
   });
 }
 
+function scrollFriendLinks(top: number) {
+  const friendScroll = document.getElementById("friend-links-container");
+
+  if (!friendScroll) {
+    return false;
+  }
+
+  scrollElement(friendScroll, top, "auto");
+  return true;
+}
+
 function handleWheel(event: WheelEvent) {
   if (siteStore.isFocusing || siteStore.mode === "reading") {
     return;
   }
 
   if (siteStore.mode === "friend") {
-    const friendScroll = document.getElementById("friend-links-container");
-    if (friendScroll) {
+    if (scrollFriendLinks(event.deltaY)) {
       event.preventDefault();
-      scrollElement(friendScroll, event.deltaY);
       return;
     }
   }
@@ -92,10 +101,8 @@ function handleTouchMove(event: TouchEvent) {
   const diff = touchStartY - touchEndY;
 
   if (siteStore.mode === "friend") {
-    const friendScroll = document.getElementById("friend-links-container");
-    if (friendScroll) {
+    if (scrollFriendLinks(diff)) {
       event.preventDefault();
-      scrollElement(friendScroll, diff, "auto");
       touchStartY = touchEndY;
       return;
     }

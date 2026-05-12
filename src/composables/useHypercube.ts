@@ -12,8 +12,14 @@ export interface Hypercube {
   hitMesh: THREE.Mesh;
   update: (delta: number) => void;
   lerpColor: (target: THREE.Color, factor: number) => void;
+  setOpacity: (alpha: number) => void;
   dispose: () => void;
 }
+
+export const HYPERCUBE_PROJECTION_ROTATION_SPEED = {
+  alpha: 0.03,
+  beta: 0.01,
+} as const;
 
 export function generateHypercubeData(): HypercubeData {
   const vertices: number[][] = [];
@@ -69,8 +75,8 @@ export function useHypercube(circleTexture: THREE.CanvasTexture): Hypercube {
   let betaRot = 0;
 
   function update(delta: number) {
-    alphaRot += delta * 0.5;
-    betaRot += delta * 0.3;
+    alphaRot += delta * HYPERCUBE_PROJECTION_ROTATION_SPEED.alpha;
+    betaRot += delta * HYPERCUBE_PROJECTION_ROTATION_SPEED.beta;
     const positions = geometry.attributes.position.array as Float32Array;
     const cosA = Math.cos(alphaRot);
     const sinA = Math.sin(alphaRot);
@@ -98,6 +104,13 @@ export function useHypercube(circleTexture: THREE.CanvasTexture): Hypercube {
     pointsMaterial.color.lerp(target, factor);
   }
 
+  function setOpacity(alpha: number) {
+    const nextOpacity = THREE.MathUtils.clamp(alpha, 0, 1);
+    lineMaterial.transparent = nextOpacity < 1;
+    lineMaterial.opacity = nextOpacity;
+    pointsMaterial.opacity = nextOpacity;
+  }
+
   function dispose() {
     hitGeom.dispose();
     hitMat.dispose();
@@ -106,5 +119,5 @@ export function useHypercube(circleTexture: THREE.CanvasTexture): Hypercube {
     pointsMaterial.dispose();
   }
 
-  return { group, line, points, hitMesh, update, lerpColor, dispose };
+  return { group, line, points, hitMesh, update, lerpColor, setOpacity, dispose };
 }

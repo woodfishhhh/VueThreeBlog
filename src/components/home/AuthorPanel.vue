@@ -12,7 +12,7 @@ const props = defineProps<{
 <template>
   <div
     id="author-scroll-container"
-    class="modern-scrollbar relative h-full w-full overflow-y-auto px-6 py-16 text-white md:px-10"
+    class="modern-scrollbar relative h-full w-full overflow-y-auto px-6 py-16 text-[var(--stage-fg)] md:px-10"
   >
     <!-- 动态波浪背景 -->
     <div class="pointer-events-none fixed inset-0 z-0 opacity-[0.03] mix-blend-screen">

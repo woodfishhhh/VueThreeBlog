@@ -6,17 +6,41 @@ const postModules = import.meta.glob<{ default: PostArticle }>("../generated/pos
 const articlePromiseCache = new Map<string, Promise<PostArticle>>();
 let postIndexPromise: Promise<PostSummary[]> | null = null;
 
+function toPostSummary(article: PostArticle): PostSummary {
+  const { html: _html, toc: _toc, ...summary } = article;
+  return summary;
+}
+
+async function loadPostIndexFromPublicFile() {
+  const indexUrl = `${import.meta.env.BASE_URL}post-index.json`;
+  const response = await fetch(indexUrl, { credentials: "same-origin" });
+  if (!response.ok) {
+    throw new Error(`Failed to load post index: ${response.status}`);
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  if (contentType && !contentType.includes("application/json")) {
+    throw new Error(`Failed to load post index: expected JSON, got ${contentType}`);
+  }
+
+  return normalizeContentPayload((await response.json()) as PostSummary[]);
+}
+
+async function loadPostIndexFromGeneratedPosts() {
+  const posts = await Promise.all(
+    Object.values(postModules).map(async (loadPost) => {
+      const module = await loadPost();
+      return toPostSummary(normalizeContentPayload(module.default));
+    }),
+  );
+
+  return posts.sort((left, right) => Date.parse(right.publishedAt) - Date.parse(left.publishedAt));
+}
+
 async function loadPostIndex() {
   if (!postIndexPromise) {
-    const indexUrl = `${import.meta.env.BASE_URL}post-index.json`;
-    postIndexPromise = fetch(indexUrl, { credentials: "same-origin" })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to load post index: ${response.status}`);
-        }
-        return response.json() as Promise<PostSummary[]>;
-      })
-      .then((payload) => normalizeContentPayload(payload))
+    postIndexPromise = loadPostIndexFromPublicFile()
+      .catch(() => loadPostIndexFromGeneratedPosts())
       .catch((error) => {
         postIndexPromise = null;
         throw error;

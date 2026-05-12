@@ -115,4 +115,92 @@ describe("PostPanel", () => {
     expect(router.currentRoute.value.query).toEqual({});
     expect(wrapper.findAll("[data-testid='blog-result-card']")).toHaveLength(2);
   });
+
+  it("keeps category, tag, and sort behavior wired through the editorial controls", async () => {
+    const router = createTestRouter();
+    await router.push({ name: "blog" });
+    await router.isReady();
+
+    const wrapper = mount(PostPanel, {
+      props: {
+        posts,
+      },
+      global: {
+        plugins: [router],
+      },
+    });
+
+    await wrapper.get("[data-testid='blog-filter-category-工程化']").trigger("click");
+    await flushPromises();
+    await wrapper.get("[data-testid='blog-filter-tag-Node.js']").trigger("click");
+    await flushPromises();
+    await wrapper.get("[data-testid='blog-sort-select']").setValue("oldest");
+    await flushPromises();
+
+    expect(router.currentRoute.value.query.category).toBe("工程化");
+    expect(router.currentRoute.value.query.tag).toBe("Node.js");
+    expect(router.currentRoute.value.query.sort).toBe("oldest");
+    expect(wrapper.findAll("[data-testid='blog-result-card']")).toHaveLength(1);
+    expect(wrapper.get("[data-testid='blog-result-card']").text()).toContain("Node 观测性随记");
+  });
+
+  it("carries the active blog query into article links", async () => {
+    const router = createTestRouter();
+    await router.push({
+      name: "blog",
+      query: {
+        q: "Node",
+        type: "Notes",
+        category: "工程化",
+        tag: "Node.js",
+        sort: "oldest",
+      },
+    });
+    await router.isReady();
+
+    const wrapper = mount(PostPanel, {
+      props: {
+        posts,
+      },
+      global: {
+        plugins: [router],
+      },
+    });
+
+    const href = wrapper.get("[data-testid='blog-result-card']").attributes("href");
+
+    expect(href).toContain("/posts/notes-observability");
+    expect(href).toContain("q=Node");
+    expect(href).toContain("type=Notes");
+    expect(href).toContain("category=%E5%B7%A5%E7%A8%8B%E5%8C%96");
+    expect(href).toContain("tag=Node.js");
+    expect(href).toContain("sort=oldest");
+  });
+
+  it("uses a desktop two-column editorial layout with a sticky filter rail", async () => {
+    const router = createTestRouter();
+    await router.push({ name: "blog" });
+    await router.isReady();
+
+    const wrapper = mount(PostPanel, {
+      props: {
+        posts,
+      },
+      global: {
+        plugins: [router],
+      },
+    });
+
+    expect(wrapper.get("[data-testid='blog-editorial-layout']").classes()).toContain(
+      "lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]",
+    );
+    expect(wrapper.get("[data-testid='blog-filter-rail']").classes()).toContain("lg:max-h-[calc(100vh-7rem)]");
+    expect(wrapper.get("[data-testid='blog-filter-rail']").classes()).toContain("max-h-72");
+    expect(wrapper.get("[data-testid='blog-filter-rail']").classes()).toContain("overflow-y-auto");
+
+    const railWrapper = wrapper.get("[data-testid='blog-filter-rail']").element.parentElement;
+    expect(railWrapper?.className).toContain("lg:sticky");
+    expect(railWrapper?.className).toContain("lg:top-0");
+    expect(railWrapper?.className).not.toContain("lg:top-24");
+  });
 });

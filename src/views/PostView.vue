@@ -3,6 +3,8 @@ import { computed, shallowRef, useTemplateRef, watch } from "vue";
 import { useRoute, type LocationQueryValue } from "vue-router";
 
 import ArticleContent from "@/components/article/ArticleContent.vue";
+import ThemeToggle from "@/components/layout/ThemeToggle.vue";
+import { useTheme } from "@/composables/useTheme";
 import { loadPostArticle, resolvePostSlug } from "@/content/posts";
 import { sanitizeSlug } from "@/utils/input-validator";
 import type { PostArticle } from "@/types/content";
@@ -12,6 +14,7 @@ const pageRoot = useTemplateRef<HTMLElement>("pageRoot");
 const article = shallowRef<PostArticle | null>(null);
 const isLoading = shallowRef(true);
 const resolvedSlug = shallowRef("");
+const { theme, toggleThemeAt } = useTheme();
 const blogReturnQuery = computed(() => {
   const nextQuery: Record<string, string> = {};
 
@@ -73,6 +76,10 @@ function readQueryValue(value: LocationQueryValue | LocationQueryValue[]) {
 
   return value?.trim() ?? "";
 }
+
+function handleToggleTheme(payload: { x: number; y: number }) {
+  toggleThemeAt(payload.x, payload.y);
+}
 </script>
 
 <template>
@@ -89,7 +96,10 @@ function readQueryValue(value: LocationQueryValue | LocationQueryValue[]) {
         <span>{{ backLinkLabel }}</span>
       </RouterLink>
 
-      <span v-if="resolvedSlug" class="article-page__nav-meta">/ posts / {{ resolvedSlug }}</span>
+      <div class="flex items-center gap-2">
+        <span v-if="resolvedSlug" class="article-page__nav-meta">/ posts / {{ resolvedSlug }}</span>
+        <ThemeToggle :theme="theme" @toggle-theme="handleToggleTheme" />
+      </div>
     </div>
 
     <div v-if="isLoading" class="article-page__status" data-testid="post-view-loading">

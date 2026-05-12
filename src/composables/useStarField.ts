@@ -2,6 +2,7 @@ import * as THREE from "three";
 
 export interface StarField {
   group: THREE.Group;
+  setOpacity: (alpha: number) => void;
   update: (delta: number) => void;
   dispose: () => void;
 }
@@ -38,6 +39,10 @@ export function useStarField(circleTexture: THREE.CanvasTexture, count = 5000): 
   points.frustumCulled = false;
   group.add(points);
 
+  function setOpacity(alpha: number) {
+    material.opacity = THREE.MathUtils.clamp(alpha, 0, 1);
+  }
+
   function update(delta: number) {
     group.rotation.x -= delta / 50;
     group.rotation.y -= delta / 60;
@@ -48,5 +53,5 @@ export function useStarField(circleTexture: THREE.CanvasTexture, count = 5000): 
     material.dispose();
   }
 
-  return { group, update, dispose };
+  return { group, setOpacity, update, dispose };
 }

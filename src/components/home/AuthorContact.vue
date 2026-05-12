@@ -8,7 +8,7 @@ const props = defineProps<{
 
 <template>
   <section class="mt-12 flex flex-col items-center text-center">
-    <div class="mb-6 h-24 w-24 rounded-full border border-white/10 md:h-32 md:w-32">
+    <div class="mb-6 h-24 w-24 rounded-full border border-[var(--border-subtle)] md:h-32 md:w-32">
       <img
         :alt="props.author.name"
         :src="props.author.avatar || 'https://pic1.imgdb.cn/item/682f3d1658cb8da5c807b704.jpg'"
@@ -16,10 +16,10 @@ const props = defineProps<{
       />
     </div>
 
-    <h2 class="mb-2 text-3xl font-bold tracking-tighter uppercase text-white/90 md:text-4xl">
+    <h2 class="mb-2 text-3xl font-bold tracking-tighter uppercase text-[var(--stage-fg)] md:text-4xl">
       {{ props.author.name }}
     </h2>
-    <p class="mb-8 text-[10px] font-light uppercase tracking-[0.3em] text-white/40">
+    <p class="mb-8 text-[10px] font-light uppercase tracking-[0.3em] text-[var(--stage-hint)]">
       {{ props.author.title }}
     </p>
 
@@ -28,46 +28,46 @@ const props = defineProps<{
       <span
         v-for="tag in props.author.leftTags"
         :key="tag"
-        class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] text-white/50"
+        class="rounded-full border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-3 py-1 text-[10px] text-[var(--stage-hint)]"
       >
         {{ tag }}
       </span>
       <span
         v-for="tag in props.author.rightTags"
         :key="tag"
-        class="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] text-white/50"
+        class="rounded-full border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-3 py-1 text-[10px] text-[var(--stage-hint)]"
       >
         {{ tag }}
       </span>
     </div>
 
     <!-- 统计数据 -->
-    <div class="mb-8 flex w-full justify-center gap-8 border-y border-white/5 py-6 md:gap-12">
+    <div class="mb-8 flex w-full justify-center gap-8 border-y border-[var(--border-subtle)] py-6 md:gap-12">
       <div class="flex flex-col items-center gap-1">
-        <span class="text-2xl font-light text-white/80">{{ props.author.postsCount }}</span>
-        <span class="text-[9px] uppercase tracking-widest text-white/30">Articles</span>
+        <span class="text-2xl font-light text-[var(--stage-hint-strong)]">{{ props.author.postsCount }}</span>
+        <span class="text-[9px] uppercase tracking-widest text-[var(--stage-hint)]">Articles</span>
       </div>
       <div class="flex flex-col items-center gap-1">
-        <span class="text-2xl font-light text-white/80">{{ props.author.categoriesCount }}</span>
-        <span class="text-[9px] uppercase tracking-widest text-white/30">Categories</span>
+        <span class="text-2xl font-light text-[var(--stage-hint-strong)]">{{ props.author.categoriesCount }}</span>
+        <span class="text-[9px] uppercase tracking-widest text-[var(--stage-hint)]">Categories</span>
       </div>
       <div class="flex flex-col items-center gap-1">
-        <span class="text-2xl font-light text-white/80">{{ props.author.tagsCount }}</span>
-        <span class="text-[9px] uppercase tracking-widest text-white/30">Tags</span>
+        <span class="text-2xl font-light text-[var(--stage-hint-strong)]">{{ props.author.tagsCount }}</span>
+        <span class="text-[9px] uppercase tracking-widest text-[var(--stage-hint)]">Tags</span>
       </div>
     </div>
 
     <!-- 社交链接 -->
     <div class="flex flex-wrap justify-center gap-4">
       <a
-        class="group flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition-colors duration-500 hover:bg-white hover:text-black"
+        class="group flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--stage-hint)] transition-colors duration-500 hover:bg-[var(--stage-fg)] hover:text-[var(--stage-bg)]"
         href="https://github.com/woodfishhhh"
         rel="noopener noreferrer"
         target="_blank"
         title="GitHub"
       >
         <svg
-          class="h-4 w-4 text-white/50 transition-colors group-hover:text-black"
+          class="h-4 w-4 text-[var(--stage-hint)] transition-colors group-hover:text-[var(--stage-bg)]"
           fill="none"
           stroke="currentColor"
           stroke-linecap="round"
@@ -81,14 +81,14 @@ const props = defineProps<{
         </svg>
       </a>
       <a
-        class="group flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition-all duration-500 hover:border-[#FB7299] hover:bg-[#FB7299]"
+        class="group flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--stage-hint)] transition-all duration-500 hover:border-[#FB7299] hover:bg-[#FB7299]"
         href="https://space.bilibili.com/359728114"
         rel="noopener noreferrer"
         target="_blank"
         title="Bilibili"
       >
         <svg
-          class="h-4 w-4 text-white/50 transition-colors group-hover:text-white"
+          class="h-4 w-4 text-[var(--stage-hint)] transition-colors group-hover:text-[var(--stage-fg)]"
           fill="none"
           stroke="currentColor"
           stroke-linecap="round"
@@ -101,14 +101,14 @@ const props = defineProps<{
         </svg>
       </a>
       <a
-        class="group flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition-all duration-500 hover:border-[#12B7F5] hover:bg-[#12B7F5]"
+        class="group flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--stage-hint)] transition-all duration-500 hover:border-[#12B7F5] hover:bg-[#12B7F5]"
         href="https://www.woodfishhhh.xyz/images/af1a055d14e4f7f6eae2886f2865d13.jpg.jpeg?_t=1750312382930"
         rel="noopener noreferrer"
         target="_blank"
         title="QQ"
       >
         <svg
-          class="h-4 w-4 text-white/50 transition-colors group-hover:text-white"
+          class="h-4 w-4 text-[var(--stage-hint)] transition-colors group-hover:text-[var(--stage-fg)]"
           fill="currentColor"
           viewBox="0 0 1024 1024"
         >
@@ -118,14 +118,14 @@ const props = defineProps<{
         </svg>
       </a>
       <a
-        class="group flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition-all duration-500 hover:border-[#07C160] hover:bg-[#07C160]"
+        class="group flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--stage-hint)] transition-all duration-500 hover:border-[#07C160] hover:bg-[#07C160]"
         href="https://www.woodfishhhh.xyz/images/f59723db9159310b6056abe8341f5d7.jpg.jpeg?_t=1750312263368"
         rel="noopener noreferrer"
         target="_blank"
         title="WeChat"
       >
         <svg
-          class="h-4 w-4 text-white/50 transition-colors group-hover:text-white"
+          class="h-4 w-4 text-[var(--stage-hint)] transition-colors group-hover:text-[var(--stage-fg)]"
           fill="currentColor"
           viewBox="0 0 1024 1024"
         >
@@ -135,14 +135,14 @@ const props = defineProps<{
         </svg>
       </a>
       <a
-        class="group flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition-colors duration-500 hover:bg-red-500 hover:text-black"
+        class="group flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--stage-hint)] transition-colors duration-500 hover:bg-red-500 hover:text-[var(--stage-bg)]"
         href="https://www.woodfishhhh.xyz/images/d8d58d2f2c7ac5790fd37f388da41db4.png?_t=1759286665402"
         rel="noopener noreferrer"
         target="_blank"
         title="Email"
       >
         <svg
-          class="h-4 w-4 text-white/50 transition-colors group-hover:text-black"
+          class="h-4 w-4 text-[var(--stage-hint)] transition-colors group-hover:text-[var(--stage-bg)]"
           fill="none"
           stroke="currentColor"
           stroke-linecap="round"
@@ -155,14 +155,14 @@ const props = defineProps<{
         </svg>
       </a>
       <a
-        class="group relative flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition-all duration-500 hover:border-white hover:bg-black"
+        class="group relative flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-subtle)] text-[var(--stage-hint)] transition-all duration-500 hover:border-[var(--border-strong)] hover:bg-[var(--surface-2)]"
         href="https://www.douyin.com/user/MS4wLjABAAAAgbOrIhdi7Rl5RfaQ3fE3i7c2WnyR3zEOyLiK2Cjtcqk?from_tab_name=main"
         rel="noopener noreferrer"
         target="_blank"
         title="Douyin"
       >
         <svg
-          class="relative z-10 h-4 w-4 text-white/50 transition-colors group-hover:text-white"
+          class="relative z-10 h-4 w-4 text-[var(--stage-hint)] transition-colors group-hover:text-[var(--stage-fg)]"
           fill="currentColor"
           viewBox="0 0 1024 1024"
         >
