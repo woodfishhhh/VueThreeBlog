@@ -12,14 +12,13 @@ const props = defineProps<{
 interface FriendCardLayout {
   id: string;
   link: FriendLinkData;
-  minHeight: number;
   rotateDeg: number;
   weight: number;
 }
 
 const layoutCards = shallowRef<FriendCardLayout[]>([]);
 const scrollerRef = shallowRef<HTMLElement | null>(null);
-const segmentElements = shallowRef<Array<HTMLElement | null>>([]);
+const columnSegmentElements = shallowRef<Array<Array<HTMLElement | null>>>([]);
 
 const waterfallColumns = computed(() => splitIntoColumns(layoutCards.value));
 const loopSegments = [
@@ -67,15 +66,14 @@ onBeforeUnmount(() => {
 function createCardLayout(links: FriendLinkData[]) {
   return shuffleLinks(links).map((link, index) => {
     const descriptionLength = link.descr?.length ?? 0;
-    const randomBucket = Math.floor(Math.random() * 3);
-    const baseHeight = 230 + Math.min(Math.floor(descriptionLength / 14), 7) * 12;
+    const estimatedDescriptionLines = Math.max(1, Math.ceil(descriptionLength / 24));
+    const estimatedHeight = 124 + estimatedDescriptionLines * 28;
 
     return {
       id: `${link.name}-${link.link}-${index}`,
       link,
-      minHeight: baseHeight + randomBucket * 18,
       rotateDeg: Number(((Math.random() - 0.5) * 4.8).toFixed(2)),
-      weight: baseHeight + randomBucket * 18,
+      weight: estimatedHeight,
     };
   });
 }
@@ -104,22 +102,30 @@ function splitIntoColumns(cards: FriendCardLayout[]) {
   return columns;
 }
 
-function setSegmentRef(
+function setColumnSegmentRef(
   element: Element | ComponentPublicInstance | null,
-  index: number,
+  columnIndex: number,
+  segmentIndex: number,
 ) {
-  segmentElements.value[index] = element instanceof HTMLElement ? element : null;
+  columnSegmentElements.value[columnIndex] ??= [];
+  columnSegmentElements.value[columnIndex][segmentIndex] = element instanceof HTMLElement ? element : null;
 }
 
 function getSegmentDistance() {
-  const firstSegment = segmentElements.value[0];
-  const middleSegment = segmentElements.value[1];
+  const distances = columnSegmentElements.value
+    .map((segments) => {
+      const firstSegment = segments[0];
+      const middleSegment = segments[1];
 
-  if (!firstSegment || !middleSegment) {
-    return 0;
-  }
+      if (!firstSegment || !middleSegment) {
+        return 0;
+      }
 
-  return middleSegment.offsetTop - firstSegment.offsetTop;
+      return middleSegment.offsetTop - firstSegment.offsetTop;
+    })
+    .filter((distance) => distance > 0);
+
+  return distances.length > 0 ? Math.min(...distances) : 0;
 }
 
 function scheduleLoopReset() {
@@ -199,32 +205,36 @@ function handleLoopScroll() {
     class="friend-loop-scroller"
     @scroll="handleLoopScroll"
   >
-    <div class="friend-loop-stack">
+    <div data-testid="friend-loop-stack" class="friend-loop-stack">
       <section
-        v-for="(segment, segmentIndex) in loopSegments"
-        :key="segment.id"
-        :ref="(element) => setSegmentRef(element, segmentIndex)"
-        :aria-hidden="segment.ariaHidden ? 'true' : undefined"
-        :data-segment="segment.label"
-        data-testid="friend-loop-segment"
-        class="friend-loop-segment"
+        v-for="(column, columnIndex) in waterfallColumns"
+        :key="columnIndex"
+        data-testid="friend-loop-column"
+        class="friend-loop-column"
       >
-        <TransitionGroup
-          v-for="(column, columnIndex) in waterfallColumns"
-          :key="`${segment.id}-${columnIndex}`"
-          name="friend-card-list"
-          tag="div"
-          class="friend-waterfall-column"
+        <div
+          v-for="(segment, segmentIndex) in loopSegments"
+          :key="segment.id"
+          :ref="(element) => setColumnSegmentRef(element, columnIndex, segmentIndex)"
+          :aria-hidden="segment.ariaHidden ? 'true' : undefined"
+          :data-segment="segment.label"
+          data-testid="friend-loop-segment"
+          class="friend-loop-segment"
         >
-          <FriendLinkCard
-            v-for="card in column"
-            :key="`${segment.id}-${card.id}`"
-            :link="card.link"
-            :focusable="!segment.ariaHidden"
-            :min-height="card.minHeight"
-            :rotate-deg="card.rotateDeg"
-          />
-        </TransitionGroup>
+          <TransitionGroup
+            name="friend-card-list"
+            tag="div"
+            class="friend-waterfall-column"
+          >
+            <FriendLinkCard
+              v-for="card in column"
+              :key="`${segment.id}-${card.id}`"
+              :link="card.link"
+              :focusable="!segment.ariaHidden"
+              :rotate-deg="card.rotateDeg"
+            />
+          </TransitionGroup>
+        </div>
       </section>
     </div>
   </div>
@@ -247,14 +257,20 @@ function handleLoopScroll() {
 
 .friend-loop-stack {
   display: grid;
-  gap: 1.25rem;
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.05rem;
+}
+
+.friend-loop-column {
+  display: grid;
+  align-content: start;
+  gap: 1.05rem;
+  padding-block: 0.35rem;
 }
 
 .friend-loop-segment {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.05rem;
-  padding-block: 0.35rem;
+  min-width: 0;
 }
 
 .friend-waterfall-column {
@@ -282,8 +298,11 @@ function handleLoopScroll() {
     padding: 0.5rem 0.9rem 2.2rem;
   }
 
-  .friend-loop-segment {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  .friend-loop-stack {
+    gap: 1.25rem;
+  }
+
+  .friend-loop-column {
     gap: 1.25rem;
   }
 

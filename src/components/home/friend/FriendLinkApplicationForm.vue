@@ -21,6 +21,10 @@ const draft = reactive<FriendLinkApplicationDraft>({
 
 const showReminder = shallowRef(false);
 
+const hasDraftStarted = computed(() =>
+  Object.values(draft).some((value) => value.trim().length > 0),
+);
+
 const validationMessage = computed(() => {
   const result = validateFriendLinkInput(draft);
 
@@ -98,8 +102,17 @@ function confirmIssueRedirect() {
 </script>
 
 <template>
-  <section class="friend-application-card">
+  <section
+    data-testid="friend-application-card"
+    class="friend-application-card"
+    :class="{ 'is-writing': hasDraftStarted, 'is-confirming': showReminder }"
+  >
+    <div data-testid="friend-application-shine" class="friend-application-card__shine" aria-hidden="true" />
+    <div class="friend-application-card__trail friend-application-card__trail--one" data-testid="friend-application-trail" aria-hidden="true" />
+    <div class="friend-application-card__trail friend-application-card__trail--two" data-testid="friend-application-trail" aria-hidden="true" />
+    <div class="friend-application-card__trail friend-application-card__trail--three" data-testid="friend-application-trail" aria-hidden="true" />
     <div class="friend-application-card__pin" aria-hidden="true" />
+    <div data-testid="friend-application-stamp" class="friend-application-card__stamp" aria-hidden="true">LINK</div>
     <div class="friend-application-card__inner">
       <div class="relative max-w-3xl">
         <div class="text-[11px] tracking-[0.18em] text-[var(--stage-hint-strong)]">提交友链</div>
@@ -231,25 +244,128 @@ function confirmIssueRedirect() {
   box-shadow: 0 24px 52px rgba(37, 28, 16, 0.16);
   backdrop-filter: blur(18px) saturate(155%);
   -webkit-backdrop-filter: blur(18px) saturate(155%);
+  transform: translateY(0) rotate(-0.5deg);
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: friend-application-arrive 540ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  isolation: isolate;
+}
+
+.friend-application-card:hover,
+.friend-application-card:focus-within {
+  border-color: var(--border-strong);
+  box-shadow: 0 30px 68px rgba(37, 28, 16, 0.22);
+  transform: translateY(-5px) rotate(0.35deg);
+}
+
+.friend-application-card.is-writing {
+  box-shadow:
+    0 30px 68px rgba(37, 28, 16, 0.2),
+    inset 0 0 0 1px rgba(53, 88, 204, 0.12);
 }
 
 .friend-application-card__inner {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   padding: 1.2rem;
+}
+
+.friend-application-card__shine {
+  position: absolute;
+  inset: -45% -80%;
+  z-index: 2;
+  background: linear-gradient(110deg, transparent 34%, rgba(255, 255, 255, 0.42) 48%, transparent 62%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-34%) rotate(12deg);
+}
+
+.friend-application-card:hover .friend-application-card__shine,
+.friend-application-card:focus-within .friend-application-card__shine {
+  animation: friend-application-shine 1100ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.friend-application-card__trail {
+  position: absolute;
+  z-index: 0;
+  height: 1px;
+  width: 38%;
+  background: linear-gradient(90deg, transparent, rgba(53, 88, 204, 0.28), transparent);
+  opacity: 0.32;
+  pointer-events: none;
+  transform-origin: left center;
+}
+
+.friend-application-card__trail--one {
+  top: 18%;
+  left: -16%;
+  transform: rotate(-12deg);
+  animation: friend-application-trail 5.6s ease-in-out infinite;
+}
+
+.friend-application-card__trail--two {
+  top: 46%;
+  right: -18%;
+  transform: rotate(9deg);
+  animation: friend-application-trail 6.4s ease-in-out 700ms infinite reverse;
+}
+
+.friend-application-card__trail--three {
+  bottom: 16%;
+  left: 10%;
+  transform: rotate(16deg);
+  animation: friend-application-trail 7.2s ease-in-out 1300ms infinite;
 }
 
 .friend-application-card__pin {
   position: absolute;
   top: 0.7rem;
   left: 50%;
-  z-index: 2;
+  z-index: 4;
   height: 0.6rem;
   width: 0.6rem;
   border-radius: 999px;
   background: rgba(155, 101, 24, 0.42);
   box-shadow: 0 2px 8px rgba(37, 28, 16, 0.24);
   transform: translateX(-50%);
+  transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.friend-application-card:hover .friend-application-card__pin,
+.friend-application-card:focus-within .friend-application-card__pin {
+  transform: translateX(-50%) translateY(-1px) scale(1.16);
+  animation: friend-application-pin 520ms ease;
+}
+
+.friend-application-card__stamp {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 4;
+  border: 1px solid rgba(155, 101, 24, 0.34);
+  border-radius: 8px;
+  padding: 0.22rem 0.42rem;
+  color: rgba(155, 101, 24, 0.66);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  opacity: 0.62;
+  transform: rotate(8deg) scale(0.94);
+  transition:
+    color 220ms ease,
+    opacity 220ms ease,
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.friend-application-card.is-writing .friend-application-card__stamp,
+.friend-application-card:hover .friend-application-card__stamp,
+.friend-application-card:focus-within .friend-application-card__stamp {
+  color: var(--accent);
+  opacity: 0.9;
+  transform: rotate(-4deg) scale(1);
 }
 
 .friend-application-input {
@@ -261,12 +377,18 @@ function confirmIssueRedirect() {
   color: var(--stage-fg);
   font-size: 0.82rem;
   outline: none;
-  transition: border-color 160ms ease, background 160ms ease;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
 .friend-application-input:focus {
   border-color: var(--border-strong);
   background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(53, 88, 204, 0.1);
+  transform: translateY(-1px);
 }
 
 .friend-application-submit,
@@ -281,6 +403,7 @@ function confirmIssueRedirect() {
 .friend-application-submit {
   background: rgba(53, 88, 204, 0.12);
   color: var(--stage-fg);
+  box-shadow: 0 10px 26px rgba(53, 88, 204, 0.08);
 }
 
 .friend-application-secondary {
@@ -291,6 +414,10 @@ function confirmIssueRedirect() {
 .friend-application-secondary:hover {
   border-color: var(--border-strong);
   color: var(--stage-fg);
+}
+
+.friend-application-submit:hover {
+  animation: friend-application-stamp 340ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .friend-application-reminder {
@@ -312,8 +439,18 @@ function confirmIssueRedirect() {
   -webkit-backdrop-filter: blur(20px) saturate(155%);
 }
 
+:root[data-theme="night"] .friend-application-card:hover,
+:root[data-theme="night"] .friend-application-card:focus-within {
+  box-shadow: 0 32px 82px rgba(0, 0, 0, 0.36);
+}
+
 :root[data-theme="night"] .friend-application-card__pin {
   background: rgba(138, 178, 255, 0.44);
+}
+
+:root[data-theme="night"] .friend-application-card__stamp {
+  border-color: rgba(138, 178, 255, 0.28);
+  color: rgba(138, 178, 255, 0.62);
 }
 
 :root[data-theme="night"] .friend-application-input,
@@ -324,6 +461,91 @@ function confirmIssueRedirect() {
 @media (min-width: 768px) {
   .friend-application-card__inner {
     padding: 1.35rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .friend-application-card,
+  .friend-application-card__pin,
+  .friend-application-card__shine,
+  .friend-application-card__stamp,
+  .friend-application-card__trail,
+  .friend-application-submit:hover {
+    animation: none;
+    transition: none;
+  }
+
+  .friend-application-card,
+  .friend-application-card:hover,
+  .friend-application-card:focus-within {
+    transform: none;
+  }
+}
+
+@keyframes friend-application-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(18px) rotate(-1.8deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(-0.5deg);
+  }
+}
+
+@keyframes friend-application-shine {
+  0% {
+    opacity: 0;
+    transform: translateX(-34%) rotate(12deg);
+  }
+
+  32% {
+    opacity: 0.64;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(34%) rotate(12deg);
+  }
+}
+
+@keyframes friend-application-pin {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+
+  38% {
+    rotate: -9deg;
+  }
+
+  70% {
+    rotate: 7deg;
+  }
+}
+
+@keyframes friend-application-stamp {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  52% {
+    transform: translateY(2px) scale(0.96);
+  }
+}
+
+@keyframes friend-application-trail {
+  0%,
+  100% {
+    opacity: 0.18;
+    translate: 0 0;
+  }
+
+  50% {
+    opacity: 0.44;
+    translate: 10px -2px;
   }
 }
 </style>

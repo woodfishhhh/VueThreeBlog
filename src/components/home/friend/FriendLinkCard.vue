@@ -7,12 +7,10 @@ const props = withDefaults(
   defineProps<{
     link: FriendLinkData;
     focusable?: boolean;
-    minHeight?: number;
     rotateDeg?: number;
   }>(),
   {
     focusable: true,
-    minHeight: 260,
     rotateDeg: 0,
   },
 );
@@ -28,7 +26,6 @@ const domain = computed(() => {
 });
 
 const cardStyle = computed<Record<string, string>>(() => ({
-  "--card-min-height": `${props.minHeight}px`,
   "--card-rotate": `${props.rotateDeg}deg`,
   "--tilt-x": "0deg",
   "--tilt-y": "0deg",
@@ -100,7 +97,7 @@ function resetTilt(event: PointerEvent) {
         </div>
       </div>
 
-      <p class="mt-6 text-[15px] leading-7 text-[var(--stage-hint)]">
+      <p class="friend-link-card__description mt-6 text-[15px] leading-7 text-[var(--stage-hint)]">
         {{ props.link.descr || "新的博客坐标，等待下一次相遇。" }}
       </p>
     </div>
@@ -111,7 +108,6 @@ function resetTilt(event: PointerEvent) {
 .friend-link-card {
   position: relative;
   display: block;
-  min-height: var(--card-min-height);
   overflow: hidden;
   border: 1px solid rgba(76, 61, 43, 0.16);
   border-radius: 8px;
@@ -150,10 +146,13 @@ function resetTilt(event: PointerEvent) {
   position: relative;
   z-index: 1;
   display: flex;
-  height: 100%;
   flex-direction: column;
   padding: 1.25rem;
   transform: translateZ(24px);
+}
+
+.friend-link-card__description {
+  overflow-wrap: anywhere;
 }
 
 .friend-link-card__pin {
