@@ -319,6 +319,13 @@ export async function resolveAssetReference(
 }
 
 async function localizeMissingLocalAsset(reference: string, options: ResolveAssetReferenceOptions) {
+  if (options.reuseGeneratedAssets && options.canonicalSlug) {
+    const reusedAsset = await reuseExistingContentAsset(reference, options.publicDir, options.siteBasePath);
+    if (reusedAsset) {
+      return reusedAsset;
+    }
+  }
+
   const mirrorSourcePath = await resolveLocalMirrorSource(reference);
   if (mirrorSourcePath && (isLegacyAbsoluteAssetReference(reference) || !options.canonicalSlug)) {
     return copyAbsoluteAsset(
@@ -342,6 +349,33 @@ async function localizeMissingLocalAsset(reference: string, options: ResolveAsse
 
   if (isLegacyAbsoluteAssetReference(reference)) {
     return createMissingImagePlaceholder(reference, options.publicDir, options.siteBasePath);
+  }
+
+  return null;
+}
+
+async function reuseExistingContentAsset(reference: string, publicDir: string, siteBasePath?: string) {
+  const safeRelativePath = toSafeRelativeAssetPath(reference);
+  if (!safeRelativePath) {
+    return null;
+  }
+
+  const contentAssetsRoot = path.join(publicDir, CONTENT_ASSET_DIR);
+  let entries: { name: string; isDirectory: () => boolean }[];
+  try {
+    entries = await readdir(contentAssetsRoot, { withFileTypes: true });
+  } catch {
+    return null;
+  }
+
+  const candidateEntries = entries
+    .filter((entry) => entry.isDirectory())
+    .sort((left, right) => left.name.localeCompare(right.name));
+
+  for (const entry of candidateEntries) {
+    if (await fileExists(path.join(contentAssetsRoot, entry.name, ...safeRelativePath.split("/")))) {
+      return toPublicAssetUrl(siteBasePath, CONTENT_ASSET_DIR, entry.name, safeRelativePath);
+    }
   }
 
   return null;

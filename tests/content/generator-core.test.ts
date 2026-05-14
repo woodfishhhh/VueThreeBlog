@@ -123,6 +123,28 @@ describe("generator-core", () => {
     expect(await readFile(existingTarget, "utf8")).toBe("optimized-image");
   });
 
+  it("can reuse an existing generated asset when an old post source image is missing", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-missing-reuse-"));
+    const sourceDir = path.join(tempRoot, "source");
+    const publicDir = path.join(tempRoot, "public");
+    const existingTarget = path.join(publicDir, "content-assets", "legacy-slug", "assets", "missing.png");
+    const sourceFilePath = path.join(sourceDir, "Missing Reuse.md");
+
+    await mkdir(sourceDir, { recursive: true });
+    await mkdir(path.dirname(existingTarget), { recursive: true });
+    await writeFile(existingTarget, "optimized-image");
+
+    const result = await rewriteMarkdownAssetPaths("![demo](assets/missing.png)", {
+      sourceFilePath,
+      canonicalSlug: "new-slug",
+      publicDir,
+      reuseGeneratedAssets: true,
+    });
+
+    expect(result.markdown).toContain("/content-assets/legacy-slug/assets/missing.png");
+    expect(await readFile(existingTarget, "utf8")).toBe("optimized-image");
+  });
+
   it("downloads remote markdown images into local static assets", async () => {
     const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-remote-"));
     const sourceDir = path.join(tempRoot, "source");
