@@ -3,7 +3,7 @@ contentinfo:
   title: 是一名 学生 / ACMer / 前端开发 / 电子音乐制作人
 
 hero:
-  image: /asset/f725f7fc67d79930b505550749765877.jpg
+  image: /asset/f725f7fc67d79930b505550749765877.webp
 
 poem:
   title: 卜算子·勤
@@ -48,28 +48,34 @@ skills:
       img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/webpack/webpack-original.svg
     - title: Vite
       color: "#646cff"
-      img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg
+      img: https://cdn.jsdelivr.net/gh/PKief/vscode-material-icon-theme@main/icons/vite.svg
     - title: Vitest
       color: "#fcc72b"
-      img: /author-assets/vitest.svg
+      img: https://cdn.jsdelivr.net/gh/PKief/vscode-material-icon-theme@main/icons/vitest.svg
     - title: Tailwind CSS
       color: "#06b6d4"
       img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg
     - title: Three.js
       color: "#ffffff"
-      img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/threejs/threejs-original.svg
+      img: https://api.iconify.design/devicon:threejs.svg
     - title: FL Studio
       color: "#f37c20"
-      img: https://upload-bbs.miyoushe.com/upload/2025/07/29/125766904/cdb36a005d1829d94f50161f09ebdf0b_2613950661444362594.png
+      img: https://images.icon-icons.com/195/PNG/256/FL_Studio_23524.png
+    - title: Less
+      color: "#1d365d"
+      img: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/less/less-plain-wordmark.svg
+    - title: SCSS
+      color: "#cc6699"
+      img: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sass/sass-original.svg
     - title: C
       color: "#a8b9cc"
-      img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg
+      img: https://api.iconify.design/logos:c.svg
     - title: C++
       color: "#00599c"
       img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg
     - title: Pinia
       color: "#ffe56c"
-      img: /author-assets/pinia.svg
+      img: https://api.iconify.design/logos:pinia.svg
     - title: TypeScript
       color: "#3178c6"
       img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg
@@ -91,6 +97,36 @@ skills:
     - title: Git
       color: "#f05032"
       img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg
+    - title: Redux
+      color: "#764abc"
+      img: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redux/redux-original.svg
+    - title: Kubernetes
+      color: "#326ce5"
+      img: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-plain.svg
+    - title: MATLAB
+      color: "#0076a8"
+      img: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matlab/matlab-original.svg
+    - title: shadcn/ui
+      color: "#000000"
+      img: https://api.iconify.design/simple-icons:shadcnui.svg
+    - title: Playwright
+      color: "#2eab5c"
+      img: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/playwright/playwright-original.svg
+    - title: PostgreSQL
+      color: "#336791"
+      img: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg
+    - title: Storybook
+      color: "#ff4785"
+      img: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/storybook/storybook-original.svg
+    - title: GSAP
+      color: "#88ce02"
+      img: /asset/gsap.svg
+    - title: Matter.js
+      color: "#89A7B1"
+      img: https://api.iconify.design/simple-icons:matterdotjs.svg
+    - title: GitHub Actions
+      color: "#2088FF"
+      img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg
 
 oneself:
   location: 中国，南昌市

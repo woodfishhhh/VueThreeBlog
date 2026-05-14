@@ -40,6 +40,16 @@ const universityProgress = computed(() => {
 const universityProgressLabel = computed(
   () => `${universityProgress.value.toFixed(1)}%`,
 );
+
+const timeHour = new Date().getHours();
+const greeting = computed(() => {
+  if (timeHour < 6) return "夜深了 🌙，注意休息";
+  if (timeHour < 12) return "早上好 ☀️，元气满满";
+  if (timeHour < 14) return "中午好 ☀️，记得午休";
+  if (timeHour < 18) return "下午好 ☕，喝杯咖啡";
+  if (timeHour < 22) return "晚上好 🌆，放松一下";
+  return "夜深了 🌙，早点休息";
+});
 </script>
 
 <template>
@@ -54,8 +64,7 @@ const universityProgressLabel = computed(
         <div class="author-about__layout">
           <div class="author-about__identity">
             <div data-author-reveal>
-              <h2 class="author-about__name">{{ props.author.name }}</h2>
-              <p class="author-about__title">{{ props.author.title }}</p>
+              <h2 class="author-about__greeting">{{ greeting }}</h2>
             </div>
 
             <dl class="author-about__grid">
@@ -123,19 +132,12 @@ const universityProgressLabel = computed(
   color: var(--stage-hint);
 }
 
-.author-about__name {
+.author-about__greeting {
   margin: 0;
-  font-size: 4.4rem;
-  line-height: 0.9;
+  font-size: 2.8rem;
+  line-height: 1.1;
+  font-weight: 700;
   color: var(--stage-fg);
-}
-
-.author-about__title {
-  max-width: 34rem;
-  margin: 1rem 0 0;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--stage-hint-strong);
 }
 
 .author-about__grid {
@@ -229,4 +231,3 @@ const universityProgressLabel = computed(
   }
 }
 </style>
-

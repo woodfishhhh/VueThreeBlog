@@ -1,7 +1,7 @@
 {
   "name": "木鱼",
   "title": "是一名 学生 / ACMer / 前端开发 / 电子音乐制作人",
-  "heroImage": "/asset/f725f7fc67d79930b505550749765877.jpg",
+  "heroImage": "/asset/f725f7fc67d79930b505550749765877.webp",
   "postsCount": 101,
   "tagsCount": 283,
   "categoriesCount": 32,
@@ -59,12 +59,12 @@
     {
       "title": "Vite",
       "color": "#646cff",
-      "img": "/remote-assets/ce7ccf21424694d67794b1774d707fc5e4e23dbc.svg"
+      "img": "/remote-assets/11d81b29e2f4a4bd013b01f63c22dda5737a9f5d.svg"
     },
     {
       "title": "Vitest",
       "color": "#fcc72b",
-      "img": "/author-assets/vitest.svg"
+      "img": "/remote-assets/938b72dfc2844557e7f1f67f8dc966e21d64a3c9.svg"
     },
     {
       "title": "Tailwind CSS",
@@ -74,17 +74,27 @@
     {
       "title": "Three.js",
       "color": "#ffffff",
-      "img": "/remote-assets/31c491e06686b4def778f225093aae81e62876b3.svg"
+      "img": "/remote-assets/1d45e27d8501242fa3bb488364e219417f7d3a8f.svg"
     },
     {
       "title": "FL Studio",
       "color": "#f37c20",
-      "img": "/remote-assets/2fd6513e5e7407540d0bedd48b86454d7cf32000.png"
+      "img": "/remote-assets/480078fdab2c95683060d0212227e48eefef14f5.png"
+    },
+    {
+      "title": "Less",
+      "color": "#1d365d",
+      "img": "/remote-assets/d6a0d37d5a4edb6c1ee0c48bf423797ba25aaed8.svg"
+    },
+    {
+      "title": "SCSS",
+      "color": "#cc6699",
+      "img": "/remote-assets/703b6ab96980ae6093ccca7c4928a55dba15e54b.svg"
     },
     {
       "title": "C",
       "color": "#a8b9cc",
-      "img": "/remote-assets/93e7ac814940c9e9f5a585c092f8a16944f8142c.svg"
+      "img": "/remote-assets/1329930c647581f5e38816ff8b286526aa68b3d8.svg"
     },
     {
       "title": "C++",
@@ -94,7 +104,7 @@
     {
       "title": "Pinia",
       "color": "#ffe56c",
-      "img": "/author-assets/pinia.svg"
+      "img": "/remote-assets/fa626c985b79ce335543635c95ac88721aa48abf.svg"
     },
     {
       "title": "TypeScript",
@@ -130,6 +140,56 @@
       "title": "Git",
       "color": "#f05032",
       "img": "/remote-assets/56bfb128472d4a65b8886958bb690bb567afe27d.svg"
+    },
+    {
+      "title": "Redux",
+      "color": "#764abc",
+      "img": "/remote-assets/3f9cde4e5fed958be8de447a281b3aa653c2503b.svg"
+    },
+    {
+      "title": "Kubernetes",
+      "color": "#326ce5",
+      "img": "/remote-assets/a265d84a7f7f8edaf4b551a3d36f82cbc36e36f0.svg"
+    },
+    {
+      "title": "MATLAB",
+      "color": "#0076a8",
+      "img": "/remote-assets/845c81e14a5de8dd25a11dde525be92a224f290d.svg"
+    },
+    {
+      "title": "shadcn/ui",
+      "color": "#000000",
+      "img": "/remote-assets/e0e6716d0173bcce73b6b203ca6c34a74a731b15.svg"
+    },
+    {
+      "title": "Playwright",
+      "color": "#2eab5c",
+      "img": "/remote-assets/9803b20dbaae6f7fe0009b6cd617ee945885ec86.svg"
+    },
+    {
+      "title": "PostgreSQL",
+      "color": "#336791",
+      "img": "/remote-assets/ea435dbc4a747a98b84e721cfa8aff9d10969177.svg"
+    },
+    {
+      "title": "Storybook",
+      "color": "#ff4785",
+      "img": "/remote-assets/048c3a1312a7b1997d6d2d2f0fa7080da821754d.svg"
+    },
+    {
+      "title": "GSAP",
+      "color": "#88ce02",
+      "img": "/asset/gsap.svg"
+    },
+    {
+      "title": "Matter.js",
+      "color": "#89A7B1",
+      "img": "/remote-assets/243f536c3c4e8cfae58cd2bcf9ad4a4052989d7e.svg"
+    },
+    {
+      "title": "GitHub Actions",
+      "color": "#2088FF",
+      "img": "/remote-assets/bea24f7202ee81bb74b4034e86a0ee8bac6fdfb3.svg"
     }
   ],
   "poem": {

@@ -46,6 +46,7 @@ const { activateSkill } = useMatterCapsules({
               v-if="skill.img"
               :alt="skill.title"
               :src="skill.img"
+              draggable="false"
               class="author-capsule__icon" />
             <span class="author-capsule__label">{{ skill.title }}</span>
           </button>
@@ -86,7 +87,7 @@ const { activateSkill } = useMatterCapsules({
 
 .author-capsules__watermark {
   position: absolute;
-  top: 50%;
+  top: 25%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
@@ -153,6 +154,7 @@ const { activateSkill } = useMatterCapsules({
   height: 1.2rem;
   object-fit: contain;
   flex-shrink: 0;
+  pointer-events: none;
 }
 
 .author-capsule__label {
@@ -169,4 +171,3 @@ const { activateSkill } = useMatterCapsules({
   }
 }
 </style>
-
