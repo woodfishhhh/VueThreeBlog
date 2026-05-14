@@ -69,23 +69,30 @@ const compressionPlugins = [
 const pwaPlugin = VitePWA({
   registerType: "autoUpdate",
   base,
-  injectRegister: "auto",
+  scope: base,
+  injectRegister: false,
   manifest: {
     name: "WOODFISH Blog",
     short_name: "WOODFISH",
     description: "WOODFISH | Vue-powered immersive 3D blog experience",
     theme_color: "#050510",
     background_color: "#050510",
+    start_url: base,
+    scope: base,
     display: "standalone",
     icons: [
       {
-        src: "/favicon.svg",
+        src: "favicon.svg",
         sizes: "any",
         type: "image/svg+xml",
       },
     ],
   },
   workbox: {
+    cleanupOutdatedCaches: true,
+    clientsClaim: true,
+    skipWaiting: true,
+    navigateFallback: `${base}index.html`,
     globPatterns: ["**/*.{js,css,html,svg,png,jpg,webp,ico,woff,woff2}"],
     runtimeCaching: [
       {

@@ -1,5 +1,6 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import { registerSW } from "virtual:pwa-register";
 
 import App from "./App.vue";
 import { router } from "@/router";
@@ -30,9 +31,4 @@ app.use(pinia);
 app.use(router);
 app.mount("#app");
 
-// PWA: 检测到新版本时立即跳过等待并刷新
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    window.location.reload();
-  });
-}
+registerSW({ immediate: true });

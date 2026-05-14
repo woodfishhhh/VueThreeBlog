@@ -11,20 +11,25 @@ const sourceProjectRoot = projectRoot;
 const generatedRoot = path.join(projectRoot, "src", "generated");
 const generatedPostsRoot = path.join(generatedRoot, "posts");
 const publicRoot = path.join(projectRoot, "public");
-const siteBasePath = process.env.VITE_BASE_PATH;
+const siteBasePath = process.env.CONTENT_BASE_PATH;
+const reuseGeneratedAssets =
+  process.argv.includes("--reuse-assets") || process.env.VUECUBEBLOG_REUSE_GENERATED_ASSETS === "true";
 
 async function main() {
   await mkdir(generatedRoot, { recursive: true });
   await rm(generatedPostsRoot, { recursive: true, force: true });
   await mkdir(generatedPostsRoot, { recursive: true });
-  await rm(path.join(publicRoot, "content-assets"), { recursive: true, force: true });
-  await rm(path.join(publicRoot, "imported-assets"), { recursive: true, force: true });
+  if (!reuseGeneratedAssets) {
+    await rm(path.join(publicRoot, "content-assets"), { recursive: true, force: true });
+    await rm(path.join(publicRoot, "imported-assets"), { recursive: true, force: true });
+  }
   await mkdir(path.join(publicRoot, "remote-assets"), { recursive: true });
 
   const siteContent = await buildSiteContent({
     sourceProjectRoot,
     targetPublicDir: publicRoot,
     siteBasePath,
+    reuseGeneratedAssets,
   });
 
   // Emit post-index.json into public/ so the runtime can fetch() it without

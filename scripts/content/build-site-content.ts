@@ -105,6 +105,7 @@ export interface BuildSiteContentOptions {
   sourceProjectRoot: string;
   targetPublicDir?: string;
   siteBasePath?: string;
+  reuseGeneratedAssets?: boolean;
 }
 
 const dateFormatter = new Intl.DateTimeFormat("en", {
@@ -130,6 +131,7 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
   const configPath = path.join(sourceProjectRoot, "content", "source", "blog", "_config.yml");
   const targetPublicDir = options.targetPublicDir ?? path.join(process.cwd(), "public");
   const siteBasePath = options.siteBasePath;
+  const reuseGeneratedAssets = options.reuseGeneratedAssets ?? false;
 
   const legacyIndex = buildLegacySlugIndex(await readLegacyEntries(legacyPostsRoot));
   const markdownFiles = await collectMarkdownFiles(myblogRoot);
@@ -157,6 +159,7 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
       publicDir: targetPublicDir,
       siteBasePath,
       sourceProjectRoot,
+      reuseGeneratedAssets,
     });
     const renderedArticle = renderArticleMarkdown(rewritten.markdown);
     await assertReferencedArticleAssetsExist({
@@ -183,6 +186,7 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
       targetPublicDir,
       siteBasePath,
       sourceProjectRoot,
+      reuseGeneratedAssets,
     });
     await assertReferencedArticleAssetsExist({
       articleHtml: renderedArticle.html,
@@ -229,8 +233,15 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
   return {
     postIndex,
     postsBySlug,
-    author: await buildAuthorProfile({ aboutPath, configPath, posts: postIndex, targetPublicDir, siteBasePath }),
-    friendLinks: await readFriendLinks(linkPath, targetPublicDir, siteBasePath),
+    author: await buildAuthorProfile({
+      aboutPath,
+      configPath,
+      posts: postIndex,
+      targetPublicDir,
+      siteBasePath,
+      reuseGeneratedAssets,
+    }),
+    friendLinks: await readFriendLinks(linkPath, targetPublicDir, siteBasePath, reuseGeneratedAssets),
   };
 }
 
@@ -445,6 +456,7 @@ async function resolveContentAssetValue(
     siteBasePath?: string;
     canonicalSlug?: string;
     sourceProjectRoot?: string;
+    reuseGeneratedAssets?: boolean;
   },
 ) {
   if (!rawValue) {
@@ -457,6 +469,7 @@ async function resolveContentAssetValue(
     siteBasePath: options.siteBasePath,
     canonicalSlug: options.canonicalSlug,
     sourceProjectRoot: options.sourceProjectRoot,
+    reuseGeneratedAssets: options.reuseGeneratedAssets,
   });
 
   if (resolved) {
@@ -479,6 +492,7 @@ async function resolveContentAssetText(
     siteBasePath?: string;
     canonicalSlug?: string;
     sourceProjectRoot?: string;
+    reuseGeneratedAssets?: boolean;
   },
 ) {
   return (await resolveContentAssetValue(rawValue, options)) ?? "";
@@ -490,6 +504,7 @@ async function buildAuthorProfile(options: {
   posts: GeneratedPostIndexEntry[];
   targetPublicDir: string;
   siteBasePath?: string;
+  reuseGeneratedAssets?: boolean;
 }): Promise<GeneratedAuthorProfile> {
   const tagsSet = new Set<string>();
   const categoriesSet = new Set<string>();
@@ -507,6 +522,7 @@ async function buildAuthorProfile(options: {
     sourceFilePath: options.aboutPath,
     targetPublicDir: options.targetPublicDir,
     siteBasePath: options.siteBasePath,
+    reuseGeneratedAssets: options.reuseGeneratedAssets,
   });
 
   const poemRaw = aboutData.poem || {};
@@ -550,7 +566,13 @@ async function buildAuthorProfile(options: {
     postsCount: options.posts.length,
     tagsCount: tagsSet.size,
     categoriesCount: categoriesSet.size,
-    skills: await normalizeSkills(aboutData.skills?.tags, options.aboutPath, options.targetPublicDir, options.siteBasePath),
+    skills: await normalizeSkills(
+      aboutData.skills?.tags,
+      options.aboutPath,
+      options.targetPublicDir,
+      options.siteBasePath,
+      options.reuseGeneratedAssets,
+    ),
     poem,
     oneself,
     tenyear,
@@ -562,6 +584,7 @@ async function readFriendLinks(
   linkPath: string,
   targetPublicDir: string,
   siteBasePath?: string,
+  reuseGeneratedAssets?: boolean,
 ): Promise<GeneratedFriendLink[]> {
   const raw = await safeReadFile(linkPath);
   const data = (yaml.load(raw) as { links?: unknown } | undefined) ?? {};
@@ -587,6 +610,7 @@ async function readFriendLinks(
             sourceFilePath: linkPath,
             targetPublicDir,
             siteBasePath,
+            reuseGeneratedAssets,
           })) ?? undefined
         : undefined;
 
@@ -616,6 +640,7 @@ async function normalizeSkills(
   sourceFilePath: string,
   targetPublicDir: string,
   siteBasePath?: string,
+  reuseGeneratedAssets?: boolean,
 ) {
   if (!Array.isArray(value)) {
     return [];
@@ -635,6 +660,7 @@ async function normalizeSkills(
             sourceFilePath,
             targetPublicDir,
             siteBasePath,
+            reuseGeneratedAssets,
           })
         : "";
 

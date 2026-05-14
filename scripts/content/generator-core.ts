@@ -78,6 +78,7 @@ export interface RewriteMarkdownAssetOptions {
   publicDir: string;
   siteBasePath?: string;
   sourceProjectRoot?: string;
+  reuseGeneratedAssets?: boolean;
 }
 
 export interface RewriteMarkdownAssetResult {
@@ -91,6 +92,7 @@ export interface ResolveAssetReferenceOptions {
   siteBasePath?: string;
   canonicalSlug?: string;
   sourceProjectRoot?: string;
+  reuseGeneratedAssets?: boolean;
 }
 
 export function buildLegacySlugIndex(entries: readonly LegacySlugSource[]): Map<string, string> {
@@ -248,15 +250,26 @@ export async function resolveAssetReference(
           options.publicDir,
           options.canonicalSlug,
           options.siteBasePath,
+          options.reuseGeneratedAssets,
         );
       }
 
-      return copyAbsoluteAsset(projectRootedPath, options.publicDir, options.siteBasePath);
+      return copyAbsoluteAsset(
+        projectRootedPath,
+        options.publicDir,
+        options.siteBasePath,
+        options.reuseGeneratedAssets,
+      );
     }
 
     const rootedAbsolutePath = path.resolve(sourceDir, originalReference);
     if (await fileExists(rootedAbsolutePath)) {
-      return copyAbsoluteAsset(rootedAbsolutePath, options.publicDir, options.siteBasePath);
+      return copyAbsoluteAsset(
+        rootedAbsolutePath,
+        options.publicDir,
+        options.siteBasePath,
+        options.reuseGeneratedAssets,
+      );
     }
 
     return toSitePublicUrl(originalReference, options.siteBasePath);
@@ -275,6 +288,7 @@ export async function resolveAssetReference(
         options.publicDir,
         options.canonicalSlug,
         options.siteBasePath,
+        options.reuseGeneratedAssets,
       );
     }
 
@@ -282,7 +296,12 @@ export async function resolveAssetReference(
   }
 
   if (path.isAbsolute(originalReference)) {
-    return copyAbsoluteAsset(resolvedPath, options.publicDir, options.siteBasePath);
+    return copyAbsoluteAsset(
+      resolvedPath,
+      options.publicDir,
+      options.siteBasePath,
+      options.reuseGeneratedAssets,
+    );
   }
 
   if (!options.canonicalSlug) {
@@ -295,13 +314,19 @@ export async function resolveAssetReference(
     options.publicDir,
     options.canonicalSlug,
     options.siteBasePath,
+    options.reuseGeneratedAssets,
   );
 }
 
 async function localizeMissingLocalAsset(reference: string, options: ResolveAssetReferenceOptions) {
   const mirrorSourcePath = await resolveLocalMirrorSource(reference);
   if (mirrorSourcePath && (isLegacyAbsoluteAssetReference(reference) || !options.canonicalSlug)) {
-    return copyAbsoluteAsset(mirrorSourcePath, options.publicDir, options.siteBasePath);
+    return copyAbsoluteAsset(
+      mirrorSourcePath,
+      options.publicDir,
+      options.siteBasePath,
+      options.reuseGeneratedAssets,
+    );
   }
 
   if (mirrorSourcePath && options.canonicalSlug) {
@@ -311,6 +336,7 @@ async function localizeMissingLocalAsset(reference: string, options: ResolveAsse
       options.publicDir,
       options.canonicalSlug,
       options.siteBasePath,
+      options.reuseGeneratedAssets,
     );
   }
 
@@ -334,8 +360,10 @@ async function createMissingImagePlaceholder(reference: string, publicDir: strin
     "</svg>",
   ].join("");
 
-  await mkdir(path.dirname(targetPath), { recursive: true });
-  await writeFile(targetPath, svg, "utf8");
+  if (!(await fileExists(targetPath))) {
+    await mkdir(path.dirname(targetPath), { recursive: true });
+    await writeFile(targetPath, svg, "utf8");
+  }
 
   return toPublicAssetUrl(siteBasePath, IMPORTED_ASSET_DIR, assetFileName);
 }
@@ -449,23 +477,33 @@ async function copyRelativeAsset(
   publicDir: string,
   canonicalSlug: string,
   siteBasePath?: string,
+  reuseGeneratedAssets = false,
 ) {
   const safeRelativePath = toSafeRelativeAssetPath(originalReference);
   const targetPath = path.join(publicDir, CONTENT_ASSET_DIR, canonicalSlug, ...safeRelativePath.split("/"));
 
-  await mkdir(path.dirname(targetPath), { recursive: true });
-  await copyFile(resolvedPath, targetPath);
+  if (!reuseGeneratedAssets || !(await fileExists(targetPath))) {
+    await mkdir(path.dirname(targetPath), { recursive: true });
+    await copyFile(resolvedPath, targetPath);
+  }
 
   return toPublicAssetUrl(siteBasePath, CONTENT_ASSET_DIR, canonicalSlug, safeRelativePath);
 }
 
-async function copyAbsoluteAsset(resolvedPath: string, publicDir: string, siteBasePath?: string) {
+async function copyAbsoluteAsset(
+  resolvedPath: string,
+  publicDir: string,
+  siteBasePath?: string,
+  reuseGeneratedAssets = false,
+) {
   const extension = path.extname(resolvedPath) || ".bin";
   const assetFileName = `${sha1(resolvedPath)}${extension}`;
   const targetPath = path.join(publicDir, IMPORTED_ASSET_DIR, assetFileName);
 
-  await mkdir(path.dirname(targetPath), { recursive: true });
-  await copyFile(resolvedPath, targetPath);
+  if (!reuseGeneratedAssets || !(await fileExists(targetPath))) {
+    await mkdir(path.dirname(targetPath), { recursive: true });
+    await copyFile(resolvedPath, targetPath);
+  }
 
   return toPublicAssetUrl(siteBasePath, IMPORTED_ASSET_DIR, assetFileName);
 }

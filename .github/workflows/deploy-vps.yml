@@ -15,8 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_BASE_PATH: /newBlog/
+      DEPLOY_URL: https://woodfish.site/newBlog/
       DEPLOY_ARCHIVE: vue-three-blog-${{ github.run_id }}.tar.gz
       DEPLOY_REMOTE_ARCHIVE: /tmp/vue-three-blog-${{ github.run_id }}.tar.gz
+      DEPLOY_DIR: ${{ secrets.DEPLOY_DIR || '/opt/blog-stack/sites/newBlog' }}
+      DEPLOY_CONTAINER: blog-nginx
 
     steps:
       - name: Checkout
@@ -32,7 +35,7 @@ jobs:
         run: npm ci
 
       - name: Generate content
-        run: npm run generate:content
+        run: npm run generate:content:ci
 
       - name: Unit tests
         run: npm run test
@@ -42,6 +45,9 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Verify deploy paths
+        run: npm run verify:dist
 
       - name: Package site archive
         run: tar -czf "${{ env.DEPLOY_ARCHIVE }}" -C dist .
@@ -67,26 +73,82 @@ jobs:
           set -eu
 
           archive="${{ env.DEPLOY_REMOTE_ARCHIVE }}"
-          target_dir="${{ secrets.DEPLOY_DIR }}"
-          next_dir="\${target_dir}.next"
-          backup_dir="\${target_dir}.bak"
+          target_dir="${{ env.DEPLOY_DIR }}"
+          base_path="${{ env.VITE_BASE_PATH }}"
+          container="${{ env.DEPLOY_CONTAINER }}"
+          config_path="/opt/blog-stack/nginx/conf.d/default.conf"
+          config_backup="\${config_path}.bak.${{ github.run_id }}"
+          next_dir="\${target_dir}.next.${{ github.run_id }}"
+          backup_dir="\${target_dir}.bak.${{ github.run_id }}"
 
-          # 同步 nginx 配置并重载
-          cp /tmp/default.conf /opt/blog-stack/nginx/conf.d/default.conf
-          docker exec blog-nginx nginx -s reload || true
+          rollback() {
+            rm -rf "\$target_dir"
+            if [ -d "\$backup_dir" ]; then
+              mv "\$backup_dir" "\$target_dir"
+            fi
+            if [ -f "\$config_backup" ]; then
+              cat "\$config_backup" > "\$config_path"
+              rm -f "\$config_backup"
+            fi
+            docker exec "\$container" nginx -s reload >/dev/null 2>&1 || true
+          }
+
+          case "\$target_dir" in
+            /opt/blog-stack/sites/*) ;;
+            *) echo "Refusing unsafe deploy dir: \$target_dir" >&2; exit 2 ;;
+          esac
+
+          cp "\$config_path" "\$config_backup"
+          cat /tmp/default.conf > "\$config_path"
+          if ! docker exec "\$container" nginx -t; then
+            cat "\$config_backup" > "\$config_path"
+            rm -f "\$config_backup"
+            docker exec "\$container" nginx -s reload || true
+            exit 1
+          fi
 
           rm -rf "\$next_dir" "\$backup_dir"
           mkdir -p "\$next_dir"
           tar -xzf "\$archive" -C "\$next_dir"
+
+          test -f "\$next_dir/index.html"
+          test -f "\$next_dir/sw.js"
+          test -f "\$next_dir/manifest.webmanifest"
+          test -d "\$next_dir/assets"
+          grep -q "\${base_path}assets/" "\$next_dir/index.html"
+          if grep -q '"/assets/' "\$next_dir/index.html"; then
+            echo "index.html contains root-scoped /assets refs" >&2
+            exit 3
+          fi
 
           if [ -d "\$target_dir" ]; then
             mv "\$target_dir" "\$backup_dir"
           fi
 
           mv "\$next_dir" "\$target_dir"
-          chmod -R 755 "\$target_dir"
+          chmod -R a+rX "\$target_dir"
+
+          if ! docker exec "\$container" nginx -s reload; then
+            rollback
+            exit 1
+          fi
+
+          if ! docker exec "\$container" sh -c "test -f /usr/share/nginx/html\${base_path}index.html && grep -q '\${base_path}assets/' /usr/share/nginx/html\${base_path}index.html"; then
+            rollback
+            exit 1
+          fi
 
           rm -f "\$archive"
           rm -rf "\$backup_dir"
+          rm -f "\$config_backup"
           rm -f /tmp/default.conf
           EOF
+
+      - name: Smoke test live site
+        run: |
+          html="$(curl -kfsSL "${{ env.DEPLOY_URL }}")"
+          printf '%s' "$html" | grep -q "${{ env.VITE_BASE_PATH }}assets/"
+          if printf '%s' "$html" | grep -q '"/assets/'; then
+            echo "Live HTML still contains root-scoped /assets refs" >&2
+            exit 1
+          fi

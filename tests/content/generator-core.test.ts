@@ -99,6 +99,30 @@ describe("generator-core", () => {
     );
   });
 
+  it("can reuse existing generated assets without overwriting optimized files", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-reuse-"));
+    const sourceDir = path.join(tempRoot, "source");
+    const publicDir = path.join(tempRoot, "public");
+    const imageDir = path.join(sourceDir, "images");
+    const existingTarget = path.join(publicDir, "content-assets", "reuse-assets", "images", "demo.png");
+    const sourceFilePath = path.join(sourceDir, "Reuse 图片测试.md");
+
+    await mkdir(imageDir, { recursive: true });
+    await mkdir(path.dirname(existingTarget), { recursive: true });
+    await writeFile(path.join(imageDir, "demo.png"), "source-image");
+    await writeFile(existingTarget, "optimized-image");
+
+    const result = await rewriteMarkdownAssetPaths("![demo](images/demo.png)", {
+      sourceFilePath,
+      canonicalSlug: "reuse-assets",
+      publicDir,
+      reuseGeneratedAssets: true,
+    });
+
+    expect(result.markdown).toContain("/content-assets/reuse-assets/images/demo.png");
+    expect(await readFile(existingTarget, "utf8")).toBe("optimized-image");
+  });
+
   it("downloads remote markdown images into local static assets", async () => {
     const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-remote-"));
     const sourceDir = path.join(tempRoot, "source");
