@@ -19,7 +19,7 @@ vi.mock("@/composables/useMatterCapsules", () => ({
 
 const author: AuthorProfileData = {
   name: "木鱼",
-  title: "是一名 学生 / 电子音乐制作人 / 算法爱好者",
+  title: "是一名 学生 / ACMer / 前端开发 / 电子音乐制作人",
   heroImage: "/hero.png",
   postsCount: 101,
   tagsCount: 283,

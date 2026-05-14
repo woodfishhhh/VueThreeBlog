@@ -21,22 +21,18 @@ const { activateSkill } = useMatterCapsules({
 </script>
 
 <template>
-  <section class="author-screen author-screen--fullbleed" data-author-screen data-testid="author-screen-capsules">
+  <section
+    class="author-screen author-screen--fullbleed"
+    data-author-screen
+    data-testid="author-screen-capsules">
     <div class="author-screen__shell">
-      <article class="author-screen__panel author-screen__panel--poster author-screen__panel--capsules">
+      <article
+        class="author-screen__panel author-screen__panel--poster author-screen__panel--capsules">
         <div ref="scene" class="author-capsules__field" data-author-reveal>
-          <button
-            aria-label="释放技术栈标题"
-            class="author-capsules__title"
-            data-author-capsule
-            data-author-fixed
-            data-author-title
-            type="button"
-            @click="activateSkill(0)"
-          >
-            <span>Stack</span>
-            <strong>技术栈</strong>
-          </button>
+          <div class="author-capsules__watermark" aria-hidden="true">
+            <div class="watermark-outline">TECH STACK</div>
+            <div class="watermark-cn">技术栈</div>
+          </div>
 
           <button
             v-for="(skill, index) in props.skills"
@@ -45,14 +41,12 @@ const { activateSkill } = useMatterCapsules({
             class="author-capsule"
             data-author-capsule
             type="button"
-            @click="activateSkill(index + 1)"
-          >
+            @click="activateSkill(index)">
             <img
               v-if="skill.img"
               :alt="skill.title"
               :src="skill.img"
-              class="author-capsule__icon"
-            />
+              class="author-capsule__icon" />
             <span class="author-capsule__label">{{ skill.title }}</span>
           </button>
         </div>
@@ -64,7 +58,7 @@ const { activateSkill } = useMatterCapsules({
 <style scoped>
 .author-screen__panel--capsules {
   justify-content: stretch;
-  padding: 0;
+  padding: 0 !important;
   /* Subtle scene-level atmosphere */
   background: var(--author-capsule-scene-bg);
 }
@@ -90,7 +84,41 @@ const { activateSkill } = useMatterCapsules({
   pointer-events: none;
 }
 
-.author-capsules__title,
+.author-capsules__watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+  width: 100%;
+}
+
+.watermark-outline {
+  font-size: clamp(2.5rem, 6vw, 6rem);
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--author-capsule-border);
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+}
+
+.watermark-cn {
+  font-size: clamp(4rem, 11vw, 11rem);
+  font-weight: 900;
+  color: var(--author-capsule-text);
+  line-height: 1;
+  margin-top: -0.25em;
+  opacity: 0.04;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
 .author-capsule {
   position: absolute;
   top: 0;
@@ -104,32 +132,11 @@ const { activateSkill } = useMatterCapsules({
   user-select: none;
   touch-action: none;
   will-change: transform;
+  z-index: 1;
 }
 
-.author-capsules__title:active,
 .author-capsule:active {
   cursor: grabbing;
-}
-
-.author-capsules__title {
-  display: grid;
-  min-width: 18rem;
-  padding: 1.1rem 1.25rem 1.35rem;
-  text-align: left;
-}
-
-.author-capsules__title span {
-  font-size: 0.74rem;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: var(--stage-hint);
-}
-
-.author-capsules__title strong {
-  margin-top: 0.55rem;
-  font-size: 4.5rem;
-  font-weight: 700;
-  line-height: 0.92;
 }
 
 .author-capsule {
@@ -156,18 +163,10 @@ const { activateSkill } = useMatterCapsules({
 }
 
 @media (max-width: 767px) {
-  .author-capsules__title {
-    min-width: 13rem;
-    padding: 0.9rem 1rem 1.05rem;
-  }
-
-  .author-capsules__title strong {
-    font-size: 3rem;
-  }
-
   .author-capsule {
     min-width: 5.8rem;
     padding: 0.72rem 0.92rem;
   }
 }
 </style>
+

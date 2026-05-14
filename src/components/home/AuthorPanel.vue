@@ -33,12 +33,13 @@ const screens = [
     <div
       ref="viewport"
       id="author-scroll-container"
-      class="author-stage__wrapper"
-    >
+      class="author-stage__wrapper">
       <div ref="track" class="author-stage__content">
         <AuthorHeroScreen :author="props.author" />
         <AuthorAboutScreen :author="props.author" />
-        <AuthorCapsuleScreen :active="activeIndex === 2" :skills="props.author.skills" />
+        <AuthorCapsuleScreen
+          :active="activeIndex === 2"
+          :skills="props.author.skills" />
         <AuthorPoemScreen :poem="props.author.poem" />
       </div>
     </div>
@@ -53,8 +54,7 @@ const screens = [
         :class="{ 'is-active': activeIndex === index }"
         data-author-nav-dot
         type="button"
-        @click="goToSlide(index)"
-      ></button>
+        @click="goToSlide(index)"></button>
     </nav>
   </div>
 </template>
@@ -118,22 +118,24 @@ const screens = [
   height: 100%;
   box-sizing: border-box;
   justify-content: flex-end;
-  padding: 5.4rem 0 3rem;
+  padding: clamp(4rem, 8vh, 6rem) 0 0;
   background: var(--author-shell-bg);
+  transition: padding 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 :deep(.author-screen__panel) {
   position: relative;
   display: flex;
-  width: min(60vw, 58rem);
+  width: 50vw;
   min-height: 100%;
   flex-direction: column;
   justify-content: space-between;
-  padding: clamp(1.5rem, 2.4vw, 2.8rem) clamp(1.4rem, 2.7vw, 3rem) 2.8rem;
   box-sizing: border-box;
+  padding: clamp(2.5rem, 5vh, 4.5rem) clamp(2rem, 5vw, 4rem);
   background: var(--author-panel-surface);
-  backdrop-filter: saturate(130%) blur(10px);
-  -webkit-backdrop-filter: saturate(130%) blur(10px);
+  box-shadow: var(--author-panel-shadow);
+  backdrop-filter: saturate(140%) blur(16px);
+  -webkit-backdrop-filter: saturate(140%) blur(16px);
 }
 
 :deep(.author-screen__panel--poster) {
@@ -147,17 +149,13 @@ const screens = [
   justify-content: flex-start;
 }
 
-/* Fullbleed capsule screen: transparent shell + full-width panel */
+/* Fullbleed capsule screen: panel completely fills the half-screen boundary */
 :deep(.author-screen--fullbleed .author-screen__shell) {
-  padding: 0;
-  background: transparent;
+  padding: 0 !important;
 }
 
 :deep(.author-screen--fullbleed .author-screen__panel) {
-  width: 100%;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  background: transparent;
+  padding: 0 !important;
 }
 
 :deep(.author-section-kicker) {
@@ -180,17 +178,15 @@ const screens = [
   }
 
   :deep(.author-screen__shell) {
-    padding: 5rem 0 2rem;
-    background:
-      linear-gradient(180deg, rgba(8, 11, 22, 0.78) 0%, rgba(8, 11, 22, 0.94) 100%);
+    padding: clamp(3rem, 15vh, 6rem) 0 2rem;
+    background: var(--author-shell-bg-mobile);
   }
 
   :deep(.author-screen__panel) {
     width: 100%;
     min-height: 100%;
-    padding: 1.05rem 1rem 1.35rem;
+    padding: clamp(1.2rem, 3vh, 2rem) 1rem 1.5rem;
   }
-
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -199,3 +195,4 @@ const screens = [
   }
 }
 </style>
+

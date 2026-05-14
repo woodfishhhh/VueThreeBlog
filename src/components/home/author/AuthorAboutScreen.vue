@@ -37,27 +37,23 @@ const universityProgress = computed(() => {
   return Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
 });
 
-const universityProgressLabel = computed(() => `${universityProgress.value.toFixed(1)}%`);
+const universityProgressLabel = computed(
+  () => `${universityProgress.value.toFixed(1)}%`,
+);
 </script>
 
 <template>
-  <section class="author-screen" data-author-screen data-testid="author-screen-about">
+  <section
+    class="author-screen"
+    data-author-screen
+    data-testid="author-screen-about">
     <div class="author-screen__shell">
       <article class="author-screen__panel author-screen__panel--about">
         <div class="author-section-kicker" data-author-reveal>About Me</div>
 
         <div class="author-about__layout">
-          <div class="author-about__portrait" data-author-reveal>
-            <img
-              :alt="props.author.name"
-              :src="props.author.heroImage"
-              class="author-about__image"
-            />
-          </div>
-
           <div class="author-about__identity">
             <div data-author-reveal>
-              <p class="author-section-kicker">About Me</p>
               <h2 class="author-about__name">{{ props.author.name }}</h2>
               <p class="author-about__title">{{ props.author.title }}</p>
             </div>
@@ -67,8 +63,7 @@ const universityProgressLabel = computed(() => `${universityProgress.value.toFix
                 v-for="item in identityItems"
                 :key="item.label"
                 class="author-about__item"
-                data-author-reveal
-              >
+                data-author-reveal>
                 <dt>{{ item.label }}</dt>
                 <dd>{{ item.value }}</dd>
               </div>
@@ -77,8 +72,12 @@ const universityProgressLabel = computed(() => `${universityProgress.value.toFix
             <section class="author-about__progress" data-author-reveal>
               <div class="author-about__progress-head">
                 <div>
-                  <p class="author-about__progress-kicker">{{ props.author.tenyear.title }}</p>
-                  <p class="author-about__progress-copy">{{ props.author.tenyear.text }}</p>
+                  <p class="author-about__progress-kicker">
+                    {{ props.author.tenyear.title }}
+                  </p>
+                  <p class="author-about__progress-copy">
+                    {{ props.author.tenyear.text }}
+                  </p>
                 </div>
                 <strong>{{ universityProgressLabel }}</strong>
               </div>
@@ -88,8 +87,7 @@ const universityProgressLabel = computed(() => `${universityProgress.value.toFix
                 role="meter"
                 :aria-valuenow="Number(universityProgress.toFixed(1))"
                 aria-valuemin="0"
-                aria-valuemax="100"
-              >
+                aria-valuemax="100">
                 <span :style="{ width: universityProgressLabel }"></span>
               </div>
               <div class="author-about__progress-dates">
@@ -110,35 +108,7 @@ const universityProgressLabel = computed(() => `${universityProgress.value.toFix
 }
 
 .author-about__layout {
-  display: grid;
-  grid-template-columns: minmax(10rem, 16rem) minmax(0, 1fr);
-  gap: 2rem;
-  align-items: center;
-}
-
-.author-about__portrait {
-  position: relative;
-  overflow: hidden;
-  min-height: 24rem;
-  border: 1px solid var(--border-subtle);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 32%),
-    var(--surface-soft);
-}
-
-.author-about__portrait::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 42%, rgba(5, 5, 16, 0.62));
-}
-
-.author-about__image {
-  width: 100%;
-  height: 100%;
-  min-height: 24rem;
-  object-fit: cover;
-  filter: saturate(0.88) contrast(1.08);
+  display: block;
 }
 
 .author-about__identity {
@@ -241,16 +211,7 @@ const universityProgressLabel = computed(() => `${universityProgress.value.toFix
 
 @media (max-width: 767px) {
   .author-about__layout {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1.2rem;
-  }
-
-  .author-about__portrait {
-    min-height: 10rem;
-  }
-
-  .author-about__image {
-    min-height: 10rem;
+    display: block;
   }
 
   .author-about__name {
@@ -268,3 +229,4 @@ const universityProgressLabel = computed(() => `${universityProgress.value.toFix
   }
 }
 </style>
+

@@ -210,7 +210,14 @@ export function useMatterCapsules({
     });
 
     mouse = Matter.Mouse.create(container);
-    mouse.pixelRatio = window.devicePixelRatio || 1;
+    // Explicitly correct for non-fullscreen scale and positions (like the 50vw panel layout).
+    // This allows mouse clicks to map exactly to the physics bodies correctly within that constrained layout.
+    if ((mouse as any).element && typeof (mouse as any).element.removeEventListener === "function") {
+      (mouse as any).element.removeEventListener("mousewheel", (mouse as any).mousewheel);
+      (mouse as any).element.removeEventListener("DOMMouseScroll", (mouse as any).mousewheel);
+    }
+    Matter.Mouse.setOffset(mouse, { x: 0, y: 0 }); // reset default offset
+    mouse.pixelRatio = 1; // DO NOT set to window.devicePixelRatio for DOM nodes. DOM works in CSS pixels, otherwise click will be divided by DPR!
     mouseConstraint = Matter.MouseConstraint.create(engine, {
       mouse,
       constraint: {
@@ -226,6 +233,13 @@ export function useMatterCapsules({
       Matter.Bodies.rectangle(
         bounds.width / 2,
         bounds.height + WALL_THICKNESS / 2,
+        bounds.width + WALL_THICKNESS * 2,
+        WALL_THICKNESS,
+        { isStatic: true },
+      ),
+      Matter.Bodies.rectangle(
+        bounds.width / 2,
+        -WALL_THICKNESS / 2,
         bounds.width + WALL_THICKNESS * 2,
         WALL_THICKNESS,
         { isStatic: true },
@@ -257,16 +271,15 @@ export function useMatterCapsules({
       const staticX = Math.min(bounds.width - width / 2 - 24, Math.max(width / 2 + 28, bounds.width * 0.38));
       const staticY = Math.min(bounds.height * 0.22, height / 2 + 48);
 
-      // Scatter freely across full width with staggered vertical entry
+      // Scatter freely across full width with staggered vertical entry inside the viewport
       const x = initiallyStatic
         ? staticX
         : gutter + width / 2 + Math.random() * (usableWidth - width);
-      // Each capsule starts at a unique random height above viewport
-      // Earlier indices enter first (smaller negative y), later ones enter later
-      const verticalSpread = bounds.height * 0.5;
+
+      const verticalSpread = bounds.height * 0.4;
       const y = initiallyStatic
         ? staticY
-        : -(height / 2 + 20 + Math.random() * verticalSpread + freeBodyIndex * 18);
+        : height / 2 + 10 + Math.random() * verticalSpread;
       if (!initiallyStatic) {
         freeBodyIndex += 1;
       }

@@ -248,7 +248,8 @@ function updateGeometryTransform(immediate = false) {
   if (width >= 768) {
     const aspect = width / Math.max(height, 1);
     const distance = 12;
-    const halfScreenCenterNdc = store.mode === "author" ? 0.6 : 0.5;
+    // For author view, panel is exactly 50vw wide, so left side bounds are 50vw. Center of that is 0.5.
+    const halfScreenCenterNdc = 0.5;
     const halfFovRad = THREE.MathUtils.degToRad(threeScene.camera.fov / 2);
     splitCenterOffset =
       halfScreenCenterNdc * distance * Math.tan(halfFovRad) * aspect;
@@ -320,11 +321,7 @@ function updateWorksOrbitCards(elapsed = 0, delta = 0) {
   const height = container.value.clientHeight;
   const activeGeometry = getActiveGeometry();
   const visible =
-    isDesktopWorksOrbitMode(
-      store.mode,
-      store.worksViewMode,
-      isMobile.value,
-    ) &&
+    isDesktopWorksOrbitMode(store.mode, store.worksViewMode, isMobile.value) &&
     !store.isFocusing &&
     !!activeGeometry;
 
@@ -436,7 +433,9 @@ function handleCanvasPointerDown(event: PointerEvent) {
   updatePointerFromEvent(event);
   raycaster.setFromCamera(pointer, threeScene.camera);
 
-  if (isDesktopWorksOrbitMode(store.mode, store.worksViewMode, isMobile.value)) {
+  if (
+    isDesktopWorksOrbitMode(store.mode, store.worksViewMode, isMobile.value)
+  ) {
     const worksHit = worksOrbitCards?.pick(raycaster, pointer);
     const action = resolveScenePointerDownAction({
       mode: store.mode,

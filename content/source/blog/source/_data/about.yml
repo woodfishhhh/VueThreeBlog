@@ -1,6 +1,6 @@
 contentinfo:
   name: 木鱼
-  title: 是一名 学生 / 电子音乐制作人 / 算法爱好者
+  title: 是一名 学生 / ACMer / 前端开发 / 电子音乐制作人
 
 hero:
   image: /asset/f725f7fc67d79930b505550749765877.jpg
@@ -101,7 +101,7 @@ oneself:
 tenyear:
   tips: 进度
   title: 大学阶段进度条
-  text: 保持热爱，慢慢变强。
+  text: 保持热爱
   start: "2024-09-01"
   end: "2028-06-30"
 
@@ -112,3 +112,4 @@ contacts:
   wechat: https://www.woodfishhhh.xyz/images/f59723db9159310b6056abe8341f5d7.jpg.jpeg?_t=1750312263368
   email: https://www.woodfishhhh.xyz/images/d8d58d2f2c7ac5790fd37f388da41db4.png?_t=1759286665402
   douyin: https://www.douyin.com/user/MS4wLjABAAAAgbOrIhdi7Rl5RfaQ3fE3i7c2WnyR3zEOyLiK2Cjtcqk?from_tab_name=main
+
