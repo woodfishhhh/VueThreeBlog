@@ -1,1 +1,1 @@
-export type WorksViewMode = "orbit" | "case";
+export type { WorksViewMode } from "@/stores/site";

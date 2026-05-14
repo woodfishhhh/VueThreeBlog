@@ -68,8 +68,46 @@ describe("ArticleContent", () => {
     expect(wrapper.get("[data-testid='article-cover']").attributes("src")).toBe(article.coverImage);
     expect(wrapper.get("[data-testid='article-prose']").html()).toContain('id="overview"');
     expect(wrapper.get("[data-testid='article-toc-rail']")).toBeTruthy();
+    expect(wrapper.get("[data-testid='article-toc-mobile']")).toBeTruthy();
     expect(wrapper.get("[data-testid='article-toc-scroll']")).toBeTruthy();
     expect(wrapper.findAll("[data-testid='article-toc-item']")).toHaveLength(2);
+    expect(wrapper.get("[data-testid='article-progress-bar']").attributes("style")).toContain("width: 50%");
+
+    wrapper.unmount();
+    scrollContainer.remove();
+  });
+
+  it("falls back to the nearest article page scroll container", async () => {
+    const scrollContainer = document.createElement("div");
+    scrollContainer.className = "article-page";
+
+    Object.defineProperty(scrollContainer, "scrollTop", {
+      configurable: true,
+      value: 0,
+      writable: true,
+    });
+    Object.defineProperty(scrollContainer, "scrollHeight", {
+      configurable: true,
+      value: 1400,
+    });
+    Object.defineProperty(scrollContainer, "clientHeight", {
+      configurable: true,
+      value: 800,
+    });
+
+    document.body.appendChild(scrollContainer);
+
+    const wrapper = mount(ArticleContent, {
+      attachTo: scrollContainer,
+      props: {
+        article,
+      },
+    });
+
+    scrollContainer.scrollTop = 300;
+    scrollContainer.dispatchEvent(new Event("scroll"));
+    await nextTick();
+
     expect(wrapper.get("[data-testid='article-progress-bar']").attributes("style")).toContain("width: 50%");
 
     wrapper.unmount();

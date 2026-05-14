@@ -74,13 +74,7 @@ function handleWheel(event: WheelEvent) {
   }
 
   if (siteStore.mode === "author") {
-    const authorScroll = document.getElementById("author-scroll-container");
-    if (authorScroll) {
-      if (!event.composedPath().includes(authorScroll)) {
-        scrollElement(authorScroll, event.deltaY);
-      }
-      return;
-    }
+    return;
   }
 
   if (event.deltaY > 0 && siteStore.mode === "home") {
@@ -126,14 +120,7 @@ function handleTouchMove(event: TouchEvent) {
   }
 
   if (siteStore.mode === "author") {
-    const authorScroll = document.getElementById("author-scroll-container");
-    if (authorScroll) {
-      if (!event.composedPath().includes(authorScroll)) {
-        scrollElement(authorScroll, diff, "auto");
-        touchStartY = touchEndY;
-      }
-      return;
-    }
+    return;
   }
 
   if (diff > 0 && siteStore.mode === "home") {

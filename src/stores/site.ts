@@ -2,12 +2,14 @@ import { defineStore } from "pinia";
 
 export type SiteMode = "home" | "blog" | "author" | "friend" | "works" | "reading";
 export type SitePanelMode = Exclude<SiteMode, "reading">;
+export type WorksViewMode = "orbit" | "case";
 
 interface SiteState {
   mode: SiteMode;
   isFocusing: boolean;
   activePostSlug: string | null;
   cubeStep: number;
+  worksViewMode: WorksViewMode;
 }
 
 export const useSiteStore = defineStore("site", {
@@ -16,12 +18,14 @@ export const useSiteStore = defineStore("site", {
     isFocusing: false,
     activePostSlug: null,
     cubeStep: 0,
+    worksViewMode: "orbit",
   }),
   actions: {
     setPanelMode(mode: SitePanelMode) {
       this.mode = mode;
       this.isFocusing = false;
       this.activePostSlug = null;
+      if (mode === "works") this.worksViewMode = "orbit";
     },
     syncRouteMode(mode: SitePanelMode) {
       this.mode = mode;
@@ -29,6 +33,7 @@ export const useSiteStore = defineStore("site", {
         this.isFocusing = false;
       }
       this.activePostSlug = null;
+      if (mode === "works") this.worksViewMode = "orbit";
     },
     goHome() {
       this.setPanelMode("home");
@@ -44,6 +49,9 @@ export const useSiteStore = defineStore("site", {
     },
     goWorks() {
       this.setPanelMode("works");
+    },
+    setWorksViewMode(mode: WorksViewMode) {
+      this.worksViewMode = mode;
     },
     enterReading(slug: string) {
       this.mode = "reading";

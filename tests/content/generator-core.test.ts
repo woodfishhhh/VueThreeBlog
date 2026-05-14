@@ -191,7 +191,167 @@ describe("generator-core", () => {
     }
   });
 
-  it("removes unresolved local image references from markdown and html while keeping warnings traceable", async () => {
+  it("does not localize image references inside fenced code blocks", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-code-images-"));
+    const sourceDir = path.join(tempRoot, "source");
+    const publicDir = path.join(tempRoot, "public");
+    const sourceFilePath = path.join(sourceDir, "Code 图片测试.md");
+
+    await mkdir(sourceDir, { recursive: true });
+
+    const markdown = [
+      "```html",
+      '<img src="./logo.png" alt="Logo">',
+      "```",
+      "",
+      "```md",
+      "![example](./example.png)",
+      "```",
+    ].join("\n");
+
+    const result = await rewriteMarkdownAssetPaths(markdown, {
+      sourceFilePath,
+      canonicalSlug: "code-image-examples",
+      publicDir,
+    });
+
+    expect(result.markdown).toBe(markdown);
+    expect(result.warnings).toHaveLength(0);
+  });
+
+  it("does not localize image references inside indented code blocks", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-indented-code-images-"));
+    const sourceDir = path.join(tempRoot, "source");
+    const publicDir = path.join(tempRoot, "public");
+    const sourceFilePath = path.join(sourceDir, "Indented Code 图片测试.md");
+    const markdown = [
+      "    const html = `<img src=\"${wObj.weatherImg}\" alt=\"\">`",
+      "    ![example](./example.png)",
+    ].join("\n");
+
+    await mkdir(sourceDir, { recursive: true });
+
+    const result = await rewriteMarkdownAssetPaths(markdown, {
+      sourceFilePath,
+      canonicalSlug: "indented-code-image-examples",
+      publicDir,
+    });
+
+    expect(result.markdown).toBe(markdown);
+    expect(result.warnings).toHaveLength(0);
+  });
+
+  it("localizes list-nested markdown images instead of treating them as indented code", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-list-images-"));
+    const sourceDir = path.join(tempRoot, "source");
+    const publicDir = path.join(tempRoot, "public");
+    const imageDir = path.join(sourceDir, "images");
+    const sourceFilePath = path.join(sourceDir, "List 图片测试.md");
+
+    await mkdir(imageDir, { recursive: true });
+    await writeFile(path.join(imageDir, "diagram.png"), "diagram");
+
+    const markdown = [
+      "1. 示例条目",
+      "",
+      "   ![diagram](images/diagram.png)",
+    ].join("\n");
+
+    const result = await rewriteMarkdownAssetPaths(markdown, {
+      sourceFilePath,
+      canonicalSlug: "list-nested-images",
+      publicDir,
+    });
+
+    expect(result.markdown).toContain("/content-assets/list-nested-images/images/diagram.png");
+    expect(
+      await readFile(path.join(publicDir, "content-assets", "list-nested-images", "images", "diagram.png"), "utf8"),
+    ).toBe("diagram");
+  });
+
+  it("falls back to local mirror files when relative post images are missing from the source folder", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-local-mirror-"));
+    const sourceDir = path.join(tempRoot, "source");
+    const publicDir = path.join(tempRoot, "public");
+    const mirrorDir = path.join(tempRoot, "mirror");
+    const mirrorAssetPath = path.join(mirrorDir, "content", "typescript-practical-foundations", "notebook-image", "course-outline.png");
+    const sourceFilePath = path.join(sourceDir, "TypeScript.md");
+    const originalMirrorEnv = process.env.VUECUBEBLOG_LOCAL_ASSET_MIRROR_DIRS;
+
+    await mkdir(sourceDir, { recursive: true });
+    await mkdir(path.dirname(mirrorAssetPath), { recursive: true });
+    await writeFile(mirrorAssetPath, "course-outline");
+    process.env.VUECUBEBLOG_LOCAL_ASSET_MIRROR_DIRS = mirrorDir;
+
+    try {
+      const result = await rewriteMarkdownAssetPaths("![course](notebook-image/course-outline.png)", {
+        sourceFilePath,
+        canonicalSlug: "typescript-foundations",
+        publicDir,
+      });
+
+      expect(result.markdown).toContain("/content-assets/typescript-foundations/notebook-image/course-outline.png");
+      expect(
+        await readFile(
+          path.join(publicDir, "content-assets", "typescript-foundations", "notebook-image", "course-outline.png"),
+          "utf8",
+        ),
+      ).toBe("course-outline");
+    } finally {
+      if (typeof originalMirrorEnv === "string") {
+        process.env.VUECUBEBLOG_LOCAL_ASSET_MIRROR_DIRS = originalMirrorEnv;
+      } else {
+        delete process.env.VUECUBEBLOG_LOCAL_ASSET_MIRROR_DIRS;
+      }
+    }
+  });
+
+  it("resolves relative images from the shared myblog asset folder", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-shared-assets-"));
+    const sourceRoot = path.join(tempRoot, "project");
+    const sourceDir = path.join(sourceRoot, "content", "source", "myblog", "前端");
+    const sharedAssetDir = path.join(sourceRoot, "content", "source", "myblog", "assets");
+    const publicDir = path.join(tempRoot, "public");
+    const sourceFilePath = path.join(sourceDir, "Header.md");
+
+    await mkdir(sourceDir, { recursive: true });
+    await mkdir(sharedAssetDir, { recursive: true });
+    await writeFile(path.join(sharedAssetDir, "1680336645218.png"), "header-image");
+
+    const result = await rewriteMarkdownAssetPaths("![header](assets/1680336645218.png)", {
+      sourceFilePath,
+      canonicalSlug: "header-demo",
+      publicDir,
+      sourceProjectRoot: sourceRoot,
+    });
+
+    expect(result.markdown).toContain("/content-assets/header-demo/assets/1680336645218.png");
+    expect(await readFile(path.join(publicDir, "content-assets", "header-demo", "assets", "1680336645218.png"), "utf8")).toBe(
+      "header-image",
+    );
+  });
+
+  it("creates a placeholder asset for unrecoverable legacy absolute image paths", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-absolute-placeholder-"));
+    const sourceDir = path.join(tempRoot, "source");
+    const publicDir = path.join(tempRoot, "public");
+    const sourceFilePath = path.join(sourceDir, "Absolute 图片测试.md");
+    const legacyPath = "D:\\BaiduNetdiskDownload\\day09\\assets\\1680342815532.png";
+
+    await mkdir(sourceDir, { recursive: true });
+
+    const result = await rewriteMarkdownAssetPaths(`![legacy](${legacyPath})`, {
+      sourceFilePath,
+      canonicalSlug: "legacy-absolute-image",
+      publicDir,
+    });
+
+    const match = result.markdown.match(/\/imported-assets\/([a-f0-9]{40}\.svg)/);
+    expect(match).not.toBeNull();
+    expect(await readFile(path.join(publicDir, "imported-assets", match![1]), "utf8")).toContain("Image unavailable");
+  });
+
+  it("fails fast when local markdown images are missing", async () => {
     const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-broken-local-"));
     const sourceDir = path.join(tempRoot, "source");
     const publicDir = path.join(tempRoot, "public");
@@ -199,25 +359,13 @@ describe("generator-core", () => {
 
     await mkdir(sourceDir, { recursive: true });
 
-    const result = await rewriteMarkdownAssetPaths(
-      [
-        "![broken-relative](assets/1680342815532.png)",
-        "<img src=\"D:%5CBaiduNetdiskDownload%5Cday09%5Cassets%5C1680342859110.png\" alt=\"broken-html\">",
-      ].join("\n\n"),
-      {
+    await expect(
+      rewriteMarkdownAssetPaths("![broken-relative](assets/1680342815532.png)", {
         sourceFilePath,
         canonicalSlug: "broken-local-images",
         publicDir,
         siteBasePath: "/newBlog/",
-      },
-    );
-
-    expect(result.markdown).not.toContain("assets/1680342815532.png");
-    expect(result.markdown).not.toContain("D:%5CBaiduNetdiskDownload");
-    expect(result.markdown).not.toContain("<img");
-    expect(result.warnings).toEqual([
-      "Removed unresolved local image: assets/1680342815532.png",
-      "Removed unresolved local image: D:%5CBaiduNetdiskDownload%5Cday09%5Cassets%5C1680342859110.png",
-    ]);
+      }),
+    ).rejects.toThrow(/broken-local-images.*assets\/1680342815532\.png/s);
   });
 });

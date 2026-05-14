@@ -3,6 +3,7 @@ import { defineComponent } from "vue";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
+  getPostSummaries: vi.fn(),
   loadPostArticle: vi.fn(),
   resolvePostSlug: vi.fn(),
   routeState: {
@@ -21,6 +22,7 @@ vi.mock("vue-router", () => ({
 }));
 
 vi.mock("@/content/posts", () => ({
+  getPostSummaries: mocks.getPostSummaries,
   loadPostArticle: mocks.loadPostArticle,
   resolvePostSlug: mocks.resolvePostSlug,
 }));
@@ -64,12 +66,59 @@ const article = {
   toc: [{ id: "overview", level: 2, text: "Overview" }],
 };
 
+const postSummaries = [
+  {
+    canonicalSlug: "vector-notes",
+    aliases: ["vector-notes"],
+    title: "Vector Notes",
+    publishedAt: "2026-04-10T00:00:00.000Z",
+    publishedLabel: "Apr 10, 2026",
+    excerpt: "Previous post excerpt.",
+    type: "Essay",
+    searchText: "Vector Notes",
+    readingMinutes: 4,
+    coverImage: null,
+    categories: ["Design Systems"],
+    tags: ["Math"],
+  },
+  {
+    canonicalSlug: "orbiting-interfaces",
+    aliases: ["orbiting-interfaces"],
+    title: "Orbiting Interfaces",
+    publishedAt: "2026-04-08T00:00:00.000Z",
+    publishedLabel: "Apr 08, 2026",
+    excerpt: "Current post excerpt.",
+    type: "Essay",
+    searchText: "Orbiting Interfaces",
+    readingMinutes: 6,
+    coverImage: null,
+    categories: ["Design Systems"],
+    tags: ["Vue", "Motion", "Editorial"],
+  },
+  {
+    canonicalSlug: "signal-objects",
+    aliases: ["signal-objects"],
+    title: "Signal Objects",
+    publishedAt: "2026-04-06T00:00:00.000Z",
+    publishedLabel: "Apr 06, 2026",
+    excerpt: "Next post excerpt.",
+    type: "Essay",
+    searchText: "Signal Objects",
+    readingMinutes: 5,
+    coverImage: null,
+    categories: ["Design Systems"],
+    tags: ["Vue"],
+  },
+];
+
 describe("PostView", () => {
   beforeEach(() => {
     mocks.routeState.slug = "orbiting-interfaces";
     mocks.routeState.query = {};
+    mocks.getPostSummaries.mockReset();
     mocks.loadPostArticle.mockReset();
     mocks.resolvePostSlug.mockReset();
+    mocks.getPostSummaries.mockResolvedValue(postSummaries);
     mocks.resolvePostSlug.mockImplementation(async (slug: string) => slug);
     document.title = "WOODFISH";
   });
@@ -138,6 +187,10 @@ describe("PostView", () => {
     expect(wrapper.get("[data-testid='post-view-article']")).toBeTruthy();
     expect(wrapper.get("[data-testid='article-content-stub']").text()).toContain("Orbiting Interfaces");
     expect(wrapper.text()).toContain("/ posts / orbiting-interfaces");
+    expect(wrapper.get("[data-testid='post-view-back-link']").attributes("aria-label")).toBe("Back Home");
+    expect(wrapper.get("[data-testid='post-view-back-link']").find("span").exists()).toBe(false);
+    expect(wrapper.get("[data-testid='post-view-previous-link']").text()).toContain("Vector Notes");
+    expect(wrapper.get("[data-testid='post-view-next-link']").text()).toContain("Signal Objects");
     expect(document.title).toBe("Orbiting Interfaces | WOODFISH");
   });
 
@@ -166,6 +219,7 @@ describe("PostView", () => {
         type: "Tutorial",
       },
     });
-    expect(wrapper.text()).toContain("Back to Blog");
+    expect(wrapper.get("[data-testid='post-view-back-link']").attributes("aria-label")).toBe("Back to Blog");
+    expect(wrapper.get("[data-testid='post-view-back-link']").find("span").exists()).toBe(false);
   });
 });

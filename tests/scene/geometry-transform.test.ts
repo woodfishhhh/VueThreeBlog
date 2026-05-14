@@ -28,7 +28,7 @@ describe("getGeometryTransformTarget", () => {
         mode: "works",
       }),
     ).toEqual({
-      baseScale: 1,
+      baseScale: 1.2,
       x: 0,
       y: 0,
       z: 0,

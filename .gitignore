@@ -33,3 +33,11 @@ AGENTS.md
 # 历史会话遗留(本地保留可,但不入仓)
 Everything_Claude_Code_使用指南.docx
 generate_ecc_guide.py
+
+# 临时验证产物
+/output/
+/author-*.png
+/author-*-snapshot.md
+/blog-*.png
+/blog-*-snapshot.md
+/NUL

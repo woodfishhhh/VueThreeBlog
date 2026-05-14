@@ -27,83 +27,21 @@ export interface PostArticle extends PostSummary {
 export interface AuthorProfileData {
   name: string;
   title: string;
-  slogan: string;
-  intro: string;
-  avatar: string;
+  heroImage: string;
   postsCount: number;
   tagsCount: number;
   categoriesCount: number;
   skills: { title: string; color: string; img: string }[];
-  tags: string[];
-  // 完整作者信息
-  leftTags: string[];
-  rightTags: string[];
-  careers: {
-    school: string;
-    major: string;
-    color: string;
-  }[];
-  personalities: {
-    tips: string;
+  poem: {
     title: string;
-    color: string;
-    type: string;
-    image: string;
-    linkText: string;
-    typeLink: string;
-    typeName: string;
-    myphoto: string;
+    author: string;
+    lines: string[];
   };
-  motto: {
-    title: string;
-    prefix: string;
-    content: string;
-  };
-  expertise: {
-    title: string;
-    prefix: string;
-    specialist: string;
-    content: string;
-    level: string;
-  };
-  game: {
-    title: string;
-    subtitle: string;
-    img: string;
-    box_shadow: string;
-    tips_left: string;
-    tips_right: string;
-  }[];
-  likes: {
-    type: string;
-    tips: string;
-    title: string;
-    subtips: string;
-    list?: {
-      name: string;
-      href: string;
-      cover: string;
-    }[];
-    bg?: string;
-    button?: boolean;
-    button_link?: string;
-    button_text?: string;
-  }[];
   oneself: {
-    map: {
-      light: string;
-      dark: string;
-    };
     location: string;
-    birthYear: number;
+    birthDate: string;
     university: string;
     major: string;
-    occupation: string;
-  };
-  cause: {
-    tip: string;
-    title: string;
-    content: string;
   };
   tenyear: {
     tips: string;
@@ -112,18 +50,14 @@ export interface AuthorProfileData {
     start: string;
     end: string;
   };
-  award: {
-    enable: boolean;
-    description: string;
-    tips: string;
+  contacts: {
+    github: string;
+    bilibili: string;
+    qq: string;
+    wechat: string;
+    email: string;
+    douyin: string;
   };
-  rewardList: {
-    name: string;
-    money: number;
-    time: number;
-    color: string;
-    icon: string;
-  }[];
 }
 
 export interface FriendLinkData {

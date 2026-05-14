@@ -27,42 +27,7 @@ const domain = computed(() => {
 
 const cardStyle = computed<Record<string, string>>(() => ({
   "--card-rotate": `${props.rotateDeg}deg`,
-  "--tilt-x": "0deg",
-  "--tilt-y": "0deg",
 }));
-
-function canTilt(event: PointerEvent) {
-  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
-    return false;
-  }
-
-  if (event.pointerType && event.pointerType !== "mouse") {
-    return false;
-  }
-
-  return !window.matchMedia("(pointer: coarse)").matches
-    && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function handlePointerMove(event: PointerEvent) {
-  if (!canTilt(event)) {
-    return;
-  }
-
-  const element = event.currentTarget as HTMLElement;
-  const rect = element.getBoundingClientRect();
-  const x = ((event.clientX - rect.left) / Math.max(rect.width, 1) - 0.5) * 2;
-  const y = ((event.clientY - rect.top) / Math.max(rect.height, 1) - 0.5) * 2;
-
-  element.style.setProperty("--tilt-x", `${(-y * 7).toFixed(2)}deg`);
-  element.style.setProperty("--tilt-y", `${(x * 7).toFixed(2)}deg`);
-}
-
-function resetTilt(event: PointerEvent) {
-  const element = event.currentTarget as HTMLElement;
-  element.style.setProperty("--tilt-x", "0deg");
-  element.style.setProperty("--tilt-y", "0deg");
-}
 </script>
 
 <template>
@@ -74,8 +39,6 @@ function resetTilt(event: PointerEvent) {
     class="friend-link-card group"
     rel="noreferrer noopener"
     target="_blank"
-    @pointerleave="resetTilt"
-    @pointermove="handlePointerMove"
   >
     <div class="friend-link-card__pin" aria-hidden="true" />
     <div class="friend-link-card__inner">
@@ -85,6 +48,7 @@ function resetTilt(event: PointerEvent) {
           :alt="props.link.name"
           :src="props.link.avatar"
           class="h-16 w-16 shrink-0 rounded-[8px] border border-[var(--border-subtle)] object-cover shadow-[0_10px_28px_rgba(34,24,12,0.2)]"
+          loading="lazy"
           @error="avatarBroken = true"
         />
         <div v-else class="h-16 w-16 shrink-0 rounded-[8px] border border-[var(--border-subtle)] bg-[var(--surface-soft)]" />
@@ -112,34 +76,22 @@ function resetTilt(event: PointerEvent) {
   border: 1px solid rgba(76, 61, 43, 0.16);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(255, 253, 246, 0.68), rgba(244, 235, 217, 0.48)),
+    linear-gradient(135deg, rgba(255, 253, 246, 0.85), rgba(250, 245, 232, 0.72)),
     var(--surface-soft);
   color: var(--stage-fg);
   box-shadow: 0 24px 52px rgba(37, 28, 16, 0.16);
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
-  transform:
-    perspective(920px)
-    rotateX(var(--tilt-x))
-    rotateY(var(--tilt-y))
-    rotateZ(var(--card-rotate));
-  transform-style: preserve-3d;
+  transform: rotateZ(var(--card-rotate));
   transition:
     transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
     border-color 220ms ease;
-  will-change: transform;
+  contain: layout style paint;
 }
 
 .friend-link-card:hover {
   border-color: rgba(53, 88, 204, 0.28);
   box-shadow: 0 30px 64px rgba(37, 28, 16, 0.22);
-  transform:
-    perspective(920px)
-    rotateX(var(--tilt-x))
-    rotateY(var(--tilt-y))
-    rotateZ(var(--card-rotate))
-    translateY(-6px);
+  transform: rotateZ(var(--card-rotate)) translateY(-6px);
 }
 
 .friend-link-card__inner {
@@ -148,7 +100,6 @@ function resetTilt(event: PointerEvent) {
   display: flex;
   flex-direction: column;
   padding: 1.25rem;
-  transform: translateZ(24px);
 }
 
 .friend-link-card__description {
@@ -171,11 +122,9 @@ function resetTilt(event: PointerEvent) {
 :root[data-theme="night"] .friend-link-card {
   border-color: var(--border-subtle);
   background:
-    linear-gradient(135deg, rgba(18, 24, 40, 0.42), rgba(8, 12, 24, 0.3)),
+    linear-gradient(135deg, rgba(22, 28, 48, 0.72), rgba(12, 16, 32, 0.58)),
     var(--surface-soft);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(20px) saturate(155%);
-  -webkit-backdrop-filter: blur(20px) saturate(155%);
 }
 
 :root[data-theme="night"] .friend-link-card:hover {
@@ -192,11 +141,6 @@ function resetTilt(event: PointerEvent) {
   .friend-link-card:hover {
     transform: none;
     transition: border-color 180ms ease, box-shadow 180ms ease;
-    will-change: auto;
-  }
-
-  .friend-link-card__inner {
-    transform: none;
   }
 }
 </style>

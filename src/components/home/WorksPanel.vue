@@ -2,6 +2,8 @@
 import { computed, onMounted, onUnmounted, shallowRef } from "vue";
 
 import WorksCaseView from "@/components/home/works/WorksCaseView.vue";
+import WorksViewToggle from "@/components/home/works/WorksViewToggle.vue";
+import { useSiteStore } from "@/stores/site";
 import type { WorkProjectData } from "@/types/content";
 
 defineProps<{
@@ -10,12 +12,19 @@ defineProps<{
 
 const largeViewportQuery = "(min-width: 1024px)";
 const isLargeViewport = shallowRef(resolveIsLargeViewport());
+const store = useSiteStore();
 
 let mediaQueryList: MediaQueryList | null = null;
 
+const isDesktopOrbit = computed(
+  () => isLargeViewport.value && store.worksViewMode === "orbit",
+);
+const showCaseView = computed(
+  () => !isLargeViewport.value || store.worksViewMode === "case",
+);
 const panelDescription = computed(() =>
-  isLargeViewport.value
-    ? "作品卡片已进入 WebGL 轨道。点击旋转中的卡片进入项目，点右下角区域查看仓库。"
+  isDesktopOrbit.value
+    ? "作品卡片已进入 WebGL 轨道。按住卡片拖向中心，松手打开 Live 站点。"
     : "移动端使用项目列表：快速查看用途、入口和仓库。",
 );
 
@@ -69,9 +78,15 @@ onUnmounted(() => {
         <h2>Selected Works</h2>
         <p>{{ panelDescription }}</p>
       </div>
+      <WorksViewToggle
+        v-if="isLargeViewport"
+        :model-value="store.worksViewMode"
+        class="works-panel__toggle"
+        @update:model-value="store.setWorksViewMode"
+      />
     </div>
 
-    <ul v-if="isLargeViewport" class="works-panel__a11y-links" aria-label="作品链接">
+    <ul v-if="isDesktopOrbit" class="works-panel__a11y-links" aria-label="作品链接">
       <li v-for="work in works" :key="work.slug">
         <a :href="work.liveUrl" rel="noreferrer noopener" tabindex="-1" target="_blank">
           {{ work.name }}
@@ -82,7 +97,7 @@ onUnmounted(() => {
       </li>
     </ul>
 
-    <div v-else class="works-panel__body">
+    <div v-if="showCaseView" class="works-panel__body">
       <WorksCaseView :works="works" />
     </div>
   </div>
@@ -113,6 +128,10 @@ onUnmounted(() => {
   min-width: 0;
 }
 
+.works-panel__toggle {
+  pointer-events: auto;
+}
+
 .works-panel__eyebrow {
   color: var(--stage-hint);
   font-size: 0.68rem;
@@ -140,7 +159,8 @@ onUnmounted(() => {
 .works-panel__body {
   min-height: 0;
   flex: 1;
-  overflow: visible;
+  overflow: auto;
+  pointer-events: auto;
 }
 
 .works-panel__a11y-links {

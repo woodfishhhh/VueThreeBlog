@@ -239,11 +239,9 @@ function confirmIssueRedirect() {
   border: 1px solid rgba(76, 61, 43, 0.16);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(255, 253, 246, 0.62), rgba(244, 235, 217, 0.38)),
+    linear-gradient(135deg, rgba(255, 253, 246, 0.82), rgba(250, 245, 232, 0.68)),
     var(--surface-soft);
   box-shadow: 0 24px 52px rgba(37, 28, 16, 0.16);
-  backdrop-filter: blur(18px) saturate(155%);
-  -webkit-backdrop-filter: blur(18px) saturate(155%);
   transform: translateY(0) rotate(-0.5deg);
   transition:
     border-color 220ms ease,
@@ -432,11 +430,9 @@ function confirmIssueRedirect() {
 :root[data-theme="night"] .friend-application-card {
   border-color: var(--border-subtle);
   background:
-    linear-gradient(135deg, rgba(18, 24, 40, 0.38), rgba(8, 12, 24, 0.26)),
+    linear-gradient(135deg, rgba(22, 28, 48, 0.72), rgba(12, 16, 32, 0.58)),
     var(--surface-soft);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(20px) saturate(155%);
-  -webkit-backdrop-filter: blur(20px) saturate(155%);
 }
 
 :root[data-theme="night"] .friend-application-card:hover,

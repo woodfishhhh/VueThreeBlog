@@ -1,18 +1,19 @@
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 import DOMPurify from "isomorphic-dompurify";
 import GithubSlugger from "github-slugger";
+import hljs from "highlight.js";
+import MarkdownIt from "markdown-it";
+import markdownItAnchor from "markdown-it-anchor";
 import matter from "gray-matter";
 import yaml from "js-yaml";
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remarkGfm from "remark-gfm";
-import remarkRehype from "remark-rehype";
-import rehypeRaw from "rehype-raw";
-import rehypeSlug from "rehype-slug";
-import rehypeHighlight from "rehype-highlight";
-import rehypeStringify from "rehype-stringify";
+
+type MarkdownToken = {
+  content: string;
+  tag: string;
+  type: string;
+};
 
 import {
   buildLegacySlugIndex,
@@ -52,83 +53,21 @@ export interface GeneratedPostArticle extends GeneratedPostIndexEntry {
 export interface GeneratedAuthorProfile {
   name: string;
   title: string;
-  slogan: string;
-  intro: string;
-  avatar: string;
+  heroImage: string;
   postsCount: number;
   tagsCount: number;
   categoriesCount: number;
   skills: { title: string; color: string; img: string }[];
-  tags: string[];
-  // 完整作者信息
-  leftTags: string[];
-  rightTags: string[];
-  careers: {
-    school: string;
-    major: string;
-    color: string;
-  }[];
-  personalities: {
-    tips: string;
+  poem: {
     title: string;
-    color: string;
-    type: string;
-    image: string;
-    linkText: string;
-    typeLink: string;
-    typeName: string;
-    myphoto: string;
+    author: string;
+    lines: string[];
   };
-  motto: {
-    title: string;
-    prefix: string;
-    content: string;
-  };
-  expertise: {
-    title: string;
-    prefix: string;
-    specialist: string;
-    content: string;
-    level: string;
-  };
-  game: {
-    title: string;
-    subtitle: string;
-    img: string;
-    box_shadow: string;
-    tips_left: string;
-    tips_right: string;
-  }[];
-  likes: {
-    type: string;
-    tips: string;
-    title: string;
-    subtips: string;
-    list?: {
-      name: string;
-      href: string;
-      cover: string;
-    }[];
-    bg?: string;
-    button?: boolean;
-    button_link?: string;
-    button_text?: string;
-  }[];
   oneself: {
-    map: {
-      light: string;
-      dark: string;
-    };
     location: string;
-    birthYear: number;
+    birthDate: string;
     university: string;
     major: string;
-    occupation: string;
-  };
-  cause: {
-    tip: string;
-    title: string;
-    content: string;
   };
   tenyear: {
     tips: string;
@@ -137,18 +76,14 @@ export interface GeneratedAuthorProfile {
     start: string;
     end: string;
   };
-  award: {
-    enable: boolean;
-    description: string;
-    tips: string;
+  contacts: {
+    github: string;
+    bilibili: string;
+    qq: string;
+    wechat: string;
+    email: string;
+    douyin: string;
   };
-  rewardList: {
-    name: string;
-    money: number;
-    time: number;
-    color: string;
-    icon: string;
-  }[];
 }
 
 export interface GeneratedFriendLink {
@@ -181,25 +116,10 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 
 const timestampPattern = /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?$/;
 
-const tagsToRemove = [
-  "数码科技爱好者",
-  "🔍 分享与热心帮助",
-  "🏠 我是鱼唇大学生",
-  "🔨 前端开发正在学",
-  "学习算法和音乐 🤝",
-  "脚踏实地行动派 🏃",
-  "团队小组发动机 🧱",
-  "电子音乐制作人 🎧",
-] as const;
-
-const markdownProcessor = unified()
-  .use(remarkParse)
-  .use(remarkGfm)
-  .use(remarkRehype, { allowDangerousHtml: true })
-  .use(rehypeRaw)
-  .use(rehypeSlug)
-  .use(rehypeHighlight)
-  .use(rehypeStringify);
+interface RenderedArticleMarkdown {
+  html: string;
+  toc: GeneratedTocItem[];
+}
 
 export async function buildSiteContent(options: BuildSiteContentOptions): Promise<SiteContentBuildResult> {
   const sourceProjectRoot = options.sourceProjectRoot;
@@ -236,8 +156,15 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
       canonicalSlug: slugResult.canonicalSlug,
       publicDir: targetPublicDir,
       siteBasePath,
+      sourceProjectRoot,
     });
-    const toc = extractToc(rewritten.markdown);
+    const renderedArticle = renderArticleMarkdown(rewritten.markdown);
+    await assertReferencedArticleAssetsExist({
+      articleHtml: renderedArticle.html,
+      coverImage: null,
+      publicDir: targetPublicDir,
+      slug: slugResult.canonicalSlug,
+    });
     const publishedAt = toIsoDate(date);
     const postType = resolvePostType(parsed.data.type);
     const categories = toStringArray(parsed.data.categories);
@@ -255,6 +182,13 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
       canonicalSlug: slugResult.canonicalSlug,
       targetPublicDir,
       siteBasePath,
+      sourceProjectRoot,
+    });
+    await assertReferencedArticleAssetsExist({
+      articleHtml: renderedArticle.html,
+      coverImage,
+      publicDir: targetPublicDir,
+      slug: slugResult.canonicalSlug,
     });
     const entry: GeneratedPostArticle = {
       canonicalSlug: slugResult.canonicalSlug,
@@ -269,8 +203,8 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
       coverImage,
       categories,
       tags,
-      html: await renderArticleHtml(rewritten.markdown),
-      toc,
+      html: renderedArticle.html,
+      toc: renderedArticle.toc,
     };
 
     postsBySlug[entry.canonicalSlug] = entry;
@@ -356,40 +290,80 @@ async function collectMarkdownFiles(root: string): Promise<string[]> {
   return files;
 }
 
-function extractToc(markdown: string): GeneratedTocItem[] {
-  const slugger = new GithubSlugger();
+function renderArticleMarkdown(markdown: string): RenderedArticleMarkdown {
   const toc: GeneratedTocItem[] = [];
-  const lines = markdown.split(/\r?\n/);
-  let inCodeBlock = false;
+  const slugger = new GithubSlugger();
+  const renderer = MarkdownIt({
+    breaks: false,
+    html: true,
+    linkify: true,
+    typographer: false,
+    highlight(code: string, language: string) {
+      const normalizedLanguage = language.trim();
 
-  for (const line of lines) {
-    if (line.trim().startsWith("```")) {
-      inCodeBlock = !inCodeBlock;
-      continue;
-    }
+      if (normalizedLanguage && hljs.getLanguage(normalizedLanguage)) {
+        return `<pre><code class="hljs language-${escapeHtmlAttribute(normalizedLanguage)}">${hljs.highlight(code, { language: normalizedLanguage, ignoreIllegals: true }).value}</code></pre>`;
+      }
 
-    if (inCodeBlock) {
-      continue;
-    }
+      return `<pre><code class="hljs">${renderer.utils.escapeHtml(code)}</code></pre>`;
+    },
+  }).use(markdownItAnchor, {
+    level: [2, 3, 4],
+    getTokensText: getHeadingTokensText,
+    slugify: (value: string) => slugger.slug(normalizeHeadingSlugInput(value)),
+    tabIndex: false,
+    callback(token: MarkdownToken, info: { slug: string; title: string }) {
+      const level = Number(token.tag.slice(1));
+      if (level === 2 || level === 3 || level === 4) {
+        toc.push({
+          id: info.slug,
+          level,
+          text: normalizeRenderedText(info.title),
+        });
+      }
+    },
+  });
 
-    const match = line.match(/^(#{2,4})\s+(.+)$/);
-    if (!match) {
-      continue;
-    }
+  return {
+    html: addLazyImageAttributes(sanitizeArticleHtml(renderer.render(markdown))),
+    toc,
+  };
+}
 
-    const text = stripInlineMarkdown(match[2].trim());
-    toc.push({
-      id: slugger.slug(text),
-      level: match[1].length as 2 | 3 | 4,
-      text,
-    });
-  }
+function getHeadingTokensText(tokens: MarkdownToken[]) {
+  return tokens
+    .filter((token) => token.type !== "image")
+    .map((token) => stripHtml(token.content))
+    .join("");
+}
 
-  return toc;
+function normalizeRenderedText(value: string) {
+  return stripHtml(value).replace(/\s+/g, " ").trim();
+}
+
+function normalizeHeadingSlugInput(value: string) {
+  return stripHtml(value)
+    .replace(/[&+]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function stripHtml(value: string) {
+  return value.replace(/<[^>]+>/g, "");
+}
+
+function escapeHtmlAttribute(value: string) {
+  return value.replace(/[&<>"']/g, (character) => {
+    if (character === "&") return "&amp;";
+    if (character === "<") return "&lt;";
+    if (character === ">") return "&gt;";
+    if (character === '"') return "&quot;";
+    return "&#39;";
+  });
 }
 
 function stripInlineMarkdown(value: string) {
-  return value
+  return stripHtml(value)
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
     .replace(/[*_]{1,2}(.*?)[*_]{1,2}/g, "$1")
     .replace(/`([^`]+)`/g, "$1");
@@ -470,6 +444,7 @@ async function resolveContentAssetValue(
     targetPublicDir: string;
     siteBasePath?: string;
     canonicalSlug?: string;
+    sourceProjectRoot?: string;
   },
 ) {
   if (!rawValue) {
@@ -481,6 +456,7 @@ async function resolveContentAssetValue(
     publicDir: options.targetPublicDir,
     siteBasePath: options.siteBasePath,
     canonicalSlug: options.canonicalSlug,
+    sourceProjectRoot: options.sourceProjectRoot,
   });
 
   if (resolved) {
@@ -502,6 +478,7 @@ async function resolveContentAssetText(
     targetPublicDir: string;
     siteBasePath?: string;
     canonicalSlug?: string;
+    sourceProjectRoot?: string;
   },
 ) {
   return (await resolveContentAssetValue(rawValue, options)) ?? "";
@@ -525,156 +502,28 @@ async function buildAuthorProfile(options: {
   const configData = (yaml.load(configText) as { author?: unknown; subtitle?: unknown } | undefined) ?? {};
   const aboutText = await safeReadFile(options.aboutPath);
   const aboutData = (yaml.load(aboutText) as Record<string, any> | undefined) ?? {};
-  const rawProfileTags = [
-    ...(Array.isArray(aboutData.authorinfo?.leftTags) ? aboutData.authorinfo.leftTags : []),
-    ...(Array.isArray(aboutData.authorinfo?.rightTags) ? aboutData.authorinfo.rightTags : []),
-  ];
-  const filteredTags = rawProfileTags
-    .map((item: unknown) => readString(typeof item === "string" ? item : (item as { title?: unknown })?.title))
-    .filter((tag) => tag.length > 0)
-    .filter((tag) => !tagsToRemove.some((forbiddenTag) => tag.includes(forbiddenTag)));
-
-  const rawAvatar = readString(aboutData.authorinfo?.image);
-  const avatar = await resolveContentAssetText(rawAvatar, {
+  const rawHeroImage = readString(aboutData.hero?.image) || readString(aboutData.authorinfo?.image);
+  const heroImage = await resolveContentAssetText(rawHeroImage, {
     sourceFilePath: options.aboutPath,
     targetPublicDir: options.targetPublicDir,
     siteBasePath: options.siteBasePath,
   });
 
-  // 提取 leftTags 和 rightTags
-  const leftTags = (Array.isArray(aboutData.authorinfo?.leftTags) ? aboutData.authorinfo.leftTags : [])
-    .map((item: unknown) => readString(typeof item === "string" ? item : ""))
-    .filter((tag: string) => tag.length > 0);
-  const rightTags = (Array.isArray(aboutData.authorinfo?.rightTags) ? aboutData.authorinfo.rightTags : [])
-    .map((item: unknown) => readString(typeof item === "string" ? item : ""))
-    .filter((tag: string) => tag.length > 0);
-
-  // 提取 careers
-  const careers = (Array.isArray(aboutData.careers?.items) ? aboutData.careers.items : []).map((item: any) => ({
-    school: readString(item?.school),
-    major: readString(item?.major),
-    color: readString(item?.color),
-  })).filter((item: { school: string; major: string }) => item.school && item.major);
-
-  // 提取 personalities
-  const personalitiesRaw = aboutData.personalities || {};
-  const personalities = {
-    tips: readString(personalitiesRaw.tips),
-    title: readString(personalitiesRaw.title),
-    color: readString(personalitiesRaw.color),
-    type: readString(personalitiesRaw.type),
-    image: await resolveContentAssetText(readString(personalitiesRaw.image), {
-      sourceFilePath: options.aboutPath,
-      targetPublicDir: options.targetPublicDir,
-      siteBasePath: options.siteBasePath,
-    }),
-    linkText: readString(personalitiesRaw.linkText),
-    typeLink: readString(personalitiesRaw.typeLink),
-    typeName: readString(personalitiesRaw.typeName),
-    myphoto: await resolveContentAssetText(readString(personalitiesRaw.myphoto), {
-      sourceFilePath: options.aboutPath,
-      targetPublicDir: options.targetPublicDir,
-      siteBasePath: options.siteBasePath,
-    }),
+  const poemRaw = aboutData.poem || {};
+  const poem = {
+    title: readString(poemRaw.title),
+    author: readString(poemRaw.author) || readString(aboutData.contentinfo?.name),
+    lines: toStringArray(poemRaw.lines),
   };
 
-  // 提取 motto
-  const mottoRaw = aboutData.motto || {};
-  const motto = {
-    title: readString(mottoRaw.title),
-    prefix: readString(mottoRaw.prefix),
-    content: readString(mottoRaw.content),
-  };
-
-  // 提取 expertise
-  const expertiseRaw = aboutData.expertise || {};
-  const expertise = {
-    title: readString(expertiseRaw.title),
-    prefix: readString(expertiseRaw.prefix),
-    specialist: readString(expertiseRaw.specialist),
-    content: readString(expertiseRaw.content),
-    level: readString(expertiseRaw.level),
-  };
-
-  // 提取 game
-  const gameRaw = Array.isArray(aboutData.game) ? aboutData.game : [];
-  const game = await Promise.all(gameRaw.map(async (item: any) => ({
-    title: readString(item?.title),
-    subtitle: readString(item?.subtitle),
-    img: await resolveContentAssetText(readString(item?.img), {
-      sourceFilePath: options.aboutPath,
-      targetPublicDir: options.targetPublicDir,
-      siteBasePath: options.siteBasePath,
-    }),
-    box_shadow: readString(item?.box_shadow),
-    tips_left: readString(item?.tips_left),
-    tips_right: readString(item?.tips_right),
-  })));
-
-  // 提取 likes
-  const likesRaw = Array.isArray(aboutData.likes) ? aboutData.likes : [];
-  const likes = await Promise.all(likesRaw.map(async (item: any) => {
-    const normalized: any = {
-      type: readString(item?.type),
-      tips: readString(item?.tips),
-      title: readString(item?.title),
-      subtips: readString(item?.subtips),
-    };
-    if (Array.isArray(item?.list)) {
-      normalized.list = await Promise.all(item.list.map(async (listItem: any) => ({
-        name: readString(listItem?.name),
-        href: readString(listItem?.href),
-        cover: await resolveContentAssetText(readString(listItem?.cover), {
-          sourceFilePath: options.aboutPath,
-          targetPublicDir: options.targetPublicDir,
-          siteBasePath: options.siteBasePath,
-        }),
-      })));
-    }
-    if (item?.bg) {
-      normalized.bg = await resolveContentAssetText(readString(item.bg), {
-        sourceFilePath: options.aboutPath,
-        targetPublicDir: options.targetPublicDir,
-        siteBasePath: options.siteBasePath,
-      });
-    }
-    if (item?.button) normalized.button = item.button;
-    if (item?.button_link) normalized.button_link = readString(item.button_link);
-    if (item?.button_text) normalized.button_text = readString(item.button_text);
-    return normalized;
-  }));
-
-  // 提取 oneself
   const oneselfRaw = aboutData.oneself || {};
   const oneself = {
-    map: {
-      light: await resolveContentAssetText(readString(oneselfRaw.map?.light), {
-        sourceFilePath: options.aboutPath,
-        targetPublicDir: options.targetPublicDir,
-        siteBasePath: options.siteBasePath,
-      }),
-      dark: await resolveContentAssetText(readString(oneselfRaw.map?.dark), {
-        sourceFilePath: options.aboutPath,
-        targetPublicDir: options.targetPublicDir,
-        siteBasePath: options.siteBasePath,
-      }),
-    },
     location: readString(oneselfRaw.location),
-    birthYear: typeof oneselfRaw.birthYear === "number" ? oneselfRaw.birthYear : 2006,
+    birthDate: readString(oneselfRaw.birthDate) || readString(oneselfRaw.birthYear),
     university: readString(oneselfRaw.university),
     major: readString(oneselfRaw.major),
-    occupation: readString(oneselfRaw.occupation),
   };
 
-  // 提取 cause
-  const causeRaw = aboutData.cause || {};
-  const cause = {
-    tip: readString(causeRaw.tip),
-    title: readString(causeRaw.title),
-    content: readString(causeRaw.content),
-  };
-
-  // 提取 tenyear
   const tenyearRaw = aboutData.tenyear || {};
   const tenyear = {
     tips: readString(tenyearRaw.tips),
@@ -684,47 +533,28 @@ async function buildAuthorProfile(options: {
     end: readString(tenyearRaw.end),
   };
 
-  // 提取 award 和 rewardList
-  const awardRaw = aboutData.award || {};
-  const award = {
-    enable: Boolean(awardRaw.enable),
-    description: readString(awardRaw.description),
-    tips: readString(awardRaw.tips),
+  const contactsRaw = aboutData.contacts || {};
+  const contacts = {
+    github: readString(contactsRaw.github),
+    bilibili: readString(contactsRaw.bilibili),
+    qq: readString(contactsRaw.qq),
+    wechat: readString(contactsRaw.wechat),
+    email: readString(contactsRaw.email),
+    douyin: readString(contactsRaw.douyin),
   };
-  const rewardListRaw = Array.isArray(aboutData.rewardList) ? aboutData.rewardList : [];
-  const rewardList = rewardListRaw.map((item: any) => ({
-    name: readString(item?.name),
-    money: typeof item?.money === "number" ? item.money : 0,
-    time: typeof item?.time === "number" ? item.time : 0,
-    color: readString(item?.color),
-    icon: readString(item?.icon),
-  })).filter((item) => item.name && item.money > 0);
 
   return {
     name: readString(aboutData.contentinfo?.name) || readString(configData.author) || "Woodfish",
     title: readString(aboutData.contentinfo?.title) || "Developer",
-    slogan: readString(aboutData.contentinfo?.slogan),
-    intro: readString(aboutData.contentinfo?.sup) || readString(configData.subtitle),
-    avatar,
+    heroImage,
     postsCount: options.posts.length,
     tagsCount: tagsSet.size,
     categoriesCount: categoriesSet.size,
     skills: await normalizeSkills(aboutData.skills?.tags, options.aboutPath, options.targetPublicDir, options.siteBasePath),
-    tags: filteredTags,
-    // 新增字段
-    leftTags,
-    rightTags,
-    careers,
-    personalities,
-    motto,
-    expertise,
-    game,
-    likes,
+    poem,
     oneself,
-    cause,
     tenyear,
-    award,
-    rewardList,
+    contacts,
   };
 }
 
@@ -887,9 +717,7 @@ function formatPublishedDate(value: string) {
   return Number.isNaN(date.getTime()) ? value : dateFormatter.format(date);
 }
 
-async function renderArticleHtml(markdown: string) {
-  const rendered = await markdownProcessor.process(markdown);
-  const rawHtml = String(rendered.value);
+function sanitizeArticleHtml(rawHtml: string) {
   // ─────────────────────────────────────────────────────────────────────────────
   // XSS 防护：构建时用 DOMPurify 消毒生成的 HTML
   //
@@ -901,7 +729,7 @@ async function renderArticleHtml(markdown: string) {
   // 这样即使 Markdown 里有人埋了 <script> 或 <img onerror=...>
   // 也会在构建时被清除，不会进入最终产物的 JSON 文件。
   // ─────────────────────────────────────────────────────────────────────────────
-  const sanitizedHtml = DOMPurify.sanitize(rawHtml, {
+  return DOMPurify.sanitize(rawHtml, {
     ALLOWED_TAGS: [
       "h1", "h2", "h3", "h4", "h5", "h6",
       "p", "br", "hr",
@@ -921,7 +749,6 @@ async function renderArticleHtml(markdown: string) {
     ],
     ALLOW_DATA_ATTR: false,
   });
-  return addLazyImageAttributes(sanitizedHtml);
 }
 
 function addLazyImageAttributes(html: string) {
@@ -938,4 +765,59 @@ function addLazyImageAttributes(html: string) {
 
     return `<img${nextAttributes}>`;
   });
+}
+
+async function assertReferencedArticleAssetsExist(options: {
+  articleHtml: string;
+  coverImage: string | null;
+  publicDir: string;
+  slug: string;
+}) {
+  const references = [
+    ...Array.from(options.articleHtml.matchAll(/<img\b[^>]*?\bsrc=(["'])([^"']+)\1/gi)).map((match) => match[2] ?? ""),
+    options.coverImage ?? "",
+  ].filter((reference) => isGeneratedLocalAssetReference(reference));
+  const missingAssets: string[] = [];
+
+  for (const reference of references) {
+    const expectedPath = generatedAssetPath(reference, options.publicDir);
+    if (!(await fileExists(expectedPath))) {
+      missingAssets.push(`${reference} -> ${expectedPath}`);
+    }
+  }
+
+  if (missingAssets.length > 0) {
+    throw new Error(`Post "${options.slug}" references missing generated image(s): ${missingAssets.join(", ")}`);
+  }
+}
+
+function isGeneratedLocalAssetReference(reference: string) {
+  const withoutBase = stripSiteBasePath(reference);
+  return withoutBase.startsWith("/remote-assets/")
+    || withoutBase.startsWith("/content-assets/")
+    || withoutBase.startsWith("/imported-assets/");
+}
+
+function generatedAssetPath(reference: string, publicDir: string) {
+  return path.join(publicDir, ...stripSiteBasePath(reference).replace(/^\/+/, "").split("/"));
+}
+
+function stripSiteBasePath(reference: string) {
+  try {
+    const parsed = new URL(reference, "https://local.invalid");
+    const match = parsed.pathname.match(/\/(?:remote-assets|content-assets|imported-assets)\/.+$/);
+    return match?.[0] ?? parsed.pathname;
+  } catch {
+    const match = reference.match(/\/(?:remote-assets|content-assets|imported-assets)\/.+$/);
+    return match?.[0] ?? reference;
+  }
+}
+
+async function fileExists(filePath: string) {
+  try {
+    const fileStat = await stat(filePath);
+    return fileStat.isFile();
+  } catch {
+    return false;
+  }
 }

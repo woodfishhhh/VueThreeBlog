@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import gsap from "gsap";
 import * as THREE from "three";
@@ -8,7 +8,14 @@ import { createCircleTexture } from "@/components/scene/circle-texture";
 import { getGeometryTransformTarget } from "@/components/scene/geometry-transform";
 import { normalizeRotationForTween } from "@/components/scene/hypercube-rotation";
 import {
+  isDesktopWorksOrbitMode,
+  resolveScenePointerDownAction,
+  shouldRaycastSceneGeometry,
+} from "@/components/scene/scene-interaction";
+import {
   createWorksOrbitCards,
+  getWorksCenterMagnetStrength,
+  WORKS_ORBIT_CARD_RENDER_LAYER,
   type WorksOrbitCards,
 } from "@/components/scene/works-orbit-cards";
 import { useHypercube, type Hypercube } from "@/composables/useHypercube";
@@ -34,8 +41,13 @@ const router = useRouter();
 const { theme } = useTheme();
 
 const isDragging = ref(false);
-const hovered = ref(false);
+const cardHovered = ref(false);
+const cardGrabActive = ref(false);
+const geometryHovered = ref(false);
 const isMobile = ref(false);
+const hasCardHoverOnly = computed(
+  () => cardHovered.value && !cardGrabActive.value,
+);
 
 const onPointerDown = () => {
   if (store.isFocusing) isDragging.value = true;
@@ -47,6 +59,12 @@ const onPointerLeave = () => {
   isDragging.value = false;
 };
 const onClickBackground = (event: MouseEvent) => {
+  if (suppressNextCanvasClick) {
+    suppressNextCanvasClick = false;
+    event.stopPropagation();
+    return;
+  }
+
   if (event.target === canvasRef.value) {
     store.triggerStep();
   }
@@ -57,7 +75,8 @@ const CAMERA_INTRO_START_POSITION = new THREE.Vector3(0, 1.5, 92);
 const CAMERA_INTRO_START_LOOK = new THREE.Vector3(0, 0, 0);
 const NIGHT_CLEAR_COLOR = new THREE.Color("#050510");
 const DAY_CLEAR_COLOR = new THREE.Color("#FAFAF7");
-const ACTIVE_SCALE = 1;
+const HYPERCUBE_SCENE_SCALE = 1;
+const MOBIUS_SCENE_SCALE = 1.7;
 const INACTIVE_SCALE = 0.001;
 
 const defaultRotations = {
@@ -98,6 +117,7 @@ let sceneTimer: THREE.Timer | null = null;
 let circleTexture: THREE.CanvasTexture | null = null;
 let reducedMotionQuery: MediaQueryList | null = null;
 let prefersReducedMotion = false;
+let suppressNextCanvasClick = false;
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -205,8 +225,10 @@ function applyThemeImmediate(nextTheme: ThemeMode) {
   hypercube.setOpacity(isDay ? 0 : 1);
   mobius.setOpacity(isDay ? 1 : 0);
   starField.setOpacity(isDay ? 0 : 1);
-  hypercube.group.scale.setScalar(isDay ? INACTIVE_SCALE : ACTIVE_SCALE);
-  mobius.group.scale.setScalar(isDay ? ACTIVE_SCALE : INACTIVE_SCALE);
+  hypercube.group.scale.setScalar(
+    isDay ? INACTIVE_SCALE : HYPERCUBE_SCENE_SCALE,
+  );
+  mobius.group.scale.setScalar(isDay ? MOBIUS_SCENE_SCALE : INACTIVE_SCALE);
   threeScene.scene.background = isDay
     ? DAY_CLEAR_COLOR.clone()
     : NIGHT_CLEAR_COLOR.clone();
@@ -226,7 +248,7 @@ function updateGeometryTransform(immediate = false) {
   if (width >= 768) {
     const aspect = width / Math.max(height, 1);
     const distance = 12;
-    const halfScreenCenterNdc = 0.5;
+    const halfScreenCenterNdc = store.mode === "author" ? 0.6 : 0.5;
     const halfFovRad = THREE.MathUtils.degToRad(threeScene.camera.fov / 2);
     splitCenterOffset =
       halfScreenCenterNdc * distance * Math.tan(halfFovRad) * aspect;
@@ -241,7 +263,8 @@ function updateGeometryTransform(immediate = false) {
 
   const targetPosition = new THREE.Vector3(target.x, target.y, target.z);
   const activeTheme: ThemeMode = theme.value;
-  const activeScale = target.baseScale * ACTIVE_SCALE;
+  const hypercubeScale = target.baseScale * HYPERCUBE_SCENE_SCALE;
+  const mobiusScale = target.baseScale * MOBIUS_SCENE_SCALE;
   const inactiveScale = target.baseScale * INACTIVE_SCALE;
 
   const nightRotation =
@@ -263,13 +286,13 @@ function updateGeometryTransform(immediate = false) {
 
   applyGroupTransform(hypercube.group, "night", {
     position: targetPosition,
-    scale: activeTheme === "night" ? activeScale : inactiveScale,
+    scale: activeTheme === "night" ? hypercubeScale : inactiveScale,
     rotation: nightRotation,
     immediate,
   });
   applyGroupTransform(mobius.group, "day", {
     position: targetPosition,
-    scale: activeTheme === "day" ? activeScale * 2 : inactiveScale,
+    scale: activeTheme === "day" ? mobiusScale : inactiveScale,
     rotation: dayRotation,
     immediate,
   });
@@ -291,13 +314,19 @@ function handleReducedMotionChange(event: MediaQueryListEvent) {
   updateWorksOrbitCards();
 }
 
-function updateWorksOrbitCards(elapsed = 0) {
+function updateWorksOrbitCards(elapsed = 0, delta = 0) {
   if (!container.value || !threeScene || !worksOrbitCards) return;
   const width = container.value.clientWidth;
   const height = container.value.clientHeight;
   const activeGeometry = getActiveGeometry();
   const visible =
-    store.mode === "works" && !store.isFocusing && !isMobile.value && !!activeGeometry;
+    isDesktopWorksOrbitMode(
+      store.mode,
+      store.worksViewMode,
+      isMobile.value,
+    ) &&
+    !store.isFocusing &&
+    !!activeGeometry;
 
   if (activeGeometry) {
     activeGeometry.group.getWorldPosition(geometryWorldCenter);
@@ -308,6 +337,7 @@ function updateWorksOrbitCards(elapsed = 0) {
   worksOrbitCards.update({
     camera: threeScene.camera,
     center: geometryWorldCenter,
+    delta,
     elapsed,
     reducedMotion: prefersReducedMotion,
     viewport: {
@@ -319,6 +349,47 @@ function updateWorksOrbitCards(elapsed = 0) {
 
   if (!visible) {
     worksOrbitCards.setHovered(null);
+    worksOrbitCards.clearInteraction();
+    cardHovered.value = false;
+    cardGrabActive.value = false;
+  }
+
+  const ritualIntensity =
+    visible && worksOrbitCards.isInteracting()
+      ? getWorksCenterMagnetStrength(pointer, prefersReducedMotion)
+      : 0;
+  hypercube?.setInteractionIntensity(
+    theme.value === "night" ? ritualIntensity : 0,
+  );
+  mobius?.setInteractionIntensity(theme.value === "day" ? ritualIntensity : 0);
+  starField?.setWarpIntensity(theme.value === "night" ? ritualIntensity : 0);
+}
+
+function renderSceneFrame() {
+  if (!threeScene) return;
+
+  const { camera, renderer, scene } = threeScene;
+  if (!worksOrbitCards?.group.visible) {
+    camera.layers.set(0);
+    threeScene.render();
+    return;
+  }
+
+  const previousAutoClear = renderer.autoClear;
+  const previousBackground = scene.background;
+
+  try {
+    renderer.autoClear = false;
+    renderer.clear(true, true, true);
+    camera.layers.set(0);
+    renderer.render(scene, camera);
+    camera.layers.set(WORKS_ORBIT_CARD_RENDER_LAYER);
+    scene.background = null;
+    renderer.render(scene, camera);
+  } finally {
+    scene.background = previousBackground;
+    camera.layers.set(0);
+    renderer.autoClear = previousAutoClear;
   }
 }
 
@@ -329,36 +400,91 @@ function updatePointerFromEvent(event: PointerEvent | MouseEvent) {
   pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 }
 
-function openWorkLink(url: string) {
-  const opened = window.open(url, "_blank", "noopener,noreferrer");
-  if (opened) {
-    opened.opener = null;
+function handlePointerMove(event: PointerEvent) {
+  updatePointerFromEvent(event);
+  if (worksOrbitCards?.isInteracting()) {
+    event.stopPropagation();
+    worksOrbitCards.drag(pointer);
   }
 }
 
-function handlePointerMove(event: PointerEvent) {
-  updatePointerFromEvent(event);
+function releaseCardInteraction(event?: PointerEvent) {
+  if (!worksOrbitCards?.isInteracting()) return;
+
+  if (event) {
+    updatePointerFromEvent(event);
+    worksOrbitCards.drag(pointer);
+  }
+  event?.stopPropagation();
+  suppressNextCanvasClick = true;
+  const result = worksOrbitCards.release(sceneTimer?.getElapsed() ?? 0);
+  if (result?.action === "launch") {
+    window.open(result.url, "_blank", "noopener,noreferrer");
+  }
+  cardGrabActive.value = worksOrbitCards.isInteracting();
+
+  if (
+    event?.currentTarget instanceof HTMLElement &&
+    event.currentTarget.hasPointerCapture(event.pointerId)
+  ) {
+    event.currentTarget.releasePointerCapture(event.pointerId);
+  }
 }
 
-function handleCanvasPointerDown(event: MouseEvent) {
+function handleCanvasPointerDown(event: PointerEvent) {
   if (store.isFocusing || !threeScene) return;
   updatePointerFromEvent(event);
   raycaster.setFromCamera(pointer, threeScene.camera);
 
-  if (store.mode === "works" && !isMobile.value) {
-    const worksHit = worksOrbitCards?.pick(raycaster);
-    if (worksHit) {
+  if (isDesktopWorksOrbitMode(store.mode, store.worksViewMode, isMobile.value)) {
+    const worksHit = worksOrbitCards?.pick(raycaster, pointer);
+    const action = resolveScenePointerDownAction({
+      mode: store.mode,
+      worksViewMode: store.worksViewMode,
+      isFocusing: store.isFocusing,
+      isMobile: isMobile.value,
+      hasWorksHit: !!worksHit,
+      hasGeometryHit: false,
+    });
+
+    if (action === "grab-card" && worksHit) {
       event.stopPropagation();
-      openWorkLink(worksHit.url);
-      return;
+      suppressNextCanvasClick = true;
+      if (event.currentTarget instanceof HTMLCanvasElement) {
+        event.currentTarget.setPointerCapture(event.pointerId);
+      }
+      worksOrbitCards?.beginDrag(worksHit, pointer);
+      cardHovered.value = true;
+      cardGrabActive.value = true;
     }
+    return;
+  }
+
+  if (
+    !shouldRaycastSceneGeometry(
+      store.mode,
+      store.worksViewMode,
+      store.isFocusing,
+      isMobile.value,
+    )
+  ) {
+    return;
   }
 
   const activeGeometry = getActiveGeometry();
   if (!activeGeometry) return;
 
   const intersects = raycaster.intersectObject(activeGeometry.hitMesh);
-  if (intersects.length === 0) return;
+  const action = resolveScenePointerDownAction({
+    mode: store.mode,
+    worksViewMode: store.worksViewMode,
+    isFocusing: store.isFocusing,
+    isMobile: isMobile.value,
+    hasWorksHit: false,
+    hasGeometryHit: intersects.length > 0,
+  });
+
+  if (action !== "focus-geometry") return;
 
   event.stopPropagation();
 
@@ -418,6 +544,12 @@ onMounted(async () => {
   window.addEventListener("resize", handleResize);
   container.value.addEventListener("pointermove", handlePointerMove);
   canvasRef.value.addEventListener("pointerdown", handleCanvasPointerDown);
+  canvasRef.value.addEventListener("pointerup", releaseCardInteraction);
+  canvasRef.value.addEventListener("pointercancel", releaseCardInteraction);
+  canvasRef.value.addEventListener(
+    "lostpointercapture",
+    releaseCardInteraction,
+  );
 
   if (typeof window.matchMedia === "function") {
     reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -434,7 +566,8 @@ onMounted(async () => {
   sceneTimer.connect(document);
 
   function tick(timestamp?: number) {
-    if (!threeScene || !starField || !hypercube || !mobius || !sceneTimer) return;
+    if (!threeScene || !starField || !hypercube || !mobius || !sceneTimer)
+      return;
 
     sceneTimer.update(timestamp);
     const delta = sceneTimer.getDelta();
@@ -448,6 +581,7 @@ onMounted(async () => {
     if (
       activeGeometry &&
       !store.isFocusing &&
+      !worksOrbitCards?.isInteracting() &&
       !rotationTweenNight &&
       !rotationTweenDay
     ) {
@@ -506,43 +640,56 @@ onMounted(async () => {
       }
     }
 
-    updateWorksOrbitCards(elapsed);
+    updateWorksOrbitCards(elapsed, delta);
 
     const activeRaycastGeometry = getActiveGeometry();
     let worksHit: ReturnType<WorksOrbitCards["pick"]> = null;
     if (
       !store.isFocusing &&
       store.mode === "works" &&
+      store.worksViewMode === "orbit" &&
       !isMobile.value &&
       worksOrbitCards
     ) {
       raycaster.setFromCamera(pointer, threeScene.camera);
-      worksHit = worksOrbitCards.pick(raycaster);
+      worksHit = worksOrbitCards.pick(raycaster, pointer);
       worksOrbitCards.setHovered(worksHit);
+      cardHovered.value = !!worksHit || worksOrbitCards.isInteracting();
+      cardGrabActive.value = worksOrbitCards.isInteracting();
     } else {
       worksOrbitCards?.setHovered(null);
+      cardHovered.value = false;
+      cardGrabActive.value = false;
     }
 
-    if (!store.isFocusing && activeRaycastGeometry) {
+    if (
+      activeRaycastGeometry &&
+      shouldRaycastSceneGeometry(
+        store.mode,
+        store.worksViewMode,
+        store.isFocusing,
+        isMobile.value,
+      )
+    ) {
       raycaster.setFromCamera(pointer, threeScene.camera);
       const intersects = raycaster.intersectObject(
         activeRaycastGeometry.hitMesh,
       );
-      hovered.value = !!worksHit || intersects.length > 0;
-    } else if (hovered.value) {
-      hovered.value = false;
+      geometryHovered.value = intersects.length > 0;
+    } else if (geometryHovered.value) {
+      geometryHovered.value = false;
     }
 
     const activeColorGeometry = getActiveGeometry();
     if (activeColorGeometry) {
       const targetColor =
         theme.value === "day"
-          ? new THREE.Color(hovered.value ? "#3558cc" : "#151922")
-          : new THREE.Color(hovered.value ? "#7ea8ff" : "#ffffff");
+          ? new THREE.Color(geometryHovered.value ? "#3558cc" : "#151922")
+          : new THREE.Color(geometryHovered.value ? "#7ea8ff" : "#ffffff");
       activeColorGeometry.lerpColor(targetColor, 0.1);
     }
 
-    threeScene.render();
+    renderSceneFrame();
     animationFrameId = requestAnimationFrame(tick);
   }
 
@@ -552,7 +699,18 @@ onMounted(async () => {
 watch(
   () => store.mode,
   () => {
+    geometryHovered.value = false;
     updateGeometryTransform();
+    updateWorksOrbitCards();
+  },
+);
+watch(
+  () => store.worksViewMode,
+  () => {
+    cardHovered.value = false;
+    cardGrabActive.value = false;
+    worksOrbitCards?.clearInteraction();
+    worksOrbitCards?.setHovered(null);
     updateWorksOrbitCards();
   },
 );
@@ -571,7 +729,9 @@ watch(theme, (nextTheme) => {
       nextTheme === "day" ? savedFocusRotations.day : savedFocusRotations.night;
     targetRotation.copy(geometry.group.rotation);
   }
-  hovered.value = false;
+  cardHovered.value = false;
+  cardGrabActive.value = false;
+  geometryHovered.value = false;
   applyThemeImmediate(nextTheme);
   worksOrbitCards?.setTheme(nextTheme);
   updateGeometryTransform(true);
@@ -585,9 +745,23 @@ onBeforeUnmount(() => {
     container.value.removeEventListener("pointermove", handlePointerMove);
   if (canvasRef.value)
     canvasRef.value.removeEventListener("pointerdown", handleCanvasPointerDown);
+  if (canvasRef.value) {
+    canvasRef.value.removeEventListener("pointerup", releaseCardInteraction);
+    canvasRef.value.removeEventListener(
+      "pointercancel",
+      releaseCardInteraction,
+    );
+    canvasRef.value.removeEventListener(
+      "lostpointercapture",
+      releaseCardInteraction,
+    );
+  }
   if (reducedMotionQuery) {
     if (typeof reducedMotionQuery.removeEventListener === "function") {
-      reducedMotionQuery.removeEventListener("change", handleReducedMotionChange);
+      reducedMotionQuery.removeEventListener(
+        "change",
+        handleReducedMotionChange,
+      );
     } else {
       reducedMotionQuery.removeListener(handleReducedMotionChange);
     }
@@ -639,9 +813,9 @@ onBeforeUnmount(() => {
     ref="container"
     class="absolute inset-0 z-0 bg-[var(--stage-bg)]"
     :class="{
-      'cursor-grab': store.isFocusing && !isDragging,
-      'cursor-grabbing': store.isFocusing && isDragging,
-      'cursor-pointer': hovered && !store.isFocusing,
+      'cursor-grab': (store.isFocusing && !isDragging) || hasCardHoverOnly,
+      'cursor-grabbing': (store.isFocusing && isDragging) || cardGrabActive,
+      'cursor-pointer': geometryHovered && !store.isFocusing,
     }"
     @pointerdown="onPointerDown"
     @pointerup="onPointerUp"

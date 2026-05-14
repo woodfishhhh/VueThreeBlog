@@ -1,5 +1,7 @@
 import type { SiteMode } from "@/stores/site";
 
+const WORKS_MODE_BASE_SCALE = 1.2;
+
 export interface GeometryTransformTargetOptions {
   mode: SiteMode;
   isFocusing: boolean;
@@ -35,6 +37,11 @@ export function getGeometryTransformTarget({
   if (mode === "author") {
     if (isMobile) target.y = 3;
     else target.x = -inwardOffset;
+    return target;
+  }
+
+  if (mode === "works") {
+    target.baseScale *= WORKS_MODE_BASE_SCALE;
     return target;
   }
 

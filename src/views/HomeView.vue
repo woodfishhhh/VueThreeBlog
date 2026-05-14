@@ -88,7 +88,7 @@
 
         <Transition name="author-panel" mode="out-in">
           <div v-if="siteStore.mode === 'author'"
-            class="stage-panel-gradient stage-panel-gradient--author pointer-events-auto absolute bottom-0 right-0 h-[68vh] w-full p-6 pt-10 md:top-0 md:h-screen md:w-1/2 md:p-10 md:pr-20">
+            class="pointer-events-auto absolute inset-0">
             <div class="flex h-full w-full items-center justify-center">
               <AuthorPanel v-if="author" :author="author" />
               <div v-else class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]">

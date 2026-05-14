@@ -1,7 +1,9 @@
 import { mount } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import WorksPanel from "@/components/home/WorksPanel.vue";
+import { useSiteStore } from "@/stores/site";
 
 const works = [
   {
@@ -17,7 +19,7 @@ const works = [
     name: "WeatherDemo",
     description: "Monochrome weather workspace and forecast explorer.",
     kind: "App",
-    liveUrl: "http://36.151.148.198/weather/",
+    liveUrl: "https://woodfish.site/weather/",
     githubUrl: "https://github.com/woodfishhhh/WeatherDemo",
   },
   {
@@ -25,7 +27,7 @@ const works = [
     name: "Pretext",
     description: "Interactive pretext geometry experiment.",
     kind: "Lab",
-    liveUrl: "http://36.151.148.198/pretext/",
+    liveUrl: "https://woodfish.site/pretext/",
     githubUrl: "https://github.com/woodfishhhh/Pretext-cube",
   },
 ];
@@ -47,11 +49,15 @@ function installMatchMedia(matches: boolean) {
 }
 
 describe("WorksPanel", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it("keeps desktop visual cards out of the DOM because WebGL owns the orbit", () => {
+  it("defaults desktop works to orbit mode with a Case toggle", () => {
     installMatchMedia(true);
 
     const wrapper = mount(WorksPanel, {
@@ -61,10 +67,31 @@ describe("WorksPanel", () => {
     });
 
     expect(wrapper.text()).toContain("Selected Works");
+    expect(wrapper.find("[data-testid='works-view-toggle']").exists()).toBe(true);
+    expect(wrapper.find("[data-testid='works-view-toggle-orbit']").attributes("aria-pressed")).toBe("true");
     expect(wrapper.find("[data-testid='works-view-orbit']").exists()).toBe(false);
     expect(wrapper.find("[data-testid='works-view-case']").exists()).toBe(false);
     expect(wrapper.findAll("[data-testid='works-item']")).toHaveLength(0);
     expect(wrapper.findAll("a")).toHaveLength(6);
+  });
+
+  it("switches desktop works to Case mode with Live and GitHub entries", async () => {
+    installMatchMedia(true);
+    const store = useSiteStore();
+
+    const wrapper = mount(WorksPanel, {
+      props: {
+        works,
+      },
+    });
+
+    await wrapper.find("[data-testid='works-view-toggle-case']").trigger("click");
+
+    expect(store.worksViewMode).toBe("case");
+    expect(wrapper.find("[data-testid='works-view-case']").exists()).toBe(true);
+    expect(wrapper.findAll("[data-testid='works-item']")).toHaveLength(3);
+    expect(wrapper.findAll("a[data-kind='live']")).toHaveLength(3);
+    expect(wrapper.findAll("a[data-kind='github']")).toHaveLength(3);
   });
 
   it("uses case mode on mobile-sized screens", () => {
@@ -76,6 +103,7 @@ describe("WorksPanel", () => {
       },
     });
 
+    expect(wrapper.find("[data-testid='works-view-toggle']").exists()).toBe(false);
     expect(wrapper.find("[data-testid='works-view-orbit']").exists()).toBe(false);
     expect(wrapper.find("[data-testid='works-view-case']").exists()).toBe(true);
     expect(wrapper.findAll("[data-testid='works-item']")).toHaveLength(3);

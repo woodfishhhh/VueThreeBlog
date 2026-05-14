@@ -3,6 +3,7 @@ import * as THREE from "three";
 export interface StarField {
   group: THREE.Group;
   setOpacity: (alpha: number) => void;
+  setWarpIntensity: (value: number) => void;
   update: (delta: number) => void;
   dispose: () => void;
 }
@@ -39,13 +40,33 @@ export function useStarField(circleTexture: THREE.CanvasTexture, count = 5000): 
   points.frustumCulled = false;
   group.add(points);
 
+  let warpIntensity = 0;
+
   function setOpacity(alpha: number) {
     material.opacity = THREE.MathUtils.clamp(alpha, 0, 1);
   }
 
+  function setWarpIntensity(value: number) {
+    warpIntensity = THREE.MathUtils.clamp(value, 0, 1);
+  }
+
   function update(delta: number) {
-    group.rotation.x -= delta / 50;
-    group.rotation.y -= delta / 60;
+    const intensity = THREE.MathUtils.clamp(warpIntensity, 0, 1);
+    group.rotation.x -= delta * (1 / 50 + intensity / 18);
+    group.rotation.y -= delta * (1 / 60 + intensity / 24);
+
+    if (intensity > 0) {
+      const array = geometry.attributes.position.array as Float32Array;
+      const speed = 34 * intensity * delta;
+      for (let i = 2; i < array.length; i += 3) {
+        array[i] += speed;
+        if (array[i] > 40) array[i] = -40 + (array[i] - 40);
+      }
+      geometry.attributes.position.needsUpdate = true;
+      material.size = 0.05 + intensity * 0.025;
+    } else if (material.size !== 0.05) {
+      material.size = 0.05;
+    }
   }
 
   function dispose() {
@@ -53,5 +74,5 @@ export function useStarField(circleTexture: THREE.CanvasTexture, count = 5000): 
     material.dispose();
   }
 
-  return { group, setOpacity, update, dispose };
+  return { group, setOpacity, setWarpIntensity, update, dispose };
 }

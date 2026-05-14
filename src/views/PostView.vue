@@ -5,15 +5,17 @@ import { useRoute, type LocationQueryValue } from "vue-router";
 import ArticleContent from "@/components/article/ArticleContent.vue";
 import ThemeToggle from "@/components/layout/ThemeToggle.vue";
 import { useTheme } from "@/composables/useTheme";
-import { loadPostArticle, resolvePostSlug } from "@/content/posts";
+import { getPostSummaries, loadPostArticle, resolvePostSlug } from "@/content/posts";
 import { sanitizeSlug } from "@/utils/input-validator";
-import type { PostArticle } from "@/types/content";
+import type { PostArticle, PostSummary } from "@/types/content";
 
 const route = useRoute();
 const pageRoot = useTemplateRef<HTMLElement>("pageRoot");
 const article = shallowRef<PostArticle | null>(null);
 const isLoading = shallowRef(true);
 const resolvedSlug = shallowRef("");
+const previousPost = shallowRef<PostSummary | null>(null);
+const nextPost = shallowRef<PostSummary | null>(null);
 const { theme, toggleThemeAt } = useTheme();
 const blogReturnQuery = computed(() => {
   const nextQuery: Record<string, string> = {};
@@ -48,16 +50,23 @@ watch(
     isLoading.value = true;
     article.value = null;
     resolvedSlug.value = "";
+    previousPost.value = null;
+    nextPost.value = null;
 
-    const [canonicalSlug, nextArticle] = slug
-      ? await Promise.all([resolvePostSlug(slug), loadPostArticle(slug)])
-      : [null, null];
+    const [canonicalSlug, nextArticle, postSummaries] = slug
+      ? await Promise.all([resolvePostSlug(slug), loadPostArticle(slug), getPostSummaries()])
+      : [null, null, []];
     if (currentToken !== requestToken) {
       return;
     }
 
     resolvedSlug.value = canonicalSlug ?? "";
     article.value = nextArticle;
+    if (canonicalSlug) {
+      const currentIndex = postSummaries.findIndex((post) => post.canonicalSlug === canonicalSlug);
+      previousPost.value = currentIndex > 0 ? postSummaries[currentIndex - 1] ?? null : null;
+      nextPost.value = currentIndex >= 0 ? postSummaries[currentIndex + 1] ?? null : null;
+    }
     document.title = nextArticle ? `${nextArticle.title} | WOODFISH` : "Article not found | WOODFISH";
 
     if (pageRoot.value) {
@@ -88,15 +97,20 @@ function handleToggleTheme(payload: { x: number; y: number }) {
     <div class="article-page__ambient article-page__ambient--right" />
 
     <div class="article-page__nav-shell">
-      <RouterLink class="article-page__nav-link" :to="backLinkTarget">
+      <RouterLink
+        class="article-page__nav-link"
+        :aria-label="backLinkLabel"
+        :title="backLinkLabel"
+        :to="backLinkTarget"
+        data-testid="post-view-back-link"
+      >
         <svg class="article-page__nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="m12 19-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" />
           <path d="M19 12H5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" />
         </svg>
-        <span>{{ backLinkLabel }}</span>
       </RouterLink>
 
-      <div class="flex items-center gap-2">
+      <div class="article-page__nav-actions">
         <span v-if="resolvedSlug" class="article-page__nav-meta">/ posts / {{ resolvedSlug }}</span>
         <ThemeToggle :theme="theme" @toggle-theme="handleToggleTheme" />
       </div>
@@ -114,6 +128,30 @@ function handleToggleTheme(payload: { x: number; y: number }) {
 
     <div v-else class="article-page__article" data-testid="post-view-article">
       <ArticleContent :article="article" :scroll-container="pageRoot" />
+
+      <nav v-if="previousPost || nextPost" class="article-page__adjacent-nav" aria-label="Adjacent posts">
+        <RouterLink
+          v-if="previousPost"
+          :to="{ path: `/posts/${previousPost.canonicalSlug}` }"
+          class="article-page__adjacent-link article-page__adjacent-link--previous"
+          data-testid="post-view-previous-link"
+        >
+          <span class="article-page__adjacent-label">上一篇</span>
+          <strong class="article-page__adjacent-title">{{ previousPost.title }}</strong>
+          <span class="article-page__adjacent-meta">{{ previousPost.publishedLabel }}</span>
+        </RouterLink>
+
+        <RouterLink
+          v-if="nextPost"
+          :to="{ path: `/posts/${nextPost.canonicalSlug}` }"
+          class="article-page__adjacent-link article-page__adjacent-link--next"
+          data-testid="post-view-next-link"
+        >
+          <span class="article-page__adjacent-label">下一篇</span>
+          <strong class="article-page__adjacent-title">{{ nextPost.title }}</strong>
+          <span class="article-page__adjacent-meta">{{ nextPost.publishedLabel }}</span>
+        </RouterLink>
+      </nav>
     </div>
   </main>
 </template>

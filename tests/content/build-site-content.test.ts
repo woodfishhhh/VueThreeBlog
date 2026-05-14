@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { mkdtemp, mkdir, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -108,15 +108,32 @@ describe("build-site-content", () => {
         "contentinfo:",
         "  name: 木鱼",
         "  title: 学生 / 创作者",
-        "  slogan: 源于热爱，去感受",
-        "  sup: 你好，很高兴认识你",
-        "authorinfo:",
+        "hero:",
         "  image: /asset/image.png",
+        "poem:",
+        "  title: 卜算子·勤",
+        "  author: 木鱼",
+        "  lines:",
+        "    - 志坚勤为本，莫凭苦中鸣。",
+        "    - 夜以继日工作辛，汗水洒衣襟。",
         "skills:",
         "  tags:",
         "    - title: Vue",
         "      color: '#42b883'",
         "      img: /asset/image.png",
+        "contacts:",
+        "  github: https://github.com/woodfishhhh",
+        "oneself:",
+        "  location: 中国，南昌市",
+        "  birthDate: 2006.6.2",
+        "  university: 江西财经大学",
+        "  major: 计算机科学与技术",
+        "tenyear:",
+        "  tips: 进度",
+        "  title: 大学阶段进度条",
+        "  text: 保持热爱，慢慢变强。",
+        "  start: '2024-09-01'",
+        "  end: '2028-06-30'",
       ].join("\n"),
     );
     try {
@@ -164,6 +181,14 @@ describe("build-site-content", () => {
       ]);
       expect(result.author.name).toBe("木鱼");
       expect(result.author.postsCount).toBe(2);
+      expect(result.author.heroImage).toBe("/newBlog/asset/image.png");
+      expect(result.author.poem.title).toBe("卜算子·勤");
+      expect(result.author.poem.lines).toHaveLength(2);
+      expect(result.author.contacts.github).toBe("https://github.com/woodfishhhh");
+      expect(result.author.oneself.birthDate).toBe("2006.6.2");
+      expect(result.author.tenyear.title).toBe("大学阶段进度条");
+      expect(result.author.tenyear.end).toBe("2028-06-30");
+      expect("avatar" in result.author).toBe(false);
       expect(result.friendLinks[0]?.name).toBe("Fomalhaut");
       expect(result.friendLinks[0]?.avatar).toMatch(/^\/newBlog\/remote-assets\/[a-f0-9]{40}\.[a-z0-9]+$/);
     } finally {
@@ -177,5 +202,117 @@ describe("build-site-content", () => {
         });
       });
     }
+  });
+
+  it("uses the rendered heading tokens for toc ids and text", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-build-heading-"));
+    const sourceRoot = path.join(tempRoot, "3Dblog");
+    const myblogDir = path.join(sourceRoot, "content", "source", "myblog", "前端");
+    const markdownPath = path.join(myblogDir, "Heading Token Test.md");
+
+    await mkdir(myblogDir, { recursive: true });
+    await writeFile(
+      markdownPath,
+      [
+        "---",
+        'title: "Heading Token Test"',
+        "date: 2026-05-13 12:00:00",
+        "---",
+        "",
+        "## <span>Promise.all</span> & [Vue](https://vuejs.org/) **渲染**",
+        "",
+        "正文。",
+      ].join("\n"),
+    );
+
+    const result = await buildSiteContent({
+      sourceProjectRoot: sourceRoot,
+      targetPublicDir: path.join(tempRoot, "generated-public"),
+    });
+    const article = Object.values(result.postsBySlug)[0];
+    const renderedHeadingId = article?.html.match(/<h2 id="([^"]+)">/)?.[1];
+
+    expect(article?.toc).toEqual([
+      {
+        id: renderedHeadingId,
+        level: 2,
+        text: "Promise.all & Vue 渲染",
+      },
+    ]);
+    expect(renderedHeadingId).toBeTruthy();
+    expect(article?.html).toContain(`<h2 id="${renderedHeadingId}">`);
+  });
+
+  it("fails with post and path context when generated article images are missing", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-build-missing-image-"));
+    const sourceRoot = path.join(tempRoot, "3Dblog");
+    const myblogDir = path.join(sourceRoot, "content", "source", "myblog", "前端");
+
+    await mkdir(myblogDir, { recursive: true });
+    await writeFile(
+      path.join(myblogDir, "Broken Image.md"),
+      [
+        "---",
+        'title: "Broken Image"',
+        "date: 2026-05-13 12:00:00",
+        "---",
+        "",
+        "![missing](./assets/missing.png)",
+      ].join("\n"),
+    );
+
+    await expect(
+      buildSiteContent({
+        sourceProjectRoot: sourceRoot,
+        targetPublicDir: path.join(tempRoot, "generated-public"),
+      }),
+    ).rejects.toThrow(/broken-image-[a-f0-9]{8}.*\.\/assets\/missing\.png.*missing\.png/s);
+  });
+
+  it("localizes root-relative content image references", async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-build-content-image-"));
+    const sourceRoot = path.join(tempRoot, "3Dblog");
+    const myblogDir = path.join(sourceRoot, "content", "source", "myblog", "前端");
+    const assetDir = path.join(sourceRoot, "content", "source", "myblog", "assets");
+    const targetPublicDir = path.join(tempRoot, "generated-public");
+
+    await mkdir(myblogDir, { recursive: true });
+    await mkdir(assetDir, { recursive: true });
+    await writeFile(path.join(assetDir, "diagram.png"), "diagram-bytes");
+    await writeFile(
+      path.join(myblogDir, "Content Image.md"),
+      [
+        "---",
+        'title: "Content Image"',
+        "date: 2026-05-13 12:00:00",
+        "---",
+        "",
+        "![diagram](/content/source/myblog/assets/diagram.png)",
+      ].join("\n"),
+    );
+
+    const result = await buildSiteContent({
+      sourceProjectRoot: sourceRoot,
+      targetPublicDir,
+      siteBasePath: "/newBlog/",
+    });
+    const article = Object.values(result.postsBySlug)[0];
+
+    expect(article?.html).toMatch(/src="\/newBlog\/content-assets\/content-image-[a-f0-9]{8}\/content\/source\/myblog\/assets\/diagram\.png"/);
+    expect(
+      await readFile(
+        path.join(
+          targetPublicDir,
+          "content-assets",
+          article!.canonicalSlug,
+          "content",
+          "source",
+          "myblog",
+          "assets",
+          "diagram.png",
+        ),
+        "utf8",
+      ),
+    ).toBe("diagram-bytes");
   });
 });

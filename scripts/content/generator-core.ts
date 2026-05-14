@@ -5,6 +5,7 @@ import { copyFile, mkdir, readdir, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import matter from "gray-matter";
+import MarkdownIt from "markdown-it";
 
 const REMOTE_ASSET_DIR = "remote-assets";
 const IMPORTED_ASSET_DIR = "imported-assets";
@@ -26,15 +27,24 @@ const LOCAL_MIRROR_HOSTS = new Set([
 ]);
 const LOCAL_MIRROR_ENV = "VUECUBEBLOG_LOCAL_ASSET_MIRROR_DIRS";
 const DEFAULT_LOCAL_MIRROR_DIRS = [
+  path.resolve(process.cwd(), "public/content"),
   path.resolve(process.cwd(), "../Blog/public/images"),
   path.resolve(process.cwd(), "../Blog/images"),
   path.resolve(process.cwd(), "../Blog/source/images"),
   path.resolve(process.cwd(), "../3Dblog/public/images"),
+  path.resolve(process.cwd(), "../3Dblog/public/content"),
+  path.resolve(process.cwd(), "../3Dblog/.netlify/static/content"),
   path.resolve(process.cwd(), "../3Dblog/content/source/blog/source/images"),
 ];
 const insecureHttpsAgent = new https.Agent({ rejectUnauthorized: false });
 let localMirrorAssetIndexPromise: Promise<Map<string, string[]>> | null = null;
 let localMirrorAssetIndexKey = "";
+const codeRangeParser = new MarkdownIt({
+  breaks: false,
+  html: true,
+  linkify: false,
+  typographer: false,
+});
 
 type RemoteAssetDownload = {
   bytes: Buffer;
@@ -67,6 +77,7 @@ export interface RewriteMarkdownAssetOptions {
   canonicalSlug: string;
   publicDir: string;
   siteBasePath?: string;
+  sourceProjectRoot?: string;
 }
 
 export interface RewriteMarkdownAssetResult {
@@ -79,6 +90,7 @@ export interface ResolveAssetReferenceOptions {
   publicDir: string;
   siteBasePath?: string;
   canonicalSlug?: string;
+  sourceProjectRoot?: string;
 }
 
 export function buildLegacySlugIndex(entries: readonly LegacySlugSource[]): Map<string, string> {
@@ -134,10 +146,15 @@ export async function rewriteMarkdownAssetPaths(
 ): Promise<RewriteMarkdownAssetResult> {
   const warnings: string[] = [];
   let nextMarkdown = markdown;
+  const originalFenceRanges = findCodeBlockRanges(markdown);
 
   const markdownImageMatches = Array.from(markdown.matchAll(/!\[[^\]]*\]\(([^)]+)\)/g));
 
   for (const match of markdownImageMatches) {
+    if (isOffsetInRanges(match.index ?? -1, originalFenceRanges)) {
+      continue;
+    }
+
     const rawReference = match[1];
     const matchedExpression = match[0];
     const originalReference = rawReference.trim();
@@ -150,9 +167,7 @@ export async function rewriteMarkdownAssetPaths(
 
     if (!rewrittenUrl) {
       if (shouldRemoveUnresolvedLocalAsset(originalReference)) {
-        warnings.push(`Removed unresolved local image: ${originalReference}`);
-        nextMarkdown = removeMatchedImageExpression(nextMarkdown, matchedExpression);
-        continue;
+        throw new Error(formatMissingLocalAssetError(originalReference, options));
       }
 
       warnings.push(`Failed to localize remote asset: ${originalReference}`);
@@ -168,11 +183,16 @@ export async function rewriteMarkdownAssetPaths(
     );
   }
 
+  const nextFenceRanges = findCodeBlockRanges(nextMarkdown);
   const htmlImageMatches = Array.from(
     nextMarkdown.matchAll(/<img\b[^>]*?\bsrc=(["'])([^"']+)\1[^>]*>/gi),
   );
 
   for (const match of htmlImageMatches) {
+    if (isOffsetInRanges(match.index ?? -1, nextFenceRanges)) {
+      continue;
+    }
+
     const matchedExpression = match[0];
     const originalReference = match[2]?.trim() ?? "";
 
@@ -183,9 +203,7 @@ export async function rewriteMarkdownAssetPaths(
     const rewrittenUrl = await resolveAssetReference(originalReference, options);
     if (!rewrittenUrl) {
       if (shouldRemoveUnresolvedLocalAsset(originalReference)) {
-        warnings.push(`Removed unresolved local image: ${originalReference}`);
-        nextMarkdown = removeMatchedImageExpression(nextMarkdown, matchedExpression);
-        continue;
+        throw new Error(formatMissingLocalAssetError(originalReference, options));
       }
 
       warnings.push(`Failed to localize remote asset: ${originalReference}`);
@@ -218,6 +236,24 @@ export async function resolveAssetReference(
   }
 
   if (originalReference.startsWith("/")) {
+    const projectRootedPath = resolveProjectRootAssetPath(
+      originalReference,
+      options.sourceProjectRoot,
+    );
+    if (projectRootedPath && await fileExists(projectRootedPath)) {
+      if (options.canonicalSlug) {
+        return copyRelativeAsset(
+          projectRootedPath,
+          originalReference,
+          options.publicDir,
+          options.canonicalSlug,
+          options.siteBasePath,
+        );
+      }
+
+      return copyAbsoluteAsset(projectRootedPath, options.publicDir, options.siteBasePath);
+    }
+
     const rootedAbsolutePath = path.resolve(sourceDir, originalReference);
     if (await fileExists(rootedAbsolutePath)) {
       return copyAbsoluteAsset(rootedAbsolutePath, options.publicDir, options.siteBasePath);
@@ -231,7 +267,18 @@ export async function resolveAssetReference(
     : path.resolve(sourceDir, originalReference);
 
   if (!(await fileExists(resolvedPath))) {
-    return null;
+    const sharedMyblogAssetPath = resolveSharedMyblogAssetPath(originalReference, options.sourceProjectRoot);
+    if (sharedMyblogAssetPath && await fileExists(sharedMyblogAssetPath) && options.canonicalSlug) {
+      return copyRelativeAsset(
+        sharedMyblogAssetPath,
+        originalReference,
+        options.publicDir,
+        options.canonicalSlug,
+        options.siteBasePath,
+      );
+    }
+
+    return localizeMissingLocalAsset(originalReference, options);
   }
 
   if (path.isAbsolute(originalReference)) {
@@ -249,6 +296,82 @@ export async function resolveAssetReference(
     options.canonicalSlug,
     options.siteBasePath,
   );
+}
+
+async function localizeMissingLocalAsset(reference: string, options: ResolveAssetReferenceOptions) {
+  const mirrorSourcePath = await resolveLocalMirrorSource(reference);
+  if (mirrorSourcePath && (isLegacyAbsoluteAssetReference(reference) || !options.canonicalSlug)) {
+    return copyAbsoluteAsset(mirrorSourcePath, options.publicDir, options.siteBasePath);
+  }
+
+  if (mirrorSourcePath && options.canonicalSlug) {
+    return copyRelativeAsset(
+      mirrorSourcePath,
+      reference,
+      options.publicDir,
+      options.canonicalSlug,
+      options.siteBasePath,
+    );
+  }
+
+  if (isLegacyAbsoluteAssetReference(reference)) {
+    return createMissingImagePlaceholder(reference, options.publicDir, options.siteBasePath);
+  }
+
+  return null;
+}
+
+async function createMissingImagePlaceholder(reference: string, publicDir: string, siteBasePath?: string) {
+  const assetFileName = `${sha1(reference)}.svg`;
+  const targetPath = path.join(publicDir, IMPORTED_ASSET_DIR, assetFileName);
+  const basename = path.basename(reference.replaceAll("\\", "/"));
+  const svg = [
+    '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img">',
+    '<rect width="960" height="540" rx="28" fill="#111827"/>',
+    '<rect x="24" y="24" width="912" height="492" rx="22" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="12 14"/>',
+    '<text x="480" y="252" text-anchor="middle" fill="#e5e7eb" font-family="Arial, sans-serif" font-size="34" font-weight="700">Image unavailable</text>',
+    `<text x="480" y="304" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="20">${escapeSvgText(basename || "legacy local path")}</text>`,
+    "</svg>",
+  ].join("");
+
+  await mkdir(path.dirname(targetPath), { recursive: true });
+  await writeFile(targetPath, svg, "utf8");
+
+  return toPublicAssetUrl(siteBasePath, IMPORTED_ASSET_DIR, assetFileName);
+}
+
+function isLegacyAbsoluteAssetReference(reference: string) {
+  return path.isAbsolute(reference) || /^[A-Za-z]:[\\/]/.test(reference);
+}
+
+function escapeSvgText(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+function findCodeBlockRanges(markdown: string) {
+  const lineStarts = Array.from(markdown.matchAll(/^.*(?:\r?\n|$)/gm)).map((match) => match.index ?? 0);
+  const tokens = codeRangeParser.parse(markdown, {});
+  const ranges: { start: number; end: number }[] = [];
+
+  for (const token of tokens) {
+    if ((token.type !== "fence" && token.type !== "code_block") || !token.map) {
+      continue;
+    }
+
+    const [startLine, endLine] = token.map;
+    const start = lineStarts[startLine] ?? 0;
+    const end = lineStarts[endLine] ?? markdown.length;
+    ranges.push({ start, end });
+  }
+
+  return ranges;
+}
+
+function isOffsetInRanges(offset: number, ranges: readonly { start: number; end: number }[]) {
+  return offset >= 0 && ranges.some((range) => offset >= range.start && offset < range.end);
 }
 
 function replaceMarkdownImageReference(
@@ -269,10 +392,6 @@ function replaceMarkdownImageReference(
   }
 
   return markdown.replace(`(${originalReference})`, `(${rewrittenReference})`);
-}
-
-function removeMatchedImageExpression(markdown: string, matchedExpression: string) {
-  return markdown.replace(matchedExpression, "");
 }
 
 function replaceHtmlImageReference(markdown: string, matchedExpression: string, originalReference: string, rewrittenReference: string) {
@@ -385,6 +504,67 @@ function isRemoteAssetReference(reference: string) {
 
 function shouldRemoveUnresolvedLocalAsset(reference: string) {
   return !isRemoteAssetReference(reference);
+}
+
+function formatMissingLocalAssetError(reference: string, options: ResolveAssetReferenceOptions) {
+  return `Missing local image for post ${options.canonicalSlug ?? "(unknown)"}: ${reference} -> ${expectedLocalAssetPath(reference, options)}`;
+}
+
+function expectedLocalAssetPath(reference: string, options: ResolveAssetReferenceOptions) {
+  const projectRootedPath = reference.startsWith("/")
+    ? resolveProjectRootAssetPath(reference, options.sourceProjectRoot)
+    : null;
+  if (projectRootedPath) {
+    return projectRootedPath;
+  }
+
+  const normalizedReference = safeDecodeAssetReference(reference);
+  if (path.isAbsolute(normalizedReference)) {
+    return normalizedReference;
+  }
+
+  return path.resolve(path.dirname(options.sourceFilePath), normalizedReference);
+}
+
+function safeDecodeAssetReference(reference: string) {
+  try {
+    return decodeURIComponent(reference);
+  } catch {
+    return reference;
+  }
+}
+
+function resolveSharedMyblogAssetPath(reference: string, sourceProjectRoot?: string) {
+  if (!sourceProjectRoot || path.isAbsolute(reference) || reference.startsWith("/")) {
+    return null;
+  }
+
+  const normalizedReference = safeDecodeAssetReference(reference)
+    .replaceAll("\\", "/")
+    .split(/[?#]/)[0];
+
+  if (!normalizedReference) {
+    return null;
+  }
+
+  return path.resolve(sourceProjectRoot, "content", "source", "myblog", normalizedReference);
+}
+
+function resolveProjectRootAssetPath(reference: string, sourceProjectRoot?: string) {
+  if (!sourceProjectRoot) {
+    return null;
+  }
+
+  const relativePath = reference
+    .replaceAll("\\", "/")
+    .split(/[?#]/)[0]
+    ?.replace(/^\/+/, "");
+
+  if (!relativePath) {
+    return null;
+  }
+
+  return path.resolve(sourceProjectRoot, relativePath);
 }
 
 export async function localizeRemoteAsset(
@@ -540,6 +720,17 @@ async function resolveLocalMirrorSource(reference: string): Promise<string | nul
 
   const index = await getLocalMirrorAssetIndex();
   const candidates = index.get(fileName.toLowerCase()) ?? [];
+  const normalizedReference = normalizeMirrorLookupPath(reference);
+  const suffixMatchedCandidates = normalizedReference
+    ? candidates.filter((candidate) => normalizeMirrorLookupPath(candidate).endsWith(`/${normalizedReference}`))
+    : [];
+
+  for (const candidate of suffixMatchedCandidates) {
+    if (await fileExists(candidate)) {
+      return candidate;
+    }
+  }
+
   for (const candidate of candidates) {
     if (await fileExists(candidate)) {
       return candidate;
@@ -549,13 +740,21 @@ async function resolveLocalMirrorSource(reference: string): Promise<string | nul
   return null;
 }
 
+function normalizeMirrorLookupPath(reference: string) {
+  return safeDecodeAssetReference(reference)
+    .replaceAll("\\", "/")
+    .split(/[?#]/)[0]
+    ?.replace(/^\/+/, "")
+    .toLowerCase() ?? "";
+}
+
 function getFileNameFromUrl(reference: string) {
   try {
     const url = new URL(reference);
     const basename = path.basename(decodeURIComponent(url.pathname));
     return basename.trim();
   } catch {
-    return "";
+    return path.basename(safeDecodeAssetReference(reference).replaceAll("\\", "/").split(/[?#]/)[0] ?? "").trim();
   }
 }
 

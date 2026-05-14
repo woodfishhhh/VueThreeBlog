@@ -71,6 +71,20 @@ describe("mobius strip", () => {
     strip.dispose();
   });
 
+  it("moves into a camera-facing ring spin when interaction intensity is high", () => {
+    const strip = useMobiusStrip();
+
+    strip.group.rotation.set(0.5, 0.5, 0);
+    strip.setInteractionIntensity(1);
+    strip.update(1);
+
+    expect(strip.group.rotation.x).toBeCloseTo(0.32, 1);
+    expect(strip.group.rotation.y).toBeCloseTo(0.36, 1);
+    expect(strip.group.rotation.z).toBeGreaterThan(1.4);
+
+    strip.dispose();
+  });
+
   it("dispose is callable", () => {
     const strip = useMobiusStrip();
     expect(() => strip.dispose()).not.toThrow();

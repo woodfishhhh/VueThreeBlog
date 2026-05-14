@@ -30,13 +30,16 @@ const loopSegments = [
 let isRecentering = false;
 let resetFrame = 0;
 let releaseFrame = 0;
+let cachedSegmentDistance = 0;
 let resizeObserver: ResizeObserver | undefined;
+let scrollRaf = 0;
 
 watch(
   () => props.links,
   async () => {
     layoutCards.value = createCardLayout(props.links);
     await nextTick();
+    cachedSegmentDistance = 0;
     scheduleLoopReset();
   },
   { immediate: true },
@@ -44,7 +47,10 @@ watch(
 
 onMounted(() => {
   if (typeof ResizeObserver === "function" && scrollerRef.value) {
-    resizeObserver = new ResizeObserver(() => scheduleLoopReset());
+    resizeObserver = new ResizeObserver(() => {
+      cachedSegmentDistance = 0;
+      scheduleLoopReset();
+    });
     resizeObserver.observe(scrollerRef.value);
   }
 
@@ -58,6 +64,10 @@ onBeforeUnmount(() => {
 
   if (releaseFrame) {
     window.cancelAnimationFrame(releaseFrame);
+  }
+
+  if (scrollRaf) {
+    window.cancelAnimationFrame(scrollRaf);
   }
 
   resizeObserver?.disconnect();
@@ -112,6 +122,10 @@ function setColumnSegmentRef(
 }
 
 function getSegmentDistance() {
+  if (cachedSegmentDistance > 0) {
+    return cachedSegmentDistance;
+  }
+
   const distances = columnSegmentElements.value
     .map((segments) => {
       const firstSegment = segments[0];
@@ -125,7 +139,8 @@ function getSegmentDistance() {
     })
     .filter((distance) => distance > 0);
 
-  return distances.length > 0 ? Math.min(...distances) : 0;
+  cachedSegmentDistance = distances.length > 0 ? Math.min(...distances) : 0;
+  return cachedSegmentDistance;
 }
 
 function scheduleLoopReset() {
@@ -168,32 +183,35 @@ function releaseRecenteringLock() {
 }
 
 function handleLoopScroll() {
-  if (isRecentering) {
+  if (isRecentering || scrollRaf) {
     return;
   }
 
-  const scroller = scrollerRef.value;
-  const distance = getSegmentDistance();
+  scrollRaf = window.requestAnimationFrame(() => {
+    scrollRaf = 0;
+    const scroller = scrollerRef.value;
+    const distance = getSegmentDistance();
 
-  if (!scroller || distance <= 0) {
-    return;
-  }
+    if (!scroller || distance <= 0) {
+      return;
+    }
 
-  const lowerLimit = distance * 0.45;
-  const upperLimit = distance * 1.55;
+    const lowerLimit = distance * 0.45;
+    const upperLimit = distance * 1.55;
 
-  if (scroller.scrollTop < lowerLimit) {
-    isRecentering = true;
-    scroller.scrollTop += distance;
-    releaseRecenteringLock();
-    return;
-  }
+    if (scroller.scrollTop < lowerLimit) {
+      isRecentering = true;
+      scroller.scrollTop += distance;
+      releaseRecenteringLock();
+      return;
+    }
 
-  if (scroller.scrollTop > upperLimit) {
-    isRecentering = true;
-    scroller.scrollTop -= distance;
-    releaseRecenteringLock();
-  }
+    if (scroller.scrollTop > upperLimit) {
+      isRecentering = true;
+      scroller.scrollTop -= distance;
+      releaseRecenteringLock();
+    }
+  });
 }
 </script>
 
@@ -219,7 +237,7 @@ function handleLoopScroll() {
           :aria-hidden="segment.ariaHidden ? 'true' : undefined"
           :data-segment="segment.label"
           data-testid="friend-loop-segment"
-          class="friend-loop-segment"
+          :class="['friend-loop-segment', { 'friend-loop-segment--clone': segment.ariaHidden }]"
         >
           <TransitionGroup
             name="friend-card-list"
@@ -271,6 +289,11 @@ function handleLoopScroll() {
 
 .friend-loop-segment {
   min-width: 0;
+}
+
+.friend-loop-segment--clone {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
 }
 
 .friend-waterfall-column {

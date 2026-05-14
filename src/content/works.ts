@@ -14,7 +14,7 @@ const workProjects: WorkProjectData[] = [
     name: "WeatherDemo",
     description: "以黑白留白和克制动效构建的天气探索工作台，兼顾信息密度与阅读节奏。",
     kind: "App",
-    liveUrl: "http://36.151.148.198/weather/",
+    liveUrl: "https://woodfish.site/weather/",
     githubUrl: "https://github.com/woodfishhhh/WeatherDemo",
   },
   {
@@ -22,7 +22,7 @@ const workProjects: WorkProjectData[] = [
     name: "Pretext",
     description: "围绕几何与空间感展开的交互实验，把叙事感放进可触摸的立体结构里。",
     kind: "Lab",
-    liveUrl: "http://36.151.148.198/pretext/",
+    liveUrl: "https://woodfish.site/pretext/",
     githubUrl: "https://github.com/woodfishhhh/Pretext-cube",
   },
 ];

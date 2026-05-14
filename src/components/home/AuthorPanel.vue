@@ -1,66 +1,201 @@
 <script setup lang="ts">
-import AuthorBio from "@/components/home/AuthorBio.vue";
-import AuthorContact from "@/components/home/AuthorContact.vue";
-import AuthorTimeline from "@/components/home/AuthorTimeline.vue";
+import { useTemplateRef } from "vue";
+
+import AuthorAboutScreen from "@/components/home/author/AuthorAboutScreen.vue";
+import AuthorCapsuleScreen from "@/components/home/author/AuthorCapsuleScreen.vue";
+import AuthorHeroScreen from "@/components/home/author/AuthorHeroScreen.vue";
+import AuthorPoemScreen from "@/components/home/author/AuthorPoemScreen.vue";
+import { useAuthorSlider } from "@/composables/useAuthorSlider";
 import type { AuthorProfileData } from "@/types/content";
 
 const props = defineProps<{
   author: AuthorProfileData;
 }>();
+
+const viewportRef = useTemplateRef<HTMLElement>("viewport");
+const trackRef = useTemplateRef<HTMLElement>("track");
+
+const { activeIndex, goToSlide } = useAuthorSlider({
+  viewportRef,
+  trackRef,
+});
+
+const screens = [
+  { id: "hero", label: "Hero" },
+  { id: "about", label: "About" },
+  { id: "capsules", label: "Stack" },
+  { id: "poem", label: "Poem" },
+];
 </script>
 
 <template>
-  <div
-    id="author-scroll-container"
-    class="modern-scrollbar relative h-full w-full overflow-y-auto px-6 py-16 text-[var(--stage-fg)] md:px-10"
-  >
-    <!-- 动态波浪背景 -->
-    <div class="pointer-events-none fixed inset-0 z-0 opacity-[0.03] mix-blend-screen">
-      <svg
-        class="absolute left-0 top-[-50%] h-[200%] w-full"
-        preserveAspectRatio="none"
-        viewBox="0 0 100 100"
-      >
-        <path
-          d="M0,30 Q25,10 50,30 T100,30 L100,100 L0,100 Z"
-          fill="none"
-          stroke="#ffffff"
-          stroke-width="0.2"
-        >
-          <animate
-            attributeName="d"
-            dur="15s"
-            repeatCount="indefinite"
-            values="M0,30 Q25,10 50,30 T100,30 L100,100 L0,100 Z;M0,30 Q25,50 50,30 T100,30 L100,100 L0,100 Z;M0,30 Q25,10 50,30 T100,30 L100,100 L0,100 Z"
-          />
-        </path>
-        <path
-          d="M0,50 Q25,70 50,50 T100,50 L100,100 L0,100 Z"
-          fill="none"
-          stroke="#ffffff"
-          stroke-width="0.2"
-        >
-          <animate
-            attributeName="d"
-            dur="20s"
-            repeatCount="indefinite"
-            values="M0,50 Q25,70 50,50 T100,50 L100,100 L0,100 Z;M0,50 Q25,30 50,50 T100,50 L100,100 L0,100 Z;M0,50 Q25,70 50,50 T100,50 L100,100 L0,100 Z"
-          />
-        </path>
-      </svg>
+  <div class="author-stage" data-testid="author-panel-root">
+    <div
+      ref="viewport"
+      id="author-scroll-container"
+      class="author-stage__wrapper"
+    >
+      <div ref="track" class="author-stage__content">
+        <AuthorHeroScreen :author="props.author" />
+        <AuthorAboutScreen :author="props.author" />
+        <AuthorCapsuleScreen :active="activeIndex === 2" :skills="props.author.skills" />
+        <AuthorPoemScreen :poem="props.author.poem" />
+      </div>
     </div>
 
-    <div class="relative z-10 mx-auto flex max-w-[400px] flex-col gap-12 pb-32">
-      <AuthorContact :author="props.author" />
-      <AuthorBio :author="props.author" />
-      <AuthorTimeline :author="props.author" />
-    </div>
+    <nav class="author-stage__dots" aria-label="Author sections">
+      <button
+        v-for="(screen, index) in screens"
+        :key="screen.id"
+        :aria-current="activeIndex === index ? 'true' : undefined"
+        :aria-label="screen.label"
+        class="author-stage__dot"
+        :class="{ 'is-active': activeIndex === index }"
+        data-author-nav-dot
+        type="button"
+        @click="goToSlide(index)"
+      ></button>
+    </nav>
   </div>
 </template>
 
 <style scoped>
-.modern-scrollbar::-webkit-scrollbar {
-  width: 0;
+.author-stage {
+  position: absolute;
+  inset: 0;
+}
+
+.author-stage__wrapper,
+.author-stage__content {
+  height: 100%;
+}
+
+.author-stage__wrapper {
+  overflow: hidden;
+}
+
+.author-stage__content {
   background: transparent;
+  will-change: transform;
+}
+
+.author-stage__dots {
+  position: fixed;
+  top: 50%;
+  right: clamp(1rem, 2vw, 2rem);
+  z-index: 35;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  transform: translateY(-50%);
+}
+
+.author-stage__dot {
+  width: 0.72rem;
+  height: 0.72rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.author-stage__dot.is-active {
+  transform: scale(1.35);
+  background: linear-gradient(135deg, #87b7ff, #ffe796);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.36);
+}
+
+:deep(.author-screen) {
+  height: 100dvh;
+}
+
+:deep(.author-screen__shell) {
+  display: flex;
+  height: 100%;
+  box-sizing: border-box;
+  justify-content: flex-end;
+  padding: 5.4rem 0 3rem;
+  background: var(--author-shell-bg);
+}
+
+:deep(.author-screen__panel) {
+  position: relative;
+  display: flex;
+  width: min(60vw, 58rem);
+  min-height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(1.5rem, 2.4vw, 2.8rem) clamp(1.4rem, 2.7vw, 3rem) 2.8rem;
+  box-sizing: border-box;
+  background: var(--author-panel-surface);
+  backdrop-filter: saturate(130%) blur(10px);
+  -webkit-backdrop-filter: saturate(130%) blur(10px);
+}
+
+:deep(.author-screen__panel--poster) {
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Hero poster: no default padding — inner elements control their own spacing */
+:deep(.author-screen__panel--hero) {
+  padding: 0;
+  justify-content: flex-start;
+}
+
+/* Fullbleed capsule screen: transparent shell + full-width panel */
+:deep(.author-screen--fullbleed .author-screen__shell) {
+  padding: 0;
+  background: transparent;
+}
+
+:deep(.author-screen--fullbleed .author-screen__panel) {
+  width: 100%;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: transparent;
+}
+
+:deep(.author-section-kicker) {
+  margin-bottom: 1.4rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: var(--stage-hint);
+}
+
+:root[data-theme="day"] .author-stage__dot {
+  background: rgba(21, 28, 40, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(21, 28, 40, 0.18);
+}
+
+@media (max-width: 767px) {
+  .author-stage__dots {
+    right: 0.9rem;
+    gap: 0.6rem;
+  }
+
+  :deep(.author-screen__shell) {
+    padding: 5rem 0 2rem;
+    background:
+      linear-gradient(180deg, rgba(8, 11, 22, 0.78) 0%, rgba(8, 11, 22, 0.94) 100%);
+  }
+
+  :deep(.author-screen__panel) {
+    width: 100%;
+    min-height: 100%;
+    padding: 1.05rem 1rem 1.35rem;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .author-stage__dot {
+    transition: none;
+  }
 }
 </style>
