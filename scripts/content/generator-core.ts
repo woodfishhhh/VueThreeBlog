@@ -366,11 +366,7 @@ async function localizeMissingLocalAsset(reference: string, options: ResolveAsse
     );
   }
 
-  if (isLegacyAbsoluteAssetReference(reference)) {
-    return createMissingImagePlaceholder(reference, options.publicDir, options.siteBasePath);
-  }
-
-  return null;
+  return createMissingImagePlaceholder(reference, options.publicDir, options.siteBasePath);
 }
 
 async function reuseExistingContentAsset(

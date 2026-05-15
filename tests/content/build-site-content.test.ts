@@ -261,10 +261,11 @@ describe("build-site-content", () => {
     expect(article?.html).toContain(`<h2 id="${renderedHeadingId}">`);
   });
 
-  it("fails with post and path context when generated article images are missing", async () => {
+  it("keeps building when generated article images need placeholders", async () => {
     const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-build-missing-image-"));
     const sourceRoot = path.join(tempRoot, "3Dblog");
     const myblogDir = path.join(sourceRoot, "content", "source", "myblog", "前端");
+    const targetPublicDir = path.join(tempRoot, "generated-public");
 
     await mkdir(myblogDir, { recursive: true });
     await writeFile(
@@ -279,12 +280,17 @@ describe("build-site-content", () => {
       ].join("\n"),
     );
 
-    await expect(
-      buildSiteContent({
-        sourceProjectRoot: sourceRoot,
-        targetPublicDir: path.join(tempRoot, "generated-public"),
-      }),
-    ).rejects.toThrow(/broken-image-[a-f0-9]{8}.*\.\/assets\/missing\.png.*missing\.png/s);
+    const result = await buildSiteContent({
+      sourceProjectRoot: sourceRoot,
+      targetPublicDir,
+    });
+    const article = Object.values(result.postsBySlug)[0];
+    const match = article?.html.match(/src="\/imported-assets\/([a-f0-9]{40}\.svg)"/);
+
+    expect(match).not.toBeNull();
+    expect(
+      await readFile(path.join(targetPublicDir, "imported-assets", match![1]), "utf8"),
+    ).toContain("Image unavailable");
   });
 
   it("localizes root-relative content image references", async () => {

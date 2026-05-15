@@ -183,6 +183,11 @@ const screens = [
     min-height: 100%;
     padding: clamp(1.2rem, 3vh, 2rem) 1rem 1.5rem;
   }
+
+  /* About Me panel: tighter top shell padding so content fits in one viewport */
+  :deep([data-testid="author-screen-about"] .author-screen__shell) {
+    padding-top: clamp(2rem, 8vh, 3.5rem);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

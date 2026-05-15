@@ -446,7 +446,7 @@ describe("generator-core", () => {
     );
   });
 
-  it("fails fast when local markdown images are missing", async () => {
+  it("creates a placeholder asset for unrecoverable relative local image paths", async () => {
     const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-broken-local-"));
     const sourceDir = path.join(tempRoot, "source");
     const publicDir = path.join(tempRoot, "public");
@@ -454,13 +454,17 @@ describe("generator-core", () => {
 
     await mkdir(sourceDir, { recursive: true });
 
-    await expect(
-      rewriteMarkdownAssetPaths("![broken-relative](assets/1680342815532.png)", {
-        sourceFilePath,
-        canonicalSlug: "broken-local-images",
-        publicDir,
-        siteBasePath: "/newBlog/",
-      }),
-    ).rejects.toThrow(/broken-local-images.*assets\/1680342815532\.png/s);
+    const result = await rewriteMarkdownAssetPaths("![broken-relative](assets/1680342815532.png)", {
+      sourceFilePath,
+      canonicalSlug: "broken-local-images",
+      publicDir,
+      siteBasePath: "/newBlog/",
+    });
+
+    const match = result.markdown.match(/\/newBlog\/imported-assets\/([a-f0-9]{40}\.svg)/);
+    expect(match).not.toBeNull();
+    expect(await readFile(path.join(publicDir, "imported-assets", match![1]), "utf8")).toContain(
+      "Image unavailable",
+    );
   });
 });

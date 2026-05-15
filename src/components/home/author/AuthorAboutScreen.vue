@@ -209,6 +209,11 @@ const greeting = computed(() => {
 }
 
 @media (max-width: 767px) {
+  .author-screen__panel--about {
+    overflow-y: auto;
+    max-height: 100%;
+  }
+
   .author-about__layout {
     display: block;
   }
@@ -217,14 +222,32 @@ const greeting = computed(() => {
     font-size: 3rem;
   }
 
+  .author-about__greeting {
+    font-size: 1.7rem;
+  }
+
   .author-about__grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.8rem;
-    margin-top: 1.2rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .author-about__item {
+    padding-top: 0.6rem;
   }
 
   .author-about__item dd {
-    font-size: 1.35rem;
+    font-size: 1.1rem;
+    margin-top: 0.4rem;
+  }
+
+  .author-about__progress {
+    margin-top: 1.2rem;
+    padding-top: 0.8rem;
+  }
+
+  .author-about__progress-head strong {
+    font-size: 1.4rem;
   }
 }
 </style>

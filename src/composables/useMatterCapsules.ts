@@ -37,6 +37,7 @@ export function useMatterCapsules({ active, sceneRef, skills }: UseMatterCapsule
   let suppressNextClick = false;
   let agitationTimer: number | null = null;
   let collisionHandler: ((event: Matter.IEventCollision<Matter.Engine>) => void) | null = null;
+  let draggingBody: Matter.Body | null = null;
 
   function stopAnimation() {
     if (animationFrameId !== null) {
@@ -83,6 +84,7 @@ export function useMatterCapsules({ active, sceneRef, skills }: UseMatterCapsule
     lastTimestamp = 0;
     accumulatedTime = 0;
     suppressNextClick = false;
+    draggingBody = null;
   }
 
   function syncBodies() {
@@ -139,7 +141,8 @@ export function useMatterCapsules({ active, sceneRef, skills }: UseMatterCapsule
 
     for (const element of capsuleElements) {
       const isTitle = element.hasAttribute("data-author-fixed");
-      const width = Math.max(element.offsetWidth, isTitle ? 260 : 120);
+      const isMobile = bounds.width < 768;
+      const width = Math.max(element.offsetWidth, isTitle ? 260 : isMobile ? 60 : 120);
       if (isTitle) {
         const cx = Math.max(gutter, bounds.width * 0.32 - width / 2);
         element.style.transform = `translate(${cx}px, 48px)`;
@@ -173,6 +176,15 @@ export function useMatterCapsules({ active, sceneRef, skills }: UseMatterCapsule
     while (accumulatedTime >= STEP_MS) {
       Matter.Engine.update(engine, STEP_MS);
       accumulatedTime -= STEP_MS;
+    }
+
+    // Smoothly rotate the grabbed capsule back to upright (angle → nearest 0)
+    if (draggingBody) {
+      const angle = draggingBody.angle;
+      const turns = Math.round(angle / (2 * Math.PI));
+      const targetAngle = turns * 2 * Math.PI;
+      Matter.Body.setAngle(draggingBody, angle + (targetAngle - angle) * 0.12);
+      Matter.Body.setAngularVelocity(draggingBody, 0);
     }
 
     syncBodies();
@@ -269,8 +281,9 @@ export function useMatterCapsules({ active, sceneRef, skills }: UseMatterCapsule
 
     capsuleBodies = capsuleElements.map((element) => {
       const initiallyStatic = element.hasAttribute("data-author-fixed");
-      const width = Math.max(element.offsetWidth, initiallyStatic ? 288 : 120);
-      const height = Math.max(element.offsetHeight, initiallyStatic ? 126 : 52);
+      const isMobile = bounds.width < 768;
+      const width = Math.max(element.offsetWidth, initiallyStatic ? 288 : isMobile ? 60 : 120);
+      const height = Math.max(element.offsetHeight, initiallyStatic ? 126 : isMobile ? 26 : 52);
       const staticX = Math.min(
         bounds.width - width / 2 - 24,
         Math.max(width / 2 + 28, bounds.width * 0.38),
@@ -361,11 +374,13 @@ export function useMatterCapsules({ active, sceneRef, skills }: UseMatterCapsule
     Matter.Events.on(mouseConstraint, "startdrag", (event) => {
       const dragEvent = event as typeof event & { body: Matter.Body };
       suppressNextClick = true;
+      draggingBody = dragEvent.body;
       setDraggingState(dragEvent.body, true);
     });
 
     Matter.Events.on(mouseConstraint, "enddrag", (event) => {
       const dragEvent = event as typeof event & { body: Matter.Body };
+      draggingBody = null;
       setDraggingState(dragEvent.body, false);
       window.setTimeout(() => {
         suppressNextClick = false;

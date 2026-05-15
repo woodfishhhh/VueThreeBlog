@@ -138,6 +138,14 @@ const { activateSkill } = useMatterCapsules({
   touch-action: none;
   will-change: transform;
   z-index: 1;
+  transition: box-shadow 0.15s ease;
+}
+
+.author-capsule:hover {
+  box-shadow:
+    var(--author-capsule-shadow),
+    inset 0 0 0 2px rgba(20, 20, 50, 1);
+  border: 22px solid #000;
 }
 
 .author-capsule:active {
@@ -170,8 +178,18 @@ const { activateSkill } = useMatterCapsules({
 
 @media (max-width: 767px) {
   .author-capsule {
-    min-width: 5.8rem;
-    padding: 0.72rem 0.92rem;
+    min-width: 3.6rem;
+    padding: 0.36rem 0.46rem;
+    gap: 0.36rem;
+  }
+
+  .author-capsule__label {
+    font-size: 0.5rem;
+  }
+
+  .author-capsule__icon {
+    width: 1.6rem;
+    height: 1.6rem;
   }
 }
 </style>

@@ -20,6 +20,7 @@ export function useAuthorSlider({ viewportRef, trackRef }: UseAuthorSliderOption
   let transitionTween: gsap.core.Tween | null = null;
   let gestureLocked = false;
   let touchStartY = 0;
+  let touchStartTarget: EventTarget | null = null;
   let unlockTimer: number | null = null;
 
   function getSlides() {
@@ -134,9 +135,18 @@ export function useAuthorSlider({ viewportRef, trackRef }: UseAuthorSliderOption
 
   function handleTouchStart(event: TouchEvent) {
     touchStartY = event.touches[0]?.clientY ?? 0;
+    touchStartTarget = event.target;
   }
 
   function handleTouchEnd(event: TouchEvent) {
+    const target = touchStartTarget;
+    touchStartTarget = null;
+
+    // If the touch started on a physics capsule, the user was dragging it — suppress page navigation.
+    if (target instanceof Element && target.closest("[data-author-capsule]")) {
+      return;
+    }
+
     const touchEndY = event.changedTouches[0]?.clientY ?? touchStartY;
     const deltaY = touchStartY - touchEndY;
     if (Math.abs(deltaY) < TOUCH_THRESHOLD) {
@@ -163,6 +173,7 @@ export function useAuthorSlider({ viewportRef, trackRef }: UseAuthorSliderOption
     transitionTween?.kill();
     transitionTween = null;
     gestureLocked = false;
+    touchStartTarget = null;
     if (unlockTimer !== null) {
       window.clearTimeout(unlockTimer);
       unlockTimer = null;
