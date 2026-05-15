@@ -40,5 +40,6 @@ describe("normalizeDeployBasePath", () => {
     expect(normalizeDeployBasePath("newBlog")).toBe("/newBlog/");
     expect(normalizeDeployBasePath("/newBlog")).toBe("/newBlog/");
     expect(normalizeDeployBasePath("/")).toBe("/");
+    expect(normalizeDeployBasePath(undefined)).toBe("/");
   });
 });

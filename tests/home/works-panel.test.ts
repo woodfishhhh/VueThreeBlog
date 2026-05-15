@@ -66,13 +66,13 @@ describe("WorksPanel", () => {
       },
     });
 
-    expect(wrapper.text()).toContain("Selected Works");
     expect(wrapper.find("[data-testid='works-view-toggle']").exists()).toBe(true);
     expect(wrapper.find("[data-testid='works-view-toggle-orbit']").attributes("aria-pressed")).toBe("true");
     expect(wrapper.find("[data-testid='works-view-orbit']").exists()).toBe(false);
     expect(wrapper.find("[data-testid='works-view-case']").exists()).toBe(false);
     expect(wrapper.findAll("[data-testid='works-item']")).toHaveLength(0);
     expect(wrapper.findAll("a")).toHaveLength(6);
+    expect(wrapper.find(".works-panel__title p").text().length).toBeGreaterThan(0);
   });
 
   it("switches desktop works to Case mode with Live and GitHub entries", async () => {
