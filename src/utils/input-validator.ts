@@ -19,7 +19,7 @@ const MAX_SLUG_LENGTH = 200;
 const MAX_TAG_LENGTH = 100;
 
 /** 控制字符范围（换行、回车、制表符等） */
-const CONTROL_CHAR_PATTERN = /[\x00-\x1F\x7F]/g;
+const CONTROL_CHAR_PATTERN = /\p{Cc}/gu;
 
 /**
  * 校验并清理搜索词
@@ -122,13 +122,13 @@ export function isSafeUrl(url: string): boolean {
     // 禁止内网 IP（简化的检查）
     const hostname = parsed.hostname;
     if (
-      hostname === "localhost"
-      || hostname === "127.0.0.1"
-      || hostname === "::1"
-      || hostname.startsWith("192.168.")
-      || hostname.startsWith("10.")
-      || hostname.startsWith("172.16.")
-      || hostname === "0.0.0.0"
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "::1" ||
+      hostname.startsWith("192.168.") ||
+      hostname.startsWith("10.") ||
+      hostname.startsWith("172.16.") ||
+      hostname === "0.0.0.0"
     ) {
       return false;
     }

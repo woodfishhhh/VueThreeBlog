@@ -25,8 +25,9 @@ function setModeWithLock(nextMode: "home" | "blog") {
 }
 
 function scrollElement(element: HTMLElement, top: number, behavior: ScrollBehavior = "smooth") {
-  const prefersReducedMotion = typeof window.matchMedia === "function"
-    && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   element.scrollBy({
     top,

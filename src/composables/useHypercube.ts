@@ -58,7 +58,7 @@ export function generateHypercubeSurfaceIndices(vertices: number[][]) {
 
   for (let fixedAxis = 0; fixedAxis < 4; fixedAxis++) {
     for (const fixedSign of [-1, 1] as const) {
-      const localToGlobal = new Array<number>(8);
+      const localToGlobal = Array.from<number>({ length: 8 });
       const remainingAxes = [0, 1, 2, 3].filter((axis) => axis !== fixedAxis);
 
       for (let vertexIndex = 0; vertexIndex < vertices.length; vertexIndex++) {
@@ -78,8 +78,12 @@ export function generateHypercubeSurfaceIndices(vertices: number[][]) {
 
       for (const [a, b, c, d] of CUBE_FACE_QUADS) {
         indices.push(
-          localToGlobal[a], localToGlobal[b], localToGlobal[c],
-          localToGlobal[a], localToGlobal[c], localToGlobal[d],
+          localToGlobal[a],
+          localToGlobal[b],
+          localToGlobal[c],
+          localToGlobal[a],
+          localToGlobal[c],
+          localToGlobal[d],
         );
       }
     }
@@ -97,11 +101,7 @@ function createDepthOnlyMaterial() {
   });
 }
 
-function projectVertex(
-  vertex: number[],
-  alphaRot: number,
-  betaRot: number,
-) {
+function projectVertex(vertex: number[], alphaRot: number, betaRot: number) {
   const [x, y, z, w] = vertex;
   const cosA = Math.cos(alphaRot);
   const sinA = Math.sin(alphaRot);

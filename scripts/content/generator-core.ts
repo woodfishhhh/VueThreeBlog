@@ -108,7 +108,10 @@ export function buildLegacySlugIndex(entries: readonly LegacySlugSource[]): Map<
 export function resolveCanonicalSlug(options: CanonicalSlugOptions): CanonicalSlugResult {
   const fingerprint = buildContentFingerprint(options.title, options.date, options.rawMarkdown);
   const legacySlug = options.legacyIndex.get(fingerprint);
-  const sourceStem = path.basename(options.sourceRelativePath, path.extname(options.sourceRelativePath));
+  const sourceStem = path.basename(
+    options.sourceRelativePath,
+    path.extname(options.sourceRelativePath),
+  );
 
   if (legacySlug) {
     return {
@@ -212,7 +215,12 @@ export async function rewriteMarkdownAssetPaths(
       continue;
     }
 
-    nextMarkdown = replaceHtmlImageReference(nextMarkdown, matchedExpression, originalReference, rewrittenUrl);
+    nextMarkdown = replaceHtmlImageReference(
+      nextMarkdown,
+      matchedExpression,
+      originalReference,
+      rewrittenUrl,
+    );
   }
 
   return {
@@ -242,7 +250,7 @@ export async function resolveAssetReference(
       originalReference,
       options.sourceProjectRoot,
     );
-    if (projectRootedPath && await fileExists(projectRootedPath)) {
+    if (projectRootedPath && (await fileExists(projectRootedPath))) {
       if (options.canonicalSlug) {
         return copyRelativeAsset(
           projectRootedPath,
@@ -280,8 +288,15 @@ export async function resolveAssetReference(
     : path.resolve(sourceDir, originalReference);
 
   if (!(await fileExists(resolvedPath))) {
-    const sharedMyblogAssetPath = resolveSharedMyblogAssetPath(originalReference, options.sourceProjectRoot);
-    if (sharedMyblogAssetPath && await fileExists(sharedMyblogAssetPath) && options.canonicalSlug) {
+    const sharedMyblogAssetPath = resolveSharedMyblogAssetPath(
+      originalReference,
+      options.sourceProjectRoot,
+    );
+    if (
+      sharedMyblogAssetPath &&
+      (await fileExists(sharedMyblogAssetPath)) &&
+      options.canonicalSlug
+    ) {
       return copyRelativeAsset(
         sharedMyblogAssetPath,
         originalReference,
@@ -320,7 +335,11 @@ export async function resolveAssetReference(
 
 async function localizeMissingLocalAsset(reference: string, options: ResolveAssetReferenceOptions) {
   if (options.reuseGeneratedAssets && options.canonicalSlug) {
-    const reusedAsset = await reuseExistingContentAsset(reference, options.publicDir, options.siteBasePath);
+    const reusedAsset = await reuseExistingContentAsset(
+      reference,
+      options.publicDir,
+      options.siteBasePath,
+    );
     if (reusedAsset) {
       return reusedAsset;
     }
@@ -354,7 +373,11 @@ async function localizeMissingLocalAsset(reference: string, options: ResolveAsse
   return null;
 }
 
-async function reuseExistingContentAsset(reference: string, publicDir: string, siteBasePath?: string) {
+async function reuseExistingContentAsset(
+  reference: string,
+  publicDir: string,
+  siteBasePath?: string,
+) {
   const safeRelativePath = toSafeRelativeAssetPath(reference);
   if (!safeRelativePath) {
     return null;
@@ -373,7 +396,9 @@ async function reuseExistingContentAsset(reference: string, publicDir: string, s
     .sort((left, right) => left.name.localeCompare(right.name));
 
   for (const entry of candidateEntries) {
-    if (await fileExists(path.join(contentAssetsRoot, entry.name, ...safeRelativePath.split("/")))) {
+    if (
+      await fileExists(path.join(contentAssetsRoot, entry.name, ...safeRelativePath.split("/")))
+    ) {
       return toPublicAssetUrl(siteBasePath, CONTENT_ASSET_DIR, entry.name, safeRelativePath);
     }
   }
@@ -381,7 +406,11 @@ async function reuseExistingContentAsset(reference: string, publicDir: string, s
   return null;
 }
 
-async function createMissingImagePlaceholder(reference: string, publicDir: string, siteBasePath?: string) {
+async function createMissingImagePlaceholder(
+  reference: string,
+  publicDir: string,
+  siteBasePath?: string,
+) {
   const assetFileName = `${sha1(reference)}.svg`;
   const targetPath = path.join(publicDir, IMPORTED_ASSET_DIR, assetFileName);
   const basename = path.basename(reference.replaceAll("\\", "/"));
@@ -407,14 +436,13 @@ function isLegacyAbsoluteAssetReference(reference: string) {
 }
 
 function escapeSvgText(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 
 function findCodeBlockRanges(markdown: string) {
-  const lineStarts = Array.from(markdown.matchAll(/^.*(?:\r?\n|$)/gm)).map((match) => match.index ?? 0);
+  const lineStarts = Array.from(markdown.matchAll(/^.*(?:\r?\n|$)/gm)).map(
+    (match) => match.index ?? 0,
+  );
   const tokens = codeRangeParser.parse(markdown, {});
   const ranges: { start: number; end: number }[] = [];
 
@@ -456,9 +484,17 @@ function replaceMarkdownImageReference(
   return markdown.replace(`(${originalReference})`, `(${rewrittenReference})`);
 }
 
-function replaceHtmlImageReference(markdown: string, matchedExpression: string, originalReference: string, rewrittenReference: string) {
+function replaceHtmlImageReference(
+  markdown: string,
+  matchedExpression: string,
+  originalReference: string,
+  rewrittenReference: string,
+) {
   const escapedReference = escapeRegExp(originalReference);
-  const rewrittenExpression = matchedExpression.replace(new RegExp(escapedReference, "g"), rewrittenReference);
+  const rewrittenExpression = matchedExpression.replace(
+    new RegExp(escapedReference, "g"),
+    rewrittenReference,
+  );
   return markdown.replace(matchedExpression, rewrittenExpression);
 }
 
@@ -514,7 +550,12 @@ async function copyRelativeAsset(
   reuseGeneratedAssets = false,
 ) {
   const safeRelativePath = toSafeRelativeAssetPath(originalReference);
-  const targetPath = path.join(publicDir, CONTENT_ASSET_DIR, canonicalSlug, ...safeRelativePath.split("/"));
+  const targetPath = path.join(
+    publicDir,
+    CONTENT_ASSET_DIR,
+    canonicalSlug,
+    ...safeRelativePath.split("/"),
+  );
 
   if (!reuseGeneratedAssets || !(await fileExists(targetPath))) {
     await mkdir(path.dirname(targetPath), { recursive: true });
@@ -543,9 +584,7 @@ async function copyAbsoluteAsset(
 }
 
 function toSafeRelativeAssetPath(originalReference: string) {
-  const normalized = originalReference
-    .replaceAll("\\", "/")
-    .split(/[?#]/)[0] ?? "";
+  const normalized = originalReference.replaceAll("\\", "/").split(/[?#]/)[0] ?? "";
   const segments = normalized.split("/");
   const safeSegments: string[] = [];
 
@@ -627,10 +666,7 @@ function resolveProjectRootAssetPath(reference: string, sourceProjectRoot?: stri
     return null;
   }
 
-  const relativePath = reference
-    .replaceAll("\\", "/")
-    .split(/[?#]/)[0]
-    ?.replace(/^\/+/, "");
+  const relativePath = reference.replaceAll("\\", "/").split(/[?#]/)[0]?.replace(/^\/+/, "");
 
   if (!relativePath) {
     return null;
@@ -652,13 +688,22 @@ export async function localizeRemoteAsset(
   const knownExtension = getPathExtensionFromUrl(reference);
   const baseName = sha1(reference);
 
-  const existingAssetFileName = await findExistingLocalizedRemoteAssetFileName(publicDir, baseName, knownExtension);
+  const existingAssetFileName = await findExistingLocalizedRemoteAssetFileName(
+    publicDir,
+    baseName,
+    knownExtension,
+  );
   if (existingAssetFileName) {
     return toPublicAssetUrl(siteBasePath, REMOTE_ASSET_DIR, existingAssetFileName);
   }
 
   if (LOCAL_MIRROR_HOSTS.has(parsed.hostname)) {
-    const mirroredAsset = await localizeAssetFromLocalMirror(reference, publicDir, knownExtension, siteBasePath);
+    const mirroredAsset = await localizeAssetFromLocalMirror(
+      reference,
+      publicDir,
+      knownExtension,
+      siteBasePath,
+    );
     if (mirroredAsset) {
       return mirroredAsset;
     }
@@ -666,7 +711,12 @@ export async function localizeRemoteAsset(
 
   const downloaded = await downloadRemoteAsset(reference);
   if (!downloaded) {
-    const mirroredAsset = await localizeAssetFromLocalMirror(reference, publicDir, knownExtension, siteBasePath);
+    const mirroredAsset = await localizeAssetFromLocalMirror(
+      reference,
+      publicDir,
+      knownExtension,
+      siteBasePath,
+    );
     if (mirroredAsset) {
       return mirroredAsset;
     }
@@ -674,7 +724,9 @@ export async function localizeRemoteAsset(
   }
 
   const finalExtension =
-    knownExtension || getPathExtensionFromUrl(downloaded.finalUrl) || extensionFromContentType(downloaded.contentType);
+    knownExtension ||
+    getPathExtensionFromUrl(downloaded.finalUrl) ||
+    extensionFromContentType(downloaded.contentType);
   const assetFileName = `${baseName}${finalExtension || ".bin"}`;
   const targetPath = path.join(publicDir, REMOTE_ASSET_DIR, assetFileName);
 
@@ -794,7 +846,9 @@ async function resolveLocalMirrorSource(reference: string): Promise<string | nul
   const candidates = index.get(fileName.toLowerCase()) ?? [];
   const normalizedReference = normalizeMirrorLookupPath(reference);
   const suffixMatchedCandidates = normalizedReference
-    ? candidates.filter((candidate) => normalizeMirrorLookupPath(candidate).endsWith(`/${normalizedReference}`))
+    ? candidates.filter((candidate) =>
+        normalizeMirrorLookupPath(candidate).endsWith(`/${normalizedReference}`),
+      )
     : [];
 
   for (const candidate of suffixMatchedCandidates) {
@@ -813,11 +867,13 @@ async function resolveLocalMirrorSource(reference: string): Promise<string | nul
 }
 
 function normalizeMirrorLookupPath(reference: string) {
-  return safeDecodeAssetReference(reference)
-    .replaceAll("\\", "/")
-    .split(/[?#]/)[0]
-    ?.replace(/^\/+/, "")
-    .toLowerCase() ?? "";
+  return (
+    safeDecodeAssetReference(reference)
+      .replaceAll("\\", "/")
+      .split(/[?#]/)[0]
+      ?.replace(/^\/+/, "")
+      .toLowerCase() ?? ""
+  );
 }
 
 function getFileNameFromUrl(reference: string) {
@@ -826,7 +882,9 @@ function getFileNameFromUrl(reference: string) {
     const basename = path.basename(decodeURIComponent(url.pathname));
     return basename.trim();
   } catch {
-    return path.basename(safeDecodeAssetReference(reference).replaceAll("\\", "/").split(/[?#]/)[0] ?? "").trim();
+    return path
+      .basename(safeDecodeAssetReference(reference).replaceAll("\\", "/").split(/[?#]/)[0] ?? "")
+      .trim();
   }
 }
 
@@ -954,7 +1012,13 @@ async function downloadRemoteAsset(
 }
 
 function shouldRetryRemoteAssetDownload(statusCode: number) {
-  return statusCode === 0 || statusCode === 408 || statusCode === 425 || statusCode === 429 || statusCode >= 500;
+  return (
+    statusCode === 0 ||
+    statusCode === 408 ||
+    statusCode === 425 ||
+    statusCode === 429 ||
+    statusCode >= 500
+  );
 }
 
 async function waitBeforeRetry(attempt: number) {
@@ -962,46 +1026,48 @@ async function waitBeforeRetry(attempt: number) {
 }
 
 async function requestRemoteAsset(url: URL) {
-  return new Promise<{ statusCode: number; headers: IncomingHttpHeaders; body: Buffer }>((resolve, reject) => {
-    const useHttps = url.protocol === "https:";
-    const client = useHttps ? https : http;
-    const request = client.get(
-      url,
-      {
-        agent: useHttps && INSECURE_TLS_HOSTS.has(url.hostname) ? insecureHttpsAgent : undefined,
-        headers: {
-          "accept": "*/*",
-          "user-agent": "VueCubeBlog-Asset-Localizer/1.0",
+  return new Promise<{ statusCode: number; headers: IncomingHttpHeaders; body: Buffer }>(
+    (resolve, reject) => {
+      const useHttps = url.protocol === "https:";
+      const client = useHttps ? https : http;
+      const request = client.get(
+        url,
+        {
+          agent: useHttps && INSECURE_TLS_HOSTS.has(url.hostname) ? insecureHttpsAgent : undefined,
+          headers: {
+            accept: "*/*",
+            "user-agent": "VueCubeBlog-Asset-Localizer/1.0",
+          },
         },
-      },
-      (response) => {
-        const chunks: Buffer[] = [];
-        let totalBytes = 0;
+        (response) => {
+          const chunks: Buffer[] = [];
+          let totalBytes = 0;
 
-        response.on("data", (chunk: Buffer) => {
-          totalBytes += chunk.length;
-          if (totalBytes > MAX_REMOTE_ASSET_BYTES) {
-            request.destroy(new Error(`Remote asset too large: ${url.toString()}`));
-            return;
-          }
-          chunks.push(chunk);
-        });
-
-        response.on("end", () => {
-          resolve({
-            statusCode: response.statusCode ?? 0,
-            headers: response.headers,
-            body: Buffer.concat(chunks),
+          response.on("data", (chunk: Buffer) => {
+            totalBytes += chunk.length;
+            if (totalBytes > MAX_REMOTE_ASSET_BYTES) {
+              request.destroy(new Error(`Remote asset too large: ${url.toString()}`));
+              return;
+            }
+            chunks.push(chunk);
           });
-        });
-      },
-    );
 
-    request.on("error", reject);
-    request.setTimeout(15000, () => {
-      request.destroy(new Error(`Remote asset timeout: ${url.toString()}`));
-    });
-  }).catch(() => ({
+          response.on("end", () => {
+            resolve({
+              statusCode: response.statusCode ?? 0,
+              headers: response.headers,
+              body: Buffer.concat(chunks),
+            });
+          });
+        },
+      );
+
+      request.on("error", reject);
+      request.setTimeout(15000, () => {
+        request.destroy(new Error(`Remote asset timeout: ${url.toString()}`));
+      });
+    },
+  ).catch(() => ({
     statusCode: 0,
     headers: {} as IncomingHttpHeaders,
     body: Buffer.alloc(0),

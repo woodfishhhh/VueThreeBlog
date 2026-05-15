@@ -34,7 +34,7 @@ app.mount("#app");
 const updateServiceWorker = registerSW({
   immediate: true,
   onNeedRefresh() {
-    updateServiceWorker(true);
+    void updateServiceWorker(true);
   },
   onRegisteredSW(_swUrl, registration) {
     registration?.update().catch(() => {});

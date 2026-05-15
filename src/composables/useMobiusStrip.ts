@@ -40,9 +40,7 @@ function indexFor(segmentsV: number, u: number, v: number) {
   return u * segmentsV + v;
 }
 
-export function generateMobiusData(
-  overrides: Partial<MobiusDataParams> = {},
-): MobiusData {
+export function generateMobiusData(overrides: Partial<MobiusDataParams> = {}): MobiusData {
   const params: MobiusDataParams = {
     segmentsU: overrides.segmentsU ?? 84,
     segmentsV: overrides.segmentsV ?? 10,
@@ -150,16 +148,8 @@ export function useMobiusStrip(): MobiusStrip {
     if (intensity <= 0) return;
 
     const poseAlpha = 1 - Math.exp(-delta * 10 * intensity);
-    group.rotation.x = THREE.MathUtils.lerp(
-      group.rotation.x,
-      MOBIUS_RING_POSE.x,
-      poseAlpha,
-    );
-    group.rotation.y = THREE.MathUtils.lerp(
-      group.rotation.y,
-      MOBIUS_RING_POSE.y,
-      poseAlpha,
-    );
+    group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, MOBIUS_RING_POSE.x, poseAlpha);
+    group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, MOBIUS_RING_POSE.y, poseAlpha);
     group.rotation.z += delta * (1.15 + intensity * 0.65) * intensity;
 
     const ribbonSpin = delta * 0.32 * intensity;

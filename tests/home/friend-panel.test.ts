@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 
 import FriendPanel from "@/components/home/FriendPanel.vue";
 import FriendLinkApplicationForm from "@/components/home/friend/FriendLinkApplicationForm.vue";
@@ -53,14 +53,22 @@ describe("FriendPanel", () => {
     expect(wrapper.get("[data-testid='friend-application-contact']")).toBeTruthy();
 
     await wrapper.get("[data-testid='friend-application-site-name']").setValue("Orbiting Notes");
-    await wrapper.get("[data-testid='friend-application-site-url']").setValue("https://orbiting.example");
-    await wrapper.get("[data-testid='friend-application-avatar-url']").setValue("https://orbiting.example/avatar.png");
-    await wrapper.get("[data-testid='friend-application-description']").setValue("沉浸式前端与工程随记。");
+    await wrapper
+      .get("[data-testid='friend-application-site-url']")
+      .setValue("https://orbiting.example");
+    await wrapper
+      .get("[data-testid='friend-application-avatar-url']")
+      .setValue("https://orbiting.example/avatar.png");
+    await wrapper
+      .get("[data-testid='friend-application-description']")
+      .setValue("沉浸式前端与工程随记。");
     await wrapper.get("[data-testid='friend-application-contact']").setValue("@orbiting-notes");
     await wrapper.get("[data-testid='friend-application-submit']").trigger("click");
 
     expect(openSpy).not.toHaveBeenCalled();
-    expect(wrapper.get("[data-testid='friend-application-reminder']").text()).toContain("将打开 GitHub 提交草稿");
+    expect(wrapper.get("[data-testid='friend-application-reminder']").text()).toContain(
+      "将打开 GitHub 提交草稿",
+    );
 
     await wrapper.get("[data-testid='friend-application-confirm']").trigger("click");
 
@@ -114,7 +122,12 @@ describe("FriendPanel", () => {
     await wrapper.get("[data-testid='friend-mobile-drawer-toggle']").trigger("click");
 
     expect(wrapper.get("[data-testid='friend-mobile-drawer']").isVisible()).toBe(true);
-    expect(wrapper.get("[data-testid='friend-mobile-drawer']").find("[data-testid='friend-application-site-name']").exists()).toBe(true);
+    expect(
+      wrapper
+        .get("[data-testid='friend-mobile-drawer']")
+        .find("[data-testid='friend-application-site-name']")
+        .exists(),
+    ).toBe(true);
 
     await wrapper.get("[data-testid='friend-mobile-drawer-close']").trigger("click");
 
@@ -135,7 +148,9 @@ describe("FriendPanel", () => {
     columns.forEach((column) => {
       const segments = column.findAll("[data-testid='friend-loop-segment']");
       const mainSegment = segments.find((segment) => segment.attributes("data-segment") === "main");
-      const cloneSegments = segments.filter((segment) => segment.attributes("data-segment") !== "main");
+      const cloneSegments = segments.filter(
+        (segment) => segment.attributes("data-segment") !== "main",
+      );
 
       expect(segments.map((segment) => segment.attributes("data-segment"))).toEqual([
         "clone-before",
@@ -144,12 +159,15 @@ describe("FriendPanel", () => {
       ]);
       expect(mainSegment?.attributes("aria-hidden")).toBeUndefined();
       expect(mainSegment?.findAll("[data-testid='friend-link-card']").length).toBeGreaterThan(0);
-      expect(cloneSegments.every((segment) => segment.attributes("aria-hidden") === "true")).toBe(true);
+      expect(cloneSegments.every((segment) => segment.attributes("aria-hidden") === "true")).toBe(
+        true,
+      );
     });
   });
 
   it("lets card height grow from the description instead of a fixed minimum", () => {
-    const longDescription = "这是一段比较长的友链描述，用来确认卡片高度由正文自然撑开，而不是由固定高度变量锁死。";
+    const longDescription =
+      "这是一段比较长的友链描述，用来确认卡片高度由正文自然撑开，而不是由固定高度变量锁死。";
     const wrapper = mount(FriendLinkCard, {
       props: {
         link: {
@@ -162,7 +180,9 @@ describe("FriendPanel", () => {
       },
     });
 
-    expect(wrapper.get("[data-testid='friend-link-card']").attributes("style") ?? "").not.toContain("--card-min-height");
+    expect(wrapper.get("[data-testid='friend-link-card']").attributes("style") ?? "").not.toContain(
+      "--card-min-height",
+    );
     expect(wrapper.text()).toContain(longDescription);
   });
 
@@ -177,6 +197,8 @@ describe("FriendPanel", () => {
 
     await wrapper.get("[data-testid='friend-application-site-name']").setValue("Orbiting Notes");
 
-    expect(wrapper.get("[data-testid='friend-application-card']").classes()).toContain("is-writing");
+    expect(wrapper.get("[data-testid='friend-application-card']").classes()).toContain(
+      "is-writing",
+    );
   });
 });

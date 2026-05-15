@@ -122,12 +122,30 @@ interface RenderedArticleMarkdown {
   toc: GeneratedTocItem[];
 }
 
-export async function buildSiteContent(options: BuildSiteContentOptions): Promise<SiteContentBuildResult> {
+export async function buildSiteContent(
+  options: BuildSiteContentOptions,
+): Promise<SiteContentBuildResult> {
   const sourceProjectRoot = options.sourceProjectRoot;
   const myblogRoot = path.join(sourceProjectRoot, "content", "source", "myblog");
   const legacyPostsRoot = path.join(sourceProjectRoot, "content", "posts");
-  const aboutPath = path.join(sourceProjectRoot, "content", "source", "blog", "source", "_data", "about.yml");
-  const linkPath = path.join(sourceProjectRoot, "content", "source", "blog", "source", "_data", "link.yml");
+  const aboutPath = path.join(
+    sourceProjectRoot,
+    "content",
+    "source",
+    "blog",
+    "source",
+    "_data",
+    "about.yml",
+  );
+  const linkPath = path.join(
+    sourceProjectRoot,
+    "content",
+    "source",
+    "blog",
+    "source",
+    "_data",
+    "link.yml",
+  );
   const configPath = path.join(sourceProjectRoot, "content", "source", "blog", "_config.yml");
   const targetPublicDir = options.targetPublicDir ?? path.join(process.cwd(), "public");
   const siteBasePath = options.siteBasePath;
@@ -241,7 +259,12 @@ export async function buildSiteContent(options: BuildSiteContentOptions): Promis
       siteBasePath,
       reuseGeneratedAssets,
     }),
-    friendLinks: await readFriendLinks(linkPath, targetPublicDir, siteBasePath, reuseGeneratedAssets),
+    friendLinks: await readFriendLinks(
+      linkPath,
+      targetPublicDir,
+      siteBasePath,
+      reuseGeneratedAssets,
+    ),
   };
 }
 
@@ -353,10 +376,7 @@ function normalizeRenderedText(value: string) {
 }
 
 function normalizeHeadingSlugInput(value: string) {
-  return stripHtml(value)
-    .replace(/[&+]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  return stripHtml(value).replace(/[&+]/g, " ").replace(/\s+/g, " ").trim();
 }
 
 function stripHtml(value: string) {
@@ -389,7 +409,9 @@ function createExcerpt(markdown: string, title: string) {
     .filter((block) => !block.startsWith("```"));
 
   const firstParagraph = paragraphs[0] ?? `A deep dive into ${title}.`;
-  const plainText = stripInlineMarkdown(firstParagraph).replace(/!\[[^\]]*\]\([^)]+\)/g, "").trim();
+  const plainText = stripInlineMarkdown(firstParagraph)
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, "")
+    .trim();
   return `${plainText.slice(0, 150)}${plainText.length > 150 ? "..." : ""}`;
 }
 
@@ -425,8 +447,10 @@ function estimateReadingMinutes(markdown: string) {
     return 1;
   }
 
-  const cjkCount = (plainText.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu) ?? [])
-    .length;
+  const cjkCount = (
+    plainText.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu) ??
+    []
+  ).length;
   const nonCjkText = plainText.replace(
     /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu,
     " ",
@@ -514,7 +538,8 @@ async function buildAuthorProfile(options: {
   }
 
   const configText = await safeReadFile(options.configPath);
-  const configData = (yaml.load(configText) as { author?: unknown; subtitle?: unknown } | undefined) ?? {};
+  const configData =
+    (yaml.load(configText) as { author?: unknown; subtitle?: unknown } | undefined) ?? {};
   const aboutText = await safeReadFile(options.aboutPath);
   const aboutData = (yaml.load(aboutText) as Record<string, any> | undefined) ?? {};
   const rawHeroImage = readString(aboutData.hero?.image) || readString(aboutData.authorinfo?.image);
@@ -592,12 +617,16 @@ async function readFriendLinks(
   const groups = Array.isArray(data.links) ? data.links : [];
 
   for (const group of groups) {
-    const typedGroup = typeof group === "object" && group !== null ? (group as { class_name?: unknown; link_list?: unknown }) : null;
+    const typedGroup =
+      typeof group === "object" && group !== null
+        ? (group as { class_name?: unknown; link_list?: unknown })
+        : null;
     const className = readString(typedGroup?.class_name);
     const linkList = Array.isArray(typedGroup?.link_list) ? typedGroup.link_list : [];
 
     for (const item of linkList) {
-      const typedItem = typeof item === "object" && item !== null ? (item as Record<string, unknown>) : null;
+      const typedItem =
+        typeof item === "object" && item !== null ? (item as Record<string, unknown>) : null;
       const name = readString(typedItem?.name);
       const link = readString(typedItem?.link);
       if (!name || !link) {
@@ -606,12 +635,12 @@ async function readFriendLinks(
 
       const rawAvatar = readString(typedItem?.avatar);
       const avatar = rawAvatar
-        ? (await resolveContentAssetValue(rawAvatar, {
+        ? ((await resolveContentAssetValue(rawAvatar, {
             sourceFilePath: linkPath,
             targetPublicDir,
             siteBasePath,
             reuseGeneratedAssets,
-          })) ?? undefined
+          })) ?? undefined)
         : undefined;
 
       result.push({
@@ -648,7 +677,8 @@ async function normalizeSkills(
 
   const normalized = await Promise.all(
     value.map(async (item) => {
-      const typedItem = typeof item === "object" && item !== null ? (item as Record<string, unknown>) : null;
+      const typedItem =
+        typeof item === "object" && item !== null ? (item as Record<string, unknown>) : null;
       const title = readString(typedItem?.title);
       if (!title) {
         return null;
@@ -672,7 +702,9 @@ async function normalizeSkills(
     }),
   );
 
-  return normalized.filter((item): item is { title: string; color: string; img: string } => item !== null);
+  return normalized.filter(
+    (item): item is { title: string; color: string; img: string } => item !== null,
+  );
 }
 
 function readString(value: unknown) {
@@ -717,7 +749,9 @@ function toIsoDate(value: string) {
   }
 
   const parsedDate = new Date(value);
-  return Number.isNaN(parsedDate.getTime()) ? new Date("2026-01-01T00:00:00.000Z").toISOString() : parsedDate.toISOString();
+  return Number.isNaN(parsedDate.getTime())
+    ? new Date("2026-01-01T00:00:00.000Z").toISOString()
+    : parsedDate.toISOString();
 }
 
 function formatPublishedDate(value: string) {
@@ -757,21 +791,58 @@ function sanitizeArticleHtml(rawHtml: string) {
   // ─────────────────────────────────────────────────────────────────────────────
   return DOMPurify.sanitize(rawHtml, {
     ALLOWED_TAGS: [
-      "h1", "h2", "h3", "h4", "h5", "h6",
-      "p", "br", "hr",
-      "ul", "ol", "li",
-      "blockquote", "pre", "code",
-      "strong", "em", "del", "s", "mark", "sup", "sub",
-      "a", "img", "figure", "figcaption",
-      "table", "thead", "tbody", "tr", "th", "td",
-      "div", "span",
-      "details", "summary",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "p",
+      "br",
+      "hr",
+      "ul",
+      "ol",
+      "li",
+      "blockquote",
+      "pre",
+      "code",
+      "strong",
+      "em",
+      "del",
+      "s",
+      "mark",
+      "sup",
+      "sub",
+      "a",
+      "img",
+      "figure",
+      "figcaption",
+      "table",
+      "thead",
+      "tbody",
+      "tr",
+      "th",
+      "td",
+      "div",
+      "span",
+      "details",
+      "summary",
     ],
     ALLOWED_ATTR: [
-      "href", "src", "alt", "title", "class",
-      "id", "loading", "decoding",
-      "target", "rel", "width", "height",
-      "colspan", "rowspan",
+      "href",
+      "src",
+      "alt",
+      "title",
+      "class",
+      "id",
+      "loading",
+      "decoding",
+      "target",
+      "rel",
+      "width",
+      "height",
+      "colspan",
+      "rowspan",
     ],
     ALLOW_DATA_ATTR: false,
   });
@@ -800,7 +871,9 @@ async function assertReferencedArticleAssetsExist(options: {
   slug: string;
 }) {
   const references = [
-    ...Array.from(options.articleHtml.matchAll(/<img\b[^>]*?\bsrc=(["'])([^"']+)\1/gi)).map((match) => match[2] ?? ""),
+    ...Array.from(options.articleHtml.matchAll(/<img\b[^>]*?\bsrc=(["'])([^"']+)\1/gi)).map(
+      (match) => match[2] ?? "",
+    ),
     options.coverImage ?? "",
   ].filter((reference) => isGeneratedLocalAssetReference(reference));
   const missingAssets: string[] = [];
@@ -813,15 +886,19 @@ async function assertReferencedArticleAssetsExist(options: {
   }
 
   if (missingAssets.length > 0) {
-    throw new Error(`Post "${options.slug}" references missing generated image(s): ${missingAssets.join(", ")}`);
+    throw new Error(
+      `Post "${options.slug}" references missing generated image(s): ${missingAssets.join(", ")}`,
+    );
   }
 }
 
 function isGeneratedLocalAssetReference(reference: string) {
   const withoutBase = stripSiteBasePath(reference);
-  return withoutBase.startsWith("/remote-assets/")
-    || withoutBase.startsWith("/content-assets/")
-    || withoutBase.startsWith("/imported-assets/");
+  return (
+    withoutBase.startsWith("/remote-assets/") ||
+    withoutBase.startsWith("/content-assets/") ||
+    withoutBase.startsWith("/imported-assets/")
+  );
 }
 
 function generatedAssetPath(reference: string, publicDir: string) {

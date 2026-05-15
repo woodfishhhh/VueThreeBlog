@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 import { useTheme } from "@/composables/useTheme";
 
@@ -110,8 +110,9 @@ describe("useTheme", () => {
 
   it("toggleThemeAt falls back synchronously when reduced motion is enabled", () => {
     const startViewTransition = vi.fn() as unknown as Document["startViewTransition"];
-    (document as Document & { startViewTransition?: Document["startViewTransition"] }).startViewTransition =
-      startViewTransition;
+    (
+      document as Document & { startViewTransition?: Document["startViewTransition"] }
+    ).startViewTransition = startViewTransition;
     installMatchMedia(true);
 
     const { initializeTheme, toggleThemeAt, theme } = useTheme();
@@ -130,8 +131,9 @@ describe("useTheme", () => {
       callback();
       return { finished: Promise.resolve() };
     }) as unknown as Document["startViewTransition"];
-    (document as Document & { startViewTransition?: Document["startViewTransition"] }).startViewTransition =
-      startViewTransition;
+    (
+      document as Document & { startViewTransition?: Document["startViewTransition"] }
+    ).startViewTransition = startViewTransition;
 
     const { initializeTheme, toggleThemeAt, theme } = useTheme();
     initializeTheme();

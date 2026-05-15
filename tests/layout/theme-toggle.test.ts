@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import ThemeToggle from "@/components/layout/ThemeToggle.vue";
 
@@ -56,4 +56,3 @@ describe("ThemeToggle", () => {
     expect(payload).toEqual({ x: 30, y: 30 });
   });
 });
-

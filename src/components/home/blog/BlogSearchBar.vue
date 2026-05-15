@@ -26,7 +26,9 @@ const sortOptions: { value: BlogSortKey; label: string }[] = [
   <section class="border-b border-[var(--border-subtle)] pb-6">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <div class="space-y-2">
-        <div class="text-[11px] uppercase tracking-[0.36em] text-[color:var(--accent)] opacity-75">Blog Archive</div>
+        <div class="text-[11px] uppercase tracking-[0.36em] text-[color:var(--accent)] opacity-75">
+          Blog Archive
+        </div>
         <h2 class="max-w-3xl text-3xl font-light leading-tight text-[var(--stage-fg)] md:text-4xl">
           Field notes for code, study, and small systems.
         </h2>
@@ -36,7 +38,9 @@ const sortOptions: { value: BlogSortKey; label: string }[] = [
       </div>
 
       <div class="border-l border-[var(--border-subtle)] pl-4 text-sm text-[var(--stage-hint)]">
-        <div class="text-[var(--stage-fg)]">{{ props.resultCount }} / {{ props.totalCount }} posts</div>
+        <div class="text-[var(--stage-fg)]">
+          {{ props.resultCount }} / {{ props.totalCount }} posts
+        </div>
         <div class="mt-1 text-xs text-[var(--stage-hint)]">
           {{ props.hasActiveFilters ? "筛选后的目录视图" : "完整文章目录" }}
         </div>

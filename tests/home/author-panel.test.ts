@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 import AuthorPanel from "@/components/home/AuthorPanel.vue";
 import type { AuthorProfileData } from "@/types/content";

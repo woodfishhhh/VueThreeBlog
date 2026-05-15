@@ -37,9 +37,7 @@ const universityProgress = computed(() => {
   return Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
 });
 
-const universityProgressLabel = computed(
-  () => `${universityProgress.value.toFixed(1)}%`,
-);
+const universityProgressLabel = computed(() => `${universityProgress.value.toFixed(1)}%`);
 
 const timeHour = new Date().getHours();
 const greeting = computed(() => {
@@ -53,10 +51,7 @@ const greeting = computed(() => {
 </script>
 
 <template>
-  <section
-    class="author-screen"
-    data-author-screen
-    data-testid="author-screen-about">
+  <section class="author-screen" data-author-screen data-testid="author-screen-about">
     <div class="author-screen__shell">
       <article class="author-screen__panel author-screen__panel--about">
         <div class="author-section-kicker" data-author-reveal>About Me</div>
@@ -72,7 +67,8 @@ const greeting = computed(() => {
                 v-for="item in identityItems"
                 :key="item.label"
                 class="author-about__item"
-                data-author-reveal>
+                data-author-reveal
+              >
                 <dt>{{ item.label }}</dt>
                 <dd>{{ item.value }}</dd>
               </div>
@@ -96,7 +92,8 @@ const greeting = computed(() => {
                 role="meter"
                 :aria-valuenow="Number(universityProgress.toFixed(1))"
                 aria-valuemin="0"
-                aria-valuemax="100">
+                aria-valuemax="100"
+              >
                 <span :style="{ width: universityProgressLabel }"></span>
               </div>
               <div class="author-about__progress-dates">

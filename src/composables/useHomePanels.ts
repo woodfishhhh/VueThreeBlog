@@ -4,7 +4,12 @@ import { loadAuthorProfile } from "@/content/author";
 import { loadFriendLinks } from "@/content/friends";
 import { getPostSummaries, warmPostSummaries } from "@/content/posts";
 import { getWorkProjects } from "@/content/works";
-import type { AuthorProfileData, FriendLinkData, PostSummary, WorkProjectData } from "@/types/content";
+import type {
+  AuthorProfileData,
+  FriendLinkData,
+  PostSummary,
+  WorkProjectData,
+} from "@/types/content";
 import type { SiteMode } from "@/stores/site";
 
 const BLOG_WARMUP_DELAY_MS = 1200;

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import {
   generateHypercubeData,
@@ -30,7 +30,9 @@ describe("useHypercube", () => {
     expect(material.depthWrite).toBe(true);
     expect(material.transparent).toBe(false);
     expect(occluderGeometry.type).toBe("BufferGeometry");
-    expect(occluderGeometry.index?.array.length).toBe(generateHypercubeSurfaceIndices(vertices).length);
+    expect(occluderGeometry.index?.array.length).toBe(
+      generateHypercubeSurfaceIndices(vertices).length,
+    );
     expect(hypercube.line.renderOrder).toBeLessThan(hypercube.occluder.renderOrder);
     expect(hypercube.points.renderOrder).toBeLessThan(hypercube.occluder.renderOrder);
     expect(hypercube.occluder.renderOrder).toBeLessThan(80);

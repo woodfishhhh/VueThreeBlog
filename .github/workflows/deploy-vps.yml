@@ -25,29 +25,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
         with:
           node-version: 22
-          cache: npm
+          cache: true
 
       - name: Install dependencies
-        run: npm ci
+        run: vp install
 
       - name: Generate content
-        run: npm run generate:content:ci
+        run: vp run content:generate:ci
 
-      - name: Unit tests
-        run: npm run test
+      - name: Agent static checks
+        run: vp run -v agent:static
 
-      - name: Type check
-        run: npm run typecheck
+      - name: Agent unit tests
+        run: vp run -v agent:test
 
-      - name: Build
-        run: npm run build
-
-      - name: Verify deploy paths
-        run: npm run verify:dist
+      - name: Agent dist build
+        run: vp run -v agent:dist
 
       - name: Package site archive
         run: tar -czf "${{ env.DEPLOY_ARCHIVE }}" -C dist .

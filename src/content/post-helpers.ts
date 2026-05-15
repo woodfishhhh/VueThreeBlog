@@ -1,6 +1,9 @@
 import type { PostSummary } from "@/types/content";
 
-export function resolvePostSlugFromIndex(posts: readonly PostSummary[], slug: string): string | null {
+export function resolvePostSlugFromIndex(
+  posts: readonly PostSummary[],
+  slug: string,
+): string | null {
   const normalizedSlug = slug.trim();
   if (!normalizedSlug) {
     return null;

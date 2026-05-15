@@ -1,6 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { createMemoryHistory, createRouter } from "vue-router";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vite-plus/test";
 
 import PostPanel from "@/components/home/PostPanel.vue";
 import type { PostSummary } from "@/types/content";
@@ -79,8 +79,12 @@ describe("PostPanel", () => {
       },
     });
 
-    expect((wrapper.get("[data-testid='blog-search-input']").element as HTMLInputElement).value).toBe("AJAX");
-    expect(wrapper.get("[data-testid='blog-filter-type-Tutorial']").attributes("aria-pressed")).toBe("true");
+    expect(
+      (wrapper.get("[data-testid='blog-search-input']").element as HTMLInputElement).value,
+    ).toBe("AJAX");
+    expect(
+      wrapper.get("[data-testid='blog-filter-type-Tutorial']").attributes("aria-pressed"),
+    ).toBe("true");
     expect(wrapper.findAll("[data-testid='blog-result-card']")).toHaveLength(1);
   });
 
@@ -194,7 +198,9 @@ describe("PostPanel", () => {
     expect(wrapper.get("[data-testid='blog-editorial-layout']").classes()).toContain(
       "lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]",
     );
-    expect(wrapper.get("[data-testid='blog-filter-rail']").classes()).toContain("lg:max-h-[calc(100vh-7rem)]");
+    expect(wrapper.get("[data-testid='blog-filter-rail']").classes()).toContain(
+      "lg:max-h-[calc(100vh-7rem)]",
+    );
     expect(wrapper.get("[data-testid='blog-filter-rail']").classes()).toContain("max-h-72");
     expect(wrapper.get("[data-testid='blog-filter-rail']").classes()).toContain("overflow-y-auto");
 

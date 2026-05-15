@@ -31,28 +31,16 @@ const ThreeSceneCanvas = defineAsyncComponent(
 const siteStore = useSiteStore();
 const { theme } = useTheme();
 const currentMode = computed(() => siteStore.mode);
-const {
-  posts,
-  author,
-  friendLinks,
-  works,
-  isPostsLoading,
-  isAuthorLoading,
-  isFriendLinksLoading,
-} = useHomePanels(currentMode);
+const { posts, author, friendLinks, works, isPostsLoading, isAuthorLoading, isFriendLinksLoading } =
+  useHomePanels(currentMode);
 
-const homeHint = computed(
-  () => siteStore.mode === "home" && !siteStore.isFocusing,
-);
+const homeHint = computed(() => siteStore.mode === "home" && !siteStore.isFocusing);
 const focusHint = computed(() => siteStore.isFocusing);
-const focusHintTarget = computed(() =>
-  theme.value === "day" ? "莫比乌斯带" : "超立方体",
-);
+const focusHintTarget = computed(() => (theme.value === "day" ? "莫比乌斯带" : "超立方体"));
 </script>
 
 <template>
-  <main
-    class="relative min-h-screen overflow-hidden bg-[var(--stage-bg)] text-[var(--stage-fg)]">
+  <main class="relative min-h-screen overflow-hidden bg-[var(--stage-bg)] text-[var(--stage-fg)]">
     <SiteNav />
 
     <div class="fixed inset-0 z-0 h-full w-full">
@@ -64,9 +52,9 @@ const focusHintTarget = computed(() =>
         <Transition name="home-hint" mode="out-in">
           <div
             v-if="homeHint"
-            class="pointer-events-auto absolute bottom-8 flex w-full justify-center">
-            <div
-              class="animate-bounce text-sm tracking-widest text-[var(--stage-hint)] opacity-70">
+            class="pointer-events-auto absolute bottom-8 flex w-full justify-center"
+          >
+            <div class="animate-bounce text-sm tracking-widest text-[var(--stage-hint)] opacity-70">
               点击{{ focusHintTarget }}进行探索
             </div>
           </div>
@@ -75,11 +63,13 @@ const focusHintTarget = computed(() =>
         <Transition name="focus-hint" mode="out-in">
           <div
             v-if="focusHint"
-            class="pointer-events-auto absolute bottom-8 flex w-full justify-center">
+            class="pointer-events-auto absolute bottom-8 flex w-full justify-center"
+          >
             <button
               class="animate-bounce cursor-pointer text-sm tracking-widest text-[var(--stage-hint)] transition-colors hover:text-[var(--stage-fg)]"
               type="button"
-              @click="siteStore.exitFocus()">
+              @click="siteStore.exitFocus()"
+            >
               沉浸模式（{{ focusHintTarget }}），点此返回
             </button>
           </div>
@@ -89,18 +79,20 @@ const focusHintTarget = computed(() =>
           <div
             v-if="siteStore.mode === 'blog'"
             data-testid="blog-panel-overlay"
-            class="stage-panel-gradient stage-panel-gradient--blog pointer-events-auto absolute inset-0 h-full w-full overflow-y-auto overscroll-contain p-4 pt-20 sm:p-6 sm:pt-24 md:p-8 md:pt-24 md:pl-16 lg:p-10 lg:pt-24 lg:pl-20">
+            class="stage-panel-gradient stage-panel-gradient--blog pointer-events-auto absolute inset-0 h-full w-full overflow-y-auto overscroll-contain p-4 pt-20 sm:p-6 sm:pt-24 md:p-8 md:pt-24 md:pl-16 lg:p-10 lg:pt-24 lg:pl-20"
+          >
             <div class="flex min-h-full w-full flex-col justify-start">
               <PostPanel v-if="posts.length > 0" :posts="posts" />
               <div
                 v-else
-                class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]">
-                <div
-                  class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
+                class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]"
+              >
+                <div class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
                   {{ isPostsLoading ? "Loading archive" : "Archive standby" }}
                 </div>
                 <p
-                  class="mt-4 w-full text-xs sm:text-sm max-w-md leading-7 text-[var(--stage-hint)]">
+                  class="mt-4 w-full text-xs sm:text-sm max-w-md leading-7 text-[var(--stage-hint)]"
+                >
                   {{
                     isPostsLoading
                       ? "正在按需装载文章目录，马上就能进入阅读。"
@@ -113,20 +105,17 @@ const focusHintTarget = computed(() =>
         </Transition>
 
         <Transition name="author-panel" mode="out-in">
-          <div
-            v-if="siteStore.mode === 'author'"
-            class="pointer-events-auto absolute inset-0">
+          <div v-if="siteStore.mode === 'author'" class="pointer-events-auto absolute inset-0">
             <div class="flex h-full w-full items-center justify-center">
               <AuthorPanel v-if="author" :author="author" />
               <div
                 v-else
-                class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]">
-                <div
-                  class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
+                class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]"
+              >
+                <div class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
                   {{ isAuthorLoading ? "Loading profile" : "Profile standby" }}
                 </div>
-                <p
-                  class="mt-4 max-w-md text-sm leading-7 text-[var(--stage-hint)]">
+                <p class="mt-4 max-w-md text-sm leading-7 text-[var(--stage-hint)]">
                   {{
                     isAuthorLoading
                       ? "作者资料正在按需同步，面板即将展开。"
@@ -141,26 +130,19 @@ const focusHintTarget = computed(() =>
         <Transition name="friend-panel" mode="out-in">
           <div
             v-if="siteStore.mode === 'friend'"
-            class="pointer-events-auto absolute inset-0 overflow-hidden">
-            <div
-              class="stage-panel-gradient stage-panel-gradient--friend h-full w-full">
+            class="pointer-events-auto absolute inset-0 overflow-hidden"
+          >
+            <div class="stage-panel-gradient stage-panel-gradient--friend h-full w-full">
               <div class="h-full w-full">
-                <FriendPanel
-                  v-if="friendLinks.length > 0"
-                  :links="friendLinks" />
+                <FriendPanel v-if="friendLinks.length > 0" :links="friendLinks" />
                 <div
                   v-else
-                  class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]">
-                  <div
-                    class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
-                    {{
-                      isFriendLinksLoading
-                        ? "Loading network"
-                        : "Network standby"
-                    }}
+                  class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]"
+                >
+                  <div class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
+                    {{ isFriendLinksLoading ? "Loading network" : "Network standby" }}
                   </div>
-                  <p
-                    class="mt-4 max-w-md text-sm leading-7 text-[var(--stage-hint)]">
+                  <p class="mt-4 max-w-md text-sm leading-7 text-[var(--stage-hint)]">
                     {{
                       isFriendLinksLoading
                         ? "友情链接正在按需接入，稍后会完整出现。"
@@ -176,7 +158,8 @@ const focusHintTarget = computed(() =>
         <Transition name="works-panel" mode="out-in">
           <div
             v-if="siteStore.mode === 'works'"
-            class="stage-panel-gradient--works pointer-events-none absolute inset-0">
+            class="stage-panel-gradient--works pointer-events-none absolute inset-0"
+          >
             <WorksPanel :works="works" />
           </div>
         </Transition>

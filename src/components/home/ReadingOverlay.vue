@@ -56,7 +56,12 @@ onBeforeUnmount(() => window.removeEventListener("keydown", handleEsc));
         @click="handleClose"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       </button>
 
@@ -70,7 +75,9 @@ onBeforeUnmount(() => window.removeEventListener("keydown", handleEsc));
       />
       <div v-else class="article-page__status article-page__status--empty mt-20">
         <p class="article-page__status-label">Article not found</p>
-        <p class="article-page__status-text">The requested post is unavailable in generated content.</p>
+        <p class="article-page__status-text">
+          The requested post is unavailable in generated content.
+        </p>
       </div>
     </div>
   </Transition>

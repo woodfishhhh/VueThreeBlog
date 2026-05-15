@@ -25,7 +25,9 @@ function hasBasePrefix(value: string, normalizedBasePath: string) {
 }
 
 function shouldPrefixRootRelativePath(value: string, normalizedBasePath: string) {
-  return value.startsWith("/") && !isHttpLikeUrl(value) && !hasBasePrefix(value, normalizedBasePath);
+  return (
+    value.startsWith("/") && !isHttpLikeUrl(value) && !hasBasePrefix(value, normalizedBasePath)
+  );
 }
 
 function prefixWithBasePath(value: string, normalizedBasePath: string) {
@@ -85,7 +87,10 @@ function normalizeContentValue(value: unknown, normalizedBasePath: string): unkn
 
   if (value && typeof value === "object") {
     return Object.fromEntries(
-      Object.entries(value).map(([key, nestedValue]) => [key, normalizeContentValue(nestedValue, normalizedBasePath)]),
+      Object.entries(value).map(([key, nestedValue]) => [
+        key,
+        normalizeContentValue(nestedValue, normalizedBasePath),
+      ]),
     );
   }
 

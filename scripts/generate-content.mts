@@ -13,7 +13,8 @@ const generatedPostsRoot = path.join(generatedRoot, "posts");
 const publicRoot = path.join(projectRoot, "public");
 const siteBasePath = process.env.CONTENT_BASE_PATH;
 const reuseGeneratedAssets =
-  process.argv.includes("--reuse-assets") || process.env.VUECUBEBLOG_REUSE_GENERATED_ASSETS === "true";
+  process.argv.includes("--reuse-assets") ||
+  process.env.VUECUBEBLOG_REUSE_GENERATED_ASSETS === "true";
 
 async function main() {
   await mkdir(generatedRoot, { recursive: true });

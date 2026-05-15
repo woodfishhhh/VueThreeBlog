@@ -13,7 +13,10 @@ function normalizeAngleForTween(current: number, target: number) {
   return target + wrappedDelta;
 }
 
-export function normalizeRotationForTween(current: HypercubeRotation, target: HypercubeRotation): HypercubeRotation {
+export function normalizeRotationForTween(
+  current: HypercubeRotation,
+  target: HypercubeRotation,
+): HypercubeRotation {
   return {
     x: normalizeAngleForTween(current.x, target.x),
     y: normalizeAngleForTween(current.y, target.y),

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 import {
   createWorksOrbitCardFrame,
@@ -10,7 +10,10 @@ import {
   WORKS_ORBIT_CARD_RENDER_LAYER,
 } from "@/components/scene/works-orbit-cards";
 
-const originalGetContext = HTMLCanvasElement.prototype.getContext;
+const originalGetContextDescriptor = Object.getOwnPropertyDescriptor(
+  HTMLCanvasElement.prototype,
+  "getContext",
+);
 
 const works = [
   {
@@ -88,8 +91,9 @@ describe("createWorksOrbitCardFrame", () => {
 
   afterEach(() => {
     Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
-      configurable: true,
-      value: originalGetContext,
+      configurable: originalGetContextDescriptor?.configurable ?? true,
+      value: originalGetContextDescriptor?.value,
+      writable: originalGetContextDescriptor?.writable,
     });
     vi.restoreAllMocks();
   });
@@ -269,9 +273,9 @@ describe("createWorksOrbitCardFrame", () => {
   it("renders visual cards on a separate depth-tested layer", () => {
     const cards = createWorksOrbitCards({ theme: "night", works });
     const cardGroup = cards.group.children[0] as THREE.Group;
-    const cardMesh = cardGroup.children.find((child) =>
-      child.name.startsWith("work-card-"),
-    ) as THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial> | undefined;
+    const cardMesh = cardGroup.children.find((child) => child.name.startsWith("work-card-")) as
+      | THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>
+      | undefined;
 
     expect(cardMesh).toBeDefined();
     expect(cardMesh?.layers.mask).toBe(1 << WORKS_ORBIT_CARD_RENDER_LAYER);
@@ -288,9 +292,9 @@ describe("createWorksOrbitCardFrame", () => {
     const camera = createCamera();
     const cards = createWorksOrbitCards({ theme: "night", works });
     const cardGroup = cards.group.children[0] as THREE.Group;
-    const cardMesh = cardGroup.children.find((child) =>
-      child.name.startsWith("work-card-"),
-    ) as THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial> | undefined;
+    const cardMesh = cardGroup.children.find((child) => child.name.startsWith("work-card-")) as
+      | THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>
+      | undefined;
 
     updateOrbitCards(cards, camera, 0.2, 0.016);
 

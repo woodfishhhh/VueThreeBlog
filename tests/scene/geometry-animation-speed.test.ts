@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import { HYPERCUBE_PROJECTION_ROTATION_SPEED } from "@/composables/useHypercube";
 import { MOBIUS_ROTATION_SPEED } from "@/composables/useMobiusStrip";

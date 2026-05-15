@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import {
-  buildBlogFacets,
-  filterBlogPosts,
-  sortBlogPosts,
-} from "@/content/blog-hub";
+import { buildBlogFacets, filterBlogPosts, sortBlogPosts } from "@/content/blog-hub";
 import BlogFilterRail from "@/components/home/blog/BlogFilterRail.vue";
 import BlogResults from "@/components/home/blog/BlogResults.vue";
 import BlogSearchBar from "@/components/home/blog/BlogSearchBar.vue";
@@ -29,12 +25,8 @@ const {
 } = useBlogQueryState();
 
 const facets = computed(() => buildBlogFacets(props.posts));
-const filteredPosts = computed(() =>
-  filterBlogPosts(props.posts, filters.value),
-);
-const sortedPosts = computed(() =>
-  sortBlogPosts(filteredPosts.value, sortKey.value),
-);
+const filteredPosts = computed(() => filterBlogPosts(props.posts, filters.value));
+const sortedPosts = computed(() => sortBlogPosts(filteredPosts.value, sortKey.value));
 
 function toggleType(value: string) {
   selectedType.value = selectedType.value === value ? "" : value;
@@ -58,11 +50,13 @@ function toggleTag(value: string) {
       :result-count="sortedPosts.length"
       :has-active-filters="hasActiveFilters"
       @update:query="searchQuery = $event"
-      @update:sort="sortKey = $event" />
+      @update:sort="sortKey = $event"
+    />
 
     <div
       data-testid="blog-editorial-layout"
-      class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)] lg:items-start xl:gap-8">
+      class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)] lg:items-start xl:gap-8"
+    >
       <div class="order-2 min-w-0 lg:order-none">
         <BlogResults :posts="sortedPosts" :blog-query="activeQuery" />
       </div>
@@ -81,7 +75,8 @@ function toggleTag(value: string) {
           @toggle:type="toggleType"
           @toggle:category="toggleCategory"
           @toggle:tag="toggleTag"
-          @clear="clearFilters" />
+          @clear="clearFilters"
+        />
       </div>
     </div>
   </div>

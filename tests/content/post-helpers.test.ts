@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import type { PostSummary } from "../../src/types/content";
 import { resolvePostSlugFromIndex } from "../../src/content/post-helpers";

@@ -161,14 +161,13 @@ const props = defineProps<{
 
 @media (max-width: 767px) {
   .author-hero__cover-shade {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(5, 5, 16, 0.08) 0%,
-        transparent 24%,
-        rgba(5, 5, 16, 0.82) 64%,
-        rgba(5, 5, 16, 0.98) 100%
-      );
+    background: linear-gradient(
+      180deg,
+      rgba(5, 5, 16, 0.08) 0%,
+      transparent 24%,
+      rgba(5, 5, 16, 0.82) 64%,
+      rgba(5, 5, 16, 0.98) 100%
+    );
   }
 
   .author-hero__footer {
@@ -186,14 +185,13 @@ const props = defineProps<{
 }
 
 :root[data-theme="day"] .author-hero__cover-shade {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(247, 243, 234, 0.06) 0%,
-      transparent 26%,
-      rgba(247, 243, 234, 0.74) 68%,
-      rgba(247, 243, 234, 0.97) 100%
-    );
+  background: linear-gradient(
+    180deg,
+    rgba(247, 243, 234, 0.06) 0%,
+    transparent 26%,
+    rgba(247, 243, 234, 0.74) 68%,
+    rgba(247, 243, 234, 0.97) 100%
+  );
 }
 
 :root[data-theme="day"] .author-hero__name {

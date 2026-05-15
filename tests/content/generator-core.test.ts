@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import {
   buildLegacySlugIndex,
@@ -62,9 +62,19 @@ describe("generator-core", () => {
     const sourceDir = path.join(tempRoot, "source", "前端");
     const publicDir = path.join(tempRoot, "public");
     const localAssetDir = path.join(sourceDir, "images");
-    const absoluteAssetDir = path.join(path.parse(tempRoot).root, "tmp", path.basename(tempRoot), "absolute");
+    const absoluteAssetDir = path.join(
+      path.parse(tempRoot).root,
+      "tmp",
+      path.basename(tempRoot),
+      "absolute",
+    );
     const absoluteAssetPath = path.join(absoluteAssetDir, "system.png");
-    const absoluteMarkdownPath = path.posix.join("/tmp", path.basename(tempRoot), "absolute", "system.png");
+    const absoluteMarkdownPath = path.posix.join(
+      "/tmp",
+      path.basename(tempRoot),
+      "absolute",
+      "system.png",
+    );
 
     await mkdir(localAssetDir, { recursive: true });
     await mkdir(absoluteAssetDir, { recursive: true });
@@ -72,10 +82,9 @@ describe("generator-core", () => {
     await writeFile(absoluteAssetPath, "absolute-image");
 
     const sourceFilePath = path.join(sourceDir, "AJAX 学习笔记（Day 01）：入门.md");
-    const markdown = [
-      "![relative](images/demo.png)",
-      `![absolute](${absoluteMarkdownPath})`,
-    ].join("\n\n");
+    const markdown = ["![relative](images/demo.png)", `![absolute](${absoluteMarkdownPath})`].join(
+      "\n\n",
+    );
 
     const result = await rewriteMarkdownAssetPaths(markdown, {
       sourceFilePath,
@@ -89,14 +98,17 @@ describe("generator-core", () => {
     expect(result.warnings).toHaveLength(0);
 
     expect(
-      await readFile(path.join(publicDir, "content-assets", "ajax-day-01", "images", "demo.png"), "utf8"),
+      await readFile(
+        path.join(publicDir, "content-assets", "ajax-day-01", "images", "demo.png"),
+        "utf8",
+      ),
     ).toBe("relative-image");
 
     const importedAssetMatch = result.markdown.match(/\/imported-assets\/([a-f0-9]{40}\.png)/);
     expect(importedAssetMatch).not.toBeNull();
-    expect(await readFile(path.join(publicDir, "imported-assets", importedAssetMatch![1]), "utf8")).toBe(
-      "absolute-image",
-    );
+    expect(
+      await readFile(path.join(publicDir, "imported-assets", importedAssetMatch![1]), "utf8"),
+    ).toBe("absolute-image");
   });
 
   it("can reuse existing generated assets without overwriting optimized files", async () => {
@@ -104,7 +116,13 @@ describe("generator-core", () => {
     const sourceDir = path.join(tempRoot, "source");
     const publicDir = path.join(tempRoot, "public");
     const imageDir = path.join(sourceDir, "images");
-    const existingTarget = path.join(publicDir, "content-assets", "reuse-assets", "images", "demo.png");
+    const existingTarget = path.join(
+      publicDir,
+      "content-assets",
+      "reuse-assets",
+      "images",
+      "demo.png",
+    );
     const sourceFilePath = path.join(sourceDir, "Reuse 图片测试.md");
 
     await mkdir(imageDir, { recursive: true });
@@ -127,7 +145,13 @@ describe("generator-core", () => {
     const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-missing-reuse-"));
     const sourceDir = path.join(tempRoot, "source");
     const publicDir = path.join(tempRoot, "public");
-    const existingTarget = path.join(publicDir, "content-assets", "legacy-slug", "assets", "missing.png");
+    const existingTarget = path.join(
+      publicDir,
+      "content-assets",
+      "legacy-slug",
+      "assets",
+      "missing.png",
+    );
     const sourceFilePath = path.join(sourceDir, "Missing Reuse.md");
 
     await mkdir(sourceDir, { recursive: true });
@@ -266,12 +290,14 @@ describe("generator-core", () => {
   });
 
   it("does not localize image references inside indented code blocks", async () => {
-    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-indented-code-images-"));
+    const tempRoot = await mkdtemp(
+      path.join(os.tmpdir(), "vuecubeblog-generator-indented-code-images-"),
+    );
     const sourceDir = path.join(tempRoot, "source");
     const publicDir = path.join(tempRoot, "public");
     const sourceFilePath = path.join(sourceDir, "Indented Code 图片测试.md");
     const markdown = [
-      "    const html = `<img src=\"${wObj.weatherImg}\" alt=\"\">`",
+      '    const html = `<img src="${wObj.weatherImg}" alt="">`',
       "    ![example](./example.png)",
     ].join("\n");
 
@@ -297,11 +323,7 @@ describe("generator-core", () => {
     await mkdir(imageDir, { recursive: true });
     await writeFile(path.join(imageDir, "diagram.png"), "diagram");
 
-    const markdown = [
-      "1. 示例条目",
-      "",
-      "   ![diagram](images/diagram.png)",
-    ].join("\n");
+    const markdown = ["1. 示例条目", "", "   ![diagram](images/diagram.png)"].join("\n");
 
     const result = await rewriteMarkdownAssetPaths(markdown, {
       sourceFilePath,
@@ -311,7 +333,10 @@ describe("generator-core", () => {
 
     expect(result.markdown).toContain("/content-assets/list-nested-images/images/diagram.png");
     expect(
-      await readFile(path.join(publicDir, "content-assets", "list-nested-images", "images", "diagram.png"), "utf8"),
+      await readFile(
+        path.join(publicDir, "content-assets", "list-nested-images", "images", "diagram.png"),
+        "utf8",
+      ),
     ).toBe("diagram");
   });
 
@@ -320,7 +345,13 @@ describe("generator-core", () => {
     const sourceDir = path.join(tempRoot, "source");
     const publicDir = path.join(tempRoot, "public");
     const mirrorDir = path.join(tempRoot, "mirror");
-    const mirrorAssetPath = path.join(mirrorDir, "content", "typescript-practical-foundations", "notebook-image", "course-outline.png");
+    const mirrorAssetPath = path.join(
+      mirrorDir,
+      "content",
+      "typescript-practical-foundations",
+      "notebook-image",
+      "course-outline.png",
+    );
     const sourceFilePath = path.join(sourceDir, "TypeScript.md");
     const originalMirrorEnv = process.env.VUECUBEBLOG_LOCAL_ASSET_MIRROR_DIRS;
 
@@ -330,16 +361,27 @@ describe("generator-core", () => {
     process.env.VUECUBEBLOG_LOCAL_ASSET_MIRROR_DIRS = mirrorDir;
 
     try {
-      const result = await rewriteMarkdownAssetPaths("![course](notebook-image/course-outline.png)", {
-        sourceFilePath,
-        canonicalSlug: "typescript-foundations",
-        publicDir,
-      });
+      const result = await rewriteMarkdownAssetPaths(
+        "![course](notebook-image/course-outline.png)",
+        {
+          sourceFilePath,
+          canonicalSlug: "typescript-foundations",
+          publicDir,
+        },
+      );
 
-      expect(result.markdown).toContain("/content-assets/typescript-foundations/notebook-image/course-outline.png");
+      expect(result.markdown).toContain(
+        "/content-assets/typescript-foundations/notebook-image/course-outline.png",
+      );
       expect(
         await readFile(
-          path.join(publicDir, "content-assets", "typescript-foundations", "notebook-image", "course-outline.png"),
+          path.join(
+            publicDir,
+            "content-assets",
+            "typescript-foundations",
+            "notebook-image",
+            "course-outline.png",
+          ),
           "utf8",
         ),
       ).toBe("course-outline");
@@ -372,13 +414,18 @@ describe("generator-core", () => {
     });
 
     expect(result.markdown).toContain("/content-assets/header-demo/assets/1680336645218.png");
-    expect(await readFile(path.join(publicDir, "content-assets", "header-demo", "assets", "1680336645218.png"), "utf8")).toBe(
-      "header-image",
-    );
+    expect(
+      await readFile(
+        path.join(publicDir, "content-assets", "header-demo", "assets", "1680336645218.png"),
+        "utf8",
+      ),
+    ).toBe("header-image");
   });
 
   it("creates a placeholder asset for unrecoverable legacy absolute image paths", async () => {
-    const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-generator-absolute-placeholder-"));
+    const tempRoot = await mkdtemp(
+      path.join(os.tmpdir(), "vuecubeblog-generator-absolute-placeholder-"),
+    );
     const sourceDir = path.join(tempRoot, "source");
     const publicDir = path.join(tempRoot, "public");
     const sourceFilePath = path.join(sourceDir, "Absolute 图片测试.md");
@@ -394,7 +441,9 @@ describe("generator-core", () => {
 
     const match = result.markdown.match(/\/imported-assets\/([a-f0-9]{40}\.svg)/);
     expect(match).not.toBeNull();
-    expect(await readFile(path.join(publicDir, "imported-assets", match![1]), "utf8")).toContain("Image unavailable");
+    expect(await readFile(path.join(publicDir, "imported-assets", match![1]), "utf8")).toContain(
+      "Image unavailable",
+    );
   });
 
   it("fails fast when local markdown images are missing", async () => {

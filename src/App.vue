@@ -1,13 +1,13 @@
 <script setup lang="ts">
-  import { onMounted } from "vue";
+import { onMounted } from "vue";
 
-  import { useTheme } from "@/composables/useTheme";
+import { useTheme } from "@/composables/useTheme";
 
-  const { initializeTheme } = useTheme();
+const { initializeTheme } = useTheme();
 
-  onMounted(() => {
-    initializeTheme();
-  });
+onMounted(() => {
+  initializeTheme();
+});
 </script>
 
 <template>

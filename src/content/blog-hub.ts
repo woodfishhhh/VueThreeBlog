@@ -44,13 +44,11 @@ export function filterBlogPosts(posts: PostSummary[], filters: BlogFilters = {})
     }
 
     const terms = query.split(" ");
-    const summaryHaystack = normalizeQuery([
-      post.title,
-      post.excerpt,
-      post.type,
-      post.categories.join(" "),
-      post.tags.join(" "),
-    ].join(" "));
+    const summaryHaystack = normalizeQuery(
+      [post.title, post.excerpt, post.type, post.categories.join(" "), post.tags.join(" ")].join(
+        " ",
+      ),
+    );
     const fullHaystack = shouldUseSearchCorpus(query)
       ? normalizeQuery(`${summaryHaystack} ${post.searchText}`)
       : summaryHaystack;
@@ -68,7 +66,10 @@ export function sortBlogPosts(posts: PostSummary[], sortKey: BlogSortKey = "late
     }
 
     if (sortKey === "reading-time") {
-      return right.readingMinutes - left.readingMinutes || Date.parse(right.publishedAt) - Date.parse(left.publishedAt);
+      return (
+        right.readingMinutes - left.readingMinutes ||
+        Date.parse(right.publishedAt) - Date.parse(left.publishedAt)
+      );
     }
 
     if (sortKey === "alphabetical") {

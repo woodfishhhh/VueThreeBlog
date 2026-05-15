@@ -1,9 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
-import {
-  normalizeDeployBasePath,
-  verifyIndexHtmlPaths,
-} from "../../scripts/verify-dist.mts";
+import { normalizeDeployBasePath, verifyIndexHtmlPaths } from "../../scripts/verify-dist.mts";
 
 describe("verifyIndexHtmlPaths", () => {
   it("accepts subpath-scoped Vite asset and manifest refs", () => {
@@ -16,10 +13,7 @@ describe("verifyIndexHtmlPaths", () => {
       "/newBlog/",
     );
 
-    expect(result.assetRefs).toEqual([
-      "/newBlog/assets/index.js",
-      "/newBlog/assets/index.css",
-    ]);
+    expect(result.assetRefs).toEqual(["/newBlog/assets/index.js", "/newBlog/assets/index.css"]);
   });
 
   it("rejects root-scoped asset refs for the /newBlog deploy", () => {

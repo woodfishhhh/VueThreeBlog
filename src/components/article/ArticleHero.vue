@@ -32,7 +32,10 @@ const metadataItems = computed(() => [
       <span class="article-hero__read-time">{{ props.article.readingMinutes }} min read</span>
     </div>
 
-    <div class="article-hero__grid" :class="{ 'article-hero__grid--with-cover': !!props.article.coverImage }">
+    <div
+      class="article-hero__grid"
+      :class="{ 'article-hero__grid--with-cover': !!props.article.coverImage }"
+    >
       <div class="article-hero__body">
         <h1 :id="`article-title-${props.article.canonicalSlug}`" class="article-hero__title">
           {{ props.article.title }}

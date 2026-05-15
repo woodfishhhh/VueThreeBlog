@@ -20,7 +20,12 @@ function selectView(value: WorksViewMode) {
 </script>
 
 <template>
-  <div aria-label="切换作品展示方式" class="works-toggle" data-testid="works-view-toggle" role="group">
+  <div
+    aria-label="切换作品展示方式"
+    class="works-toggle"
+    data-testid="works-view-toggle"
+    role="group"
+  >
     <button
       v-for="option in options"
       :key="option.value"

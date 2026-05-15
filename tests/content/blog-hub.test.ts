@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import type { PostSummary } from "../../src/types/content";
 import { buildBlogFacets, filterBlogPosts, sortBlogPosts } from "../../src/content/blog-hub";
@@ -37,13 +37,15 @@ const posts: PostSummary[] = [
 describe("blog-hub", () => {
   it("keeps short queries on summary metadata instead of scanning the full search corpus", () => {
     expect(filterBlogPosts(posts, { query: "retry" })).toEqual([]);
-    expect(filterBlogPosts(posts, { query: "AJAX" }).map((post) => post.canonicalSlug)).toEqual(["ajax-basics-intro"]);
+    expect(filterBlogPosts(posts, { query: "AJAX" }).map((post) => post.canonicalSlug)).toEqual([
+      "ajax-basics-intro",
+    ]);
   });
 
   it("uses searchText when the query is long enough", () => {
-    expect(filterBlogPosts(posts, { query: "circuit breaker" }).map((post) => post.canonicalSlug)).toEqual([
-      "ajax-basics-intro",
-    ]);
+    expect(
+      filterBlogPosts(posts, { query: "circuit breaker" }).map((post) => post.canonicalSlug),
+    ).toEqual(["ajax-basics-intro"]);
   });
 
   it("supports type, category, and tag filters together", () => {

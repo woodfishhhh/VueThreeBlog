@@ -107,99 +107,121 @@ function confirmIssueRedirect() {
     class="friend-application-card"
     :class="{ 'is-writing': hasDraftStarted, 'is-confirming': showReminder }"
   >
-    <div data-testid="friend-application-shine" class="friend-application-card__shine" aria-hidden="true" />
-    <div class="friend-application-card__trail friend-application-card__trail--one" data-testid="friend-application-trail" aria-hidden="true" />
-    <div class="friend-application-card__trail friend-application-card__trail--two" data-testid="friend-application-trail" aria-hidden="true" />
-    <div class="friend-application-card__trail friend-application-card__trail--three" data-testid="friend-application-trail" aria-hidden="true" />
+    <div
+      data-testid="friend-application-shine"
+      class="friend-application-card__shine"
+      aria-hidden="true"
+    />
+    <div
+      class="friend-application-card__trail friend-application-card__trail--one"
+      data-testid="friend-application-trail"
+      aria-hidden="true"
+    />
+    <div
+      class="friend-application-card__trail friend-application-card__trail--two"
+      data-testid="friend-application-trail"
+      aria-hidden="true"
+    />
+    <div
+      class="friend-application-card__trail friend-application-card__trail--three"
+      data-testid="friend-application-trail"
+      aria-hidden="true"
+    />
     <div class="friend-application-card__pin" aria-hidden="true" />
-    <div data-testid="friend-application-stamp" class="friend-application-card__stamp" aria-hidden="true">LINK</div>
+    <div
+      data-testid="friend-application-stamp"
+      class="friend-application-card__stamp"
+      aria-hidden="true"
+    >
+      LINK
+    </div>
     <div class="friend-application-card__inner">
       <div class="relative max-w-3xl">
         <div class="text-[11px] tracking-[0.18em] text-[var(--stage-hint-strong)]">提交友链</div>
         <h3 class="mt-2 text-2xl font-semibold text-[var(--stage-fg)]">投递你的站点</h3>
         <p class="mt-2 text-sm leading-6 text-[var(--stage-hint)]">
           填完后会先确认，再打开预填好的 GitHub 提交草稿。
-      </p>
-    </div>
+        </p>
+      </div>
 
       <form class="relative mt-5 grid gap-3 md:grid-cols-2" @submit.prevent="handleSubmit">
         <label class="space-y-1.5">
           <span class="text-xs tracking-[0.08em] text-[var(--stage-hint)]">站点名称</span>
-        <input
-          v-model="draft.siteName"
-          data-testid="friend-application-site-name"
+          <input
+            v-model="draft.siteName"
+            data-testid="friend-application-site-name"
             class="friend-application-input"
-          name="siteName"
-          type="text"
+            name="siteName"
+            type="text"
             placeholder="你的博客名"
-        />
-      </label>
+          />
+        </label>
 
         <label class="space-y-1.5">
           <span class="text-xs tracking-[0.08em] text-[var(--stage-hint)]">站点链接</span>
-        <input
-          v-model="draft.siteUrl"
-          data-testid="friend-application-site-url"
+          <input
+            v-model="draft.siteUrl"
+            data-testid="friend-application-site-url"
             class="friend-application-input"
-          name="siteUrl"
-          type="url"
-          placeholder="https://example.com"
-        />
-      </label>
+            name="siteUrl"
+            type="url"
+            placeholder="https://example.com"
+          />
+        </label>
 
         <label class="space-y-1.5">
           <span class="text-xs tracking-[0.08em] text-[var(--stage-hint)]">头像链接</span>
-        <input
-          v-model="draft.avatarUrl"
-          data-testid="friend-application-avatar-url"
+          <input
+            v-model="draft.avatarUrl"
+            data-testid="friend-application-avatar-url"
             class="friend-application-input"
-          name="avatarUrl"
-          type="url"
-          placeholder="https://example.com/avatar.png"
-        />
-      </label>
+            name="avatarUrl"
+            type="url"
+            placeholder="https://example.com/avatar.png"
+          />
+        </label>
 
         <label class="space-y-1.5">
           <span class="text-xs tracking-[0.08em] text-[var(--stage-hint)]">称呼或联系方式</span>
-        <input
-          v-model="draft.contact"
-          data-testid="friend-application-contact"
+          <input
+            v-model="draft.contact"
+            data-testid="friend-application-contact"
             class="friend-application-input"
-          name="contact"
-          type="text"
-          placeholder="@woodfishhhh"
-        />
-      </label>
+            name="contact"
+            type="text"
+            placeholder="@woodfishhhh"
+          />
+        </label>
 
         <label class="space-y-1.5 md:col-span-2">
           <span class="text-xs tracking-[0.08em] text-[var(--stage-hint)]">简短介绍</span>
-        <textarea
-          v-model="draft.description"
-          data-testid="friend-application-description"
+          <textarea
+            v-model="draft.description"
+            data-testid="friend-application-description"
             class="friend-application-input min-h-24 leading-6"
-          name="description"
+            name="description"
             placeholder="写一句网站主题或你想说的话。"
-        />
-      </label>
+          />
+        </label>
 
         <div class="md:col-span-2 flex flex-col gap-3">
           <p v-if="validationMessage" class="text-sm text-amber-500">
-          {{ validationMessage }}
-        </p>
+            {{ validationMessage }}
+          </p>
 
-        <div class="flex flex-wrap items-center gap-3">
-          <button
-            data-testid="friend-application-submit"
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              data-testid="friend-application-submit"
               class="friend-application-submit"
-            type="button"
-            @click="handleSubmit"
-          >
+              type="button"
+              @click="handleSubmit"
+            >
               生成提交草稿
-          </button>
+            </button>
             <span class="text-xs text-[var(--stage-hint)]">仅前端生成，不需要令牌。</span>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
 
       <div
         v-if="showReminder"
@@ -209,25 +231,21 @@ function confirmIssueRedirect() {
         <div class="text-[11px] tracking-[0.16em] text-[var(--stage-hint-strong)]">确认跳转</div>
         <p class="mt-2 text-sm leading-6 text-[var(--stage-hint)]">
           将打开 GitHub 提交草稿，你可以检查内容后再提交。
-      </p>
-      <div class="mt-4 flex flex-wrap gap-3">
-        <button
-          data-testid="friend-application-confirm"
+        </p>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <button
+            data-testid="friend-application-confirm"
             class="friend-application-submit"
-          type="button"
-          @click="confirmIssueRedirect"
-        >
-          继续前往 GitHub
-        </button>
-        <button
-            class="friend-application-secondary"
-          type="button"
-          @click="closeReminder"
-        >
-          再检查一下
-        </button>
+            type="button"
+            @click="confirmIssueRedirect"
+          >
+            继续前往 GitHub
+          </button>
+          <button class="friend-application-secondary" type="button" @click="closeReminder">
+            再检查一下
+          </button>
+        </div>
       </div>
-    </div>
     </div>
   </section>
 </template>
@@ -274,7 +292,12 @@ function confirmIssueRedirect() {
   position: absolute;
   inset: -45% -80%;
   z-index: 2;
-  background: linear-gradient(110deg, transparent 34%, rgba(255, 255, 255, 0.42) 48%, transparent 62%);
+  background: linear-gradient(
+    110deg,
+    transparent 34%,
+    rgba(255, 255, 255, 0.42) 48%,
+    transparent 62%
+  );
   opacity: 0;
   pointer-events: none;
   transform: translateX(-34%) rotate(12deg);
@@ -395,7 +418,10 @@ function confirmIssueRedirect() {
   border-radius: 999px;
   padding: 0.58rem 0.86rem;
   font-size: 0.82rem;
-  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+  transition:
+    border-color 180ms ease,
+    color 180ms ease,
+    background 180ms ease;
 }
 
 .friend-application-submit {
@@ -430,8 +456,7 @@ function confirmIssueRedirect() {
 :root[data-theme="night"] .friend-application-card {
   border-color: var(--border-subtle);
   background:
-    linear-gradient(135deg, rgba(22, 28, 48, 0.72), rgba(12, 16, 32, 0.58)),
-    var(--surface-soft);
+    linear-gradient(135deg, rgba(22, 28, 48, 0.72), rgba(12, 16, 32, 0.58)), var(--surface-soft);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
 }
 

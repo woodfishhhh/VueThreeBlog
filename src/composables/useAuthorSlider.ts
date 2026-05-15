@@ -10,33 +10,24 @@ const WHEEL_THRESHOLD = 42;
 const TOUCH_THRESHOLD = 56;
 const SLIDE_DURATION = 0.92;
 
-export function stepAuthorSlideIndex(
-  currentIndex: number,
-  direction: -1 | 1,
-  totalSlides: number,
-) {
+export function stepAuthorSlideIndex(currentIndex: number, direction: -1 | 1, totalSlides: number) {
   return Math.max(0, Math.min(totalSlides - 1, currentIndex + direction));
 }
 
-export function useAuthorSlider({
-  viewportRef,
-  trackRef,
-}: UseAuthorSliderOptions) {
+export function useAuthorSlider({ viewportRef, trackRef }: UseAuthorSliderOptions) {
   const activeIndex = shallowRef(0);
 
-let transitionTween: gsap.core.Tween | null = null;
-let gestureLocked = false;
-let touchStartY = 0;
-let unlockTimer: number | null = null;
+  let transitionTween: gsap.core.Tween | null = null;
+  let gestureLocked = false;
+  let touchStartY = 0;
+  let unlockTimer: number | null = null;
 
   function getSlides() {
     if (!trackRef.value) {
       return [] as HTMLElement[];
     }
 
-    return Array.from(
-      trackRef.value.querySelectorAll<HTMLElement>("[data-author-screen]"),
-    );
+    return Array.from(trackRef.value.querySelectorAll<HTMLElement>("[data-author-screen]"));
   }
 
   function animateReveal(index: number) {
@@ -45,9 +36,7 @@ let unlockTimer: number | null = null;
       return;
     }
 
-    const targets = Array.from(
-      slide.querySelectorAll<HTMLElement>("[data-author-reveal]"),
-    );
+    const targets = Array.from(slide.querySelectorAll<HTMLElement>("[data-author-reveal]"));
     if (targets.length === 0) {
       return;
     }
@@ -96,10 +85,13 @@ let unlockTimer: number | null = null;
       },
     });
 
-    unlockTimer = window.setTimeout(() => {
-      gestureLocked = false;
-      unlockTimer = null;
-    }, immediate ? 0 : Math.round(SLIDE_DURATION * 1000) + 60);
+    unlockTimer = window.setTimeout(
+      () => {
+        gestureLocked = false;
+        unlockTimer = null;
+      },
+      immediate ? 0 : Math.round(SLIDE_DURATION * 1000) + 60,
+    );
   }
 
   function goToSlide(index: number) {
@@ -122,11 +114,7 @@ let unlockTimer: number | null = null;
       return;
     }
 
-    const nextIndex = stepAuthorSlideIndex(
-      activeIndex.value,
-      direction,
-      slides.length,
-    );
+    const nextIndex = stepAuthorSlideIndex(activeIndex.value, direction, slides.length);
 
     if (nextIndex === activeIndex.value) {
       return;

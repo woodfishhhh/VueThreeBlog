@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { nextTick } from "vue";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import ArticleContent from "@/components/article/ArticleContent.vue";
 import type { PostArticle } from "@/types/content";
@@ -71,7 +71,9 @@ describe("ArticleContent", () => {
     expect(wrapper.get("[data-testid='article-toc-mobile']")).toBeTruthy();
     expect(wrapper.get("[data-testid='article-toc-scroll']")).toBeTruthy();
     expect(wrapper.findAll("[data-testid='article-toc-item']")).toHaveLength(2);
-    expect(wrapper.get("[data-testid='article-progress-bar']").attributes("style")).toContain("width: 50%");
+    expect(wrapper.get("[data-testid='article-progress-bar']").attributes("style")).toContain(
+      "width: 50%",
+    );
 
     wrapper.unmount();
     scrollContainer.remove();
@@ -108,7 +110,9 @@ describe("ArticleContent", () => {
     scrollContainer.dispatchEvent(new Event("scroll"));
     await nextTick();
 
-    expect(wrapper.get("[data-testid='article-progress-bar']").attributes("style")).toContain("width: 50%");
+    expect(wrapper.get("[data-testid='article-progress-bar']").attributes("style")).toContain(
+      "width: 50%",
+    );
 
     wrapper.unmount();
     scrollContainer.remove();

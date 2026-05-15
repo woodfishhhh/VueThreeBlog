@@ -1,7 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { createMemoryHistory, createRouter } from "vue-router";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 import SlideController from "@/components/home/SlideController.vue";
 import { useSiteStore } from "@/stores/site";
@@ -33,7 +33,8 @@ describe("SlideController", () => {
 
     const authorScroll = document.createElement("div");
     authorScroll.id = "author-scroll-container";
-    authorScroll.scrollBy = vi.fn();
+    const scrollBy = vi.fn();
+    authorScroll.scrollBy = scrollBy;
     document.body.appendChild(authorScroll);
 
     mount(SlideController, {
@@ -53,7 +54,7 @@ describe("SlideController", () => {
 
     window.dispatchEvent(event);
 
-    expect(authorScroll.scrollBy).not.toHaveBeenCalled();
+    expect(scrollBy).not.toHaveBeenCalled();
     expect(router.currentRoute.value.name).toBe("author");
   });
 });

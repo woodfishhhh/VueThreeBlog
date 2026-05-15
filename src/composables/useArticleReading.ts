@@ -55,9 +55,9 @@ export function useArticleReading(options: UseArticleReadingOptions) {
       return;
     }
 
-    const headings = Array.from(contentRoot.querySelectorAll<HTMLElement>("h2[id], h3[id], h4[id]")).filter(
-      (heading) => tocItems.some((item) => item.id === heading.id),
-    );
+    const headings = Array.from(
+      contentRoot.querySelectorAll<HTMLElement>("h2[id], h3[id], h4[id]"),
+    ).filter((heading) => tocItems.some((item) => item.id === heading.id));
 
     activeId.value = headings[0]?.id ?? tocItems[0]?.id ?? "";
 
@@ -102,7 +102,10 @@ export function useArticleReading(options: UseArticleReadingOptions) {
     }
 
     const targetTop =
-      target.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - 104;
+      target.getBoundingClientRect().top -
+      container.getBoundingClientRect().top +
+      container.scrollTop -
+      104;
 
     container.scrollTo({
       top: Math.max(0, targetTop),

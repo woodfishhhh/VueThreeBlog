@@ -32,21 +32,17 @@ function visitRandomFriend() {
 <template>
   <section
     data-testid="friend-panel-root"
-    class="relative min-h-screen w-full text-[var(--stage-fg)]">
-    <section
-      data-testid="friend-panel-application"
-      class="friend-application-pane hidden md:block">
+    class="relative min-h-screen w-full text-[var(--stage-fg)]"
+  >
+    <section data-testid="friend-panel-application" class="friend-application-pane hidden md:block">
       <FriendLinkApplicationForm />
     </section>
 
     <section data-testid="friend-panel-grid" class="friend-links-pane">
       <header data-testid="friend-panel-hero" class="friend-links-pane__header">
         <div>
-          <div class="text-[11px] tracking-[0.22em] text-[var(--stage-hint)]">
-            邻居星球
-          </div>
-          <h2
-            class="mt-2 text-3xl sm:text-4xl font-light text-[var(--stage-fg)] md:text-5xl">
+          <div class="text-[11px] tracking-[0.22em] text-[var(--stage-hint)]">邻居星球</div>
+          <h2 class="mt-2 text-3xl sm:text-4xl font-light text-[var(--stage-fg)] md:text-5xl">
             友链
           </h2>
         </div>
@@ -55,12 +51,11 @@ function visitRandomFriend() {
             data-testid="friend-random-visit"
             class="friend-links-pane__random"
             type="button"
-            @click="visitRandomFriend">
+            @click="visitRandomFriend"
+          >
             随机访问
           </button>
-          <span class="friend-links-pane__count"
-            >{{ props.links.length }} 个站点</span
-          >
+          <span class="friend-links-pane__count">{{ props.links.length }} 个站点</span>
         </div>
       </header>
 
@@ -71,7 +66,8 @@ function visitRandomFriend() {
       data-testid="friend-mobile-drawer-toggle"
       class="friend-mobile-application-trigger md:hidden"
       type="button"
-      @click="openMobileApplication">
+      @click="openMobileApplication"
+    >
       提交友链
     </button>
 
@@ -79,22 +75,23 @@ function visitRandomFriend() {
       <div
         v-if="isMobileApplicationOpen"
         data-testid="friend-mobile-drawer"
-        class="friend-mobile-drawer md:hidden">
+        class="friend-mobile-drawer md:hidden"
+      >
         <button
           class="friend-mobile-drawer__backdrop"
           type="button"
           aria-label="关闭提交友链抽屉"
-          @click="closeMobileApplication" />
+          @click="closeMobileApplication"
+        />
         <section class="friend-mobile-drawer__sheet" aria-label="提交友链">
           <div class="mb-4 flex items-center justify-between gap-4">
-            <div class="text-[11px] tracking-[0.18em] text-[var(--stage-hint)]">
-              提交友链
-            </div>
+            <div class="text-[11px] tracking-[0.18em] text-[var(--stage-hint)]">提交友链</div>
             <button
               data-testid="friend-mobile-drawer-close"
               class="friend-mobile-drawer__close"
               type="button"
-              @click="closeMobileApplication">
+              @click="closeMobileApplication"
+            >
               关闭
             </button>
           </div>
@@ -137,11 +134,7 @@ function visitRandomFriend() {
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   background:
-    linear-gradient(
-      135deg,
-      rgba(255, 251, 241, 0.72),
-      rgba(255, 255, 255, 0.48)
-    ),
+    linear-gradient(135deg, rgba(255, 251, 241, 0.72), rgba(255, 255, 255, 0.48)),
     var(--surface-soft);
   box-shadow: 0 26px 90px rgba(37, 32, 22, 0.16);
 }
@@ -258,8 +251,7 @@ function visitRandomFriend() {
 
 :root[data-theme="night"] .friend-links-pane {
   background:
-    linear-gradient(135deg, rgba(12, 16, 32, 0.58), rgba(8, 12, 24, 0.42)),
-    var(--surface-soft);
+    linear-gradient(135deg, rgba(12, 16, 32, 0.58), rgba(8, 12, 24, 0.42)), var(--surface-soft);
   box-shadow: 0 26px 90px rgba(0, 0, 0, 0.34);
 }
 

@@ -30,16 +30,11 @@ const screens = [
 
 <template>
   <div class="author-stage" data-testid="author-panel-root">
-    <div
-      ref="viewport"
-      id="author-scroll-container"
-      class="author-stage__wrapper">
+    <div ref="viewport" id="author-scroll-container" class="author-stage__wrapper">
       <div ref="track" class="author-stage__content">
         <AuthorHeroScreen :author="props.author" />
         <AuthorAboutScreen :author="props.author" />
-        <AuthorCapsuleScreen
-          :active="activeIndex === 2"
-          :skills="props.author.skills" />
+        <AuthorCapsuleScreen :active="activeIndex === 2" :skills="props.author.skills" />
         <AuthorPoemScreen :poem="props.author.poem" />
       </div>
     </div>
@@ -54,7 +49,8 @@ const screens = [
         :class="{ 'is-active': activeIndex === index }"
         data-author-nav-dot
         type="button"
-        @click="goToSlide(index)"></button>
+        @click="goToSlide(index)"
+      ></button>
     </nav>
   </div>
 </template>
@@ -195,4 +191,3 @@ const screens = [
   }
 }
 </style>
-

@@ -18,10 +18,7 @@ export function normalizeDeployBasePath(value: string | undefined): string {
   return withLeadingSlash.endsWith("/") ? withLeadingSlash : `${withLeadingSlash}/`;
 }
 
-export function verifyIndexHtmlPaths(
-  html: string,
-  basePath = "/newBlog/",
-): DistPathVerification {
+export function verifyIndexHtmlPaths(html: string, basePath = "/newBlog/"): DistPathVerification {
   const normalizedBase = normalizeDeployBasePath(basePath);
   const refs = Array.from(html.matchAll(/\b(?:href|src)=["']([^"']+)["']/g)).map(
     (match) => match[1] ?? "",
@@ -37,9 +34,7 @@ export function verifyIndexHtmlPaths(
   if (normalizedBase !== "/") {
     const rootScopedRefs = refs.filter(
       (ref) =>
-        ref.startsWith("/assets/") ||
-        ref === "/registerSW.js" ||
-        ref === "/manifest.webmanifest",
+        ref.startsWith("/assets/") || ref === "/registerSW.js" || ref === "/manifest.webmanifest",
     );
 
     if (rootScopedRefs.length > 0) {
@@ -49,9 +44,7 @@ export function verifyIndexHtmlPaths(
     }
   }
 
-  const wrongAssetRefs = assetRefs.filter(
-    (ref) => !ref.startsWith(`${normalizedBase}assets/`),
-  );
+  const wrongAssetRefs = assetRefs.filter((ref) => !ref.startsWith(`${normalizedBase}assets/`));
   if (wrongAssetRefs.length > 0) {
     throw new Error(
       `dist/index.html asset refs do not use ${normalizedBase}: ${wrongAssetRefs.join(", ")}`,

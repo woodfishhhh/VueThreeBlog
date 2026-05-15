@@ -8,7 +8,7 @@ const THEME_SET = new Set<ThemeMode>(["night", "day"]);
 
 const theme = ref<ThemeMode>(DEFAULT_THEME);
 const initialDatasetTheme =
-  typeof document !== "undefined" ? document.documentElement.dataset.theme ?? null : null;
+  typeof document !== "undefined" ? (document.documentElement.dataset.theme ?? null) : null;
 if (isThemeMode(initialDatasetTheme)) {
   theme.value = initialDatasetTheme;
 }
@@ -98,9 +98,12 @@ type ViewTransitionLike = {
 function getStartViewTransition():
   | ((callback: () => void) => ViewTransitionLike | undefined)
   | undefined {
-  const doc = typeof document === "undefined" ? undefined : (document as Document & {
-    startViewTransition?: (callback: () => void) => ViewTransitionLike;
-  });
+  const doc =
+    typeof document === "undefined"
+      ? undefined
+      : (document as Document & {
+          startViewTransition?: (callback: () => void) => ViewTransitionLike;
+        });
   if (!doc?.startViewTransition) return undefined;
   return (callback) => doc.startViewTransition?.(callback);
 }

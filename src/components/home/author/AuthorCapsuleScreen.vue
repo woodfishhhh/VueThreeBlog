@@ -24,10 +24,12 @@ const { activateSkill } = useMatterCapsules({
   <section
     class="author-screen author-screen--fullbleed"
     data-author-screen
-    data-testid="author-screen-capsules">
+    data-testid="author-screen-capsules"
+  >
     <div class="author-screen__shell">
       <article
-        class="author-screen__panel author-screen__panel--poster author-screen__panel--capsules">
+        class="author-screen__panel author-screen__panel--poster author-screen__panel--capsules"
+      >
         <div ref="scene" class="author-capsules__field" data-author-reveal>
           <div class="author-capsules__watermark" aria-hidden="true">
             <div class="watermark-outline">TECH STACK</div>
@@ -41,13 +43,15 @@ const { activateSkill } = useMatterCapsules({
             class="author-capsule"
             data-author-capsule
             type="button"
-            @click="activateSkill(index)">
+            @click="activateSkill(index)"
+          >
             <img
               v-if="skill.img"
               :alt="skill.title"
               :src="skill.img"
               draggable="false"
-              class="author-capsule__icon" />
+              class="author-capsule__icon"
+            />
             <span class="author-capsule__label">{{ skill.title }}</span>
           </button>
         </div>

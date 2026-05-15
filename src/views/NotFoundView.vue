@@ -1,5 +1,7 @@
 <template>
-  <main class="grid min-h-screen place-items-center bg-[var(--stage-bg)] px-6 text-[var(--stage-fg)]">
+  <main
+    class="grid min-h-screen place-items-center bg-[var(--stage-bg)] px-6 text-[var(--stage-fg)]"
+  >
     <div class="space-y-4 text-center">
       <p class="text-sm uppercase tracking-[0.4em] text-[var(--stage-hint)]">404</p>
       <h1 class="text-4xl font-semibold tracking-tight text-[var(--stage-fg)]">Page not found</h1>

@@ -30,20 +30,20 @@
 
 ## 优先级总览
 
-| 优先级 | 项目 | 涉及文件 | 预期收益 | 风险 |
-|---|---|---|---|---|
-| P0-1 | Three.js 内存泄漏 | `src/components/scene/ThreeSceneCanvas.vue` | 修复 GPU 内存泄漏,避免 WebGL Context Lost | 低 |
-| P0-2 | post-index 巨型 chunk | `vite.config.ts` + 内容生成脚本 | 首屏 JS -600KB(gz -150KB) | 中 |
-| P0-3 | 依赖归位 | `package.json` | bundle -30~50KB,避免误打包 | 低 |
-| P1-4 | 大组件拆分 | `AuthorPanel.vue` 699L / `ThreeSceneCanvas.vue` 501L | 可维护性 | 中 |
-| P1-5 | Router/Store 去重 | `src/router/index.ts` / `src/stores/site.ts` | 代码减少 ~30 行 | 中 |
-| P1-6 | Vite 构建参数 | `vite.config.ts` | bundle -5~10%,build 快 5-10% | 低 |
-| P1-7 | index.html 去重 + SEO | `index.html` | LCP -100~200ms,SEO 提升 | 低 |
-| P1-8 | public/ 资源重复 | `public/imported-assets`/`remote-assets` | 部署包 -6MB | 低 |
-| P2-9 | Import 路径统一 | 多文件 | 代码风格一致 | 低 |
-| P2-10 | CI/CD 改进 | `.github/workflows/*` | 部署时间减半,自动化更新 | 低 |
-| P2-11 | 根目录清理 | 根目录遗留文件 | 仓库整洁 | 低 |
-| P3 | content-source 大文件 / three.js 按需 / 测试覆盖率 / CSP | 多处 | 长期治理 | 视情况 |
+| 优先级 | 项目                                                     | 涉及文件                                             | 预期收益                                  | 风险   |
+| ------ | -------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------- | ------ |
+| P0-1   | Three.js 内存泄漏                                        | `src/components/scene/ThreeSceneCanvas.vue`          | 修复 GPU 内存泄漏,避免 WebGL Context Lost | 低     |
+| P0-2   | post-index 巨型 chunk                                    | `vite.config.ts` + 内容生成脚本                      | 首屏 JS -600KB(gz -150KB)                 | 中     |
+| P0-3   | 依赖归位                                                 | `package.json`                                       | bundle -30~50KB,避免误打包                | 低     |
+| P1-4   | 大组件拆分                                               | `AuthorPanel.vue` 699L / `ThreeSceneCanvas.vue` 501L | 可维护性                                  | 中     |
+| P1-5   | Router/Store 去重                                        | `src/router/index.ts` / `src/stores/site.ts`         | 代码减少 ~30 行                           | 中     |
+| P1-6   | Vite 构建参数                                            | `vite.config.ts`                                     | bundle -5~10%,build 快 5-10%              | 低     |
+| P1-7   | index.html 去重 + SEO                                    | `index.html`                                         | LCP -100~200ms,SEO 提升                   | 低     |
+| P1-8   | public/ 资源重复                                         | `public/imported-assets`/`remote-assets`             | 部署包 -6MB                               | 低     |
+| P2-9   | Import 路径统一                                          | 多文件                                               | 代码风格一致                              | 低     |
+| P2-10  | CI/CD 改进                                               | `.github/workflows/*`                                | 部署时间减半,自动化更新                   | 低     |
+| P2-11  | 根目录清理                                               | 根目录遗留文件                                       | 仓库整洁                                  | 低     |
+| P3     | content-source 大文件 / three.js 按需 / 测试覆盖率 / CSP | 多处                                                 | 长期治理                                  | 视情况 |
 
 ---
 
@@ -57,6 +57,7 @@
 `starGeom / starMat / hitGeom / hitMat / hcGeom / hcMat / hcPointsMat / circleTexture` 全部是 `onMounted` 内部的 `const` 局部变量。`onBeforeUnmount` 作用域之外**根本拿不到引用**,所以即便想 dispose 也无法清理。当前只对 `renderer / controls` 做了 dispose。
 
 **当前代码(简化):**
+
 ```ts
 onMounted(async () => {
   // L101: const circleTexture = new THREE.CanvasTexture(canvas);
@@ -95,6 +96,7 @@ onBeforeUnmount(() => {
    ```
 2. `onMounted` 中改为赋值(去掉 `const`)。
 3. `onBeforeUnmount` 中循环 dispose:
+
    ```ts
    onBeforeUnmount(() => {
      if (animationFrameId) cancelAnimationFrame(animationFrameId);
@@ -102,14 +104,15 @@ onBeforeUnmount(() => {
      container.value?.removeEventListener("pointermove", handlePointerMove);
      canvasRef.value?.removeEventListener("pointerdown", handleCanvasPointerDown);
 
-     [starGeom, hitGeom, hcGeom].forEach(g => g?.dispose());
-     [starMat, hitMat, hcMat, hcPointsMat].forEach(m => m?.dispose());
+     [starGeom, hitGeom, hcGeom].forEach((g) => g?.dispose());
+     [starMat, hitMat, hcMat, hcPointsMat].forEach((m) => m?.dispose());
      circleTexture?.dispose();
      scene?.clear();
      renderer?.dispose();
      controls?.dispose();
    });
    ```
+
 4. 进一步重构(可选): 把 starField / hypercube 各自抽到 `useStarField()` / `useHypercube()` composable,内部自带 dispose 逻辑,SFC 仅负责生命周期入口。
 
 **验证方式:**
@@ -154,6 +157,7 @@ onBeforeUnmount(() => {
 #### 方案 C — 快速止血(动态 import)
 
 最小改动:在路由守卫或 BlogResults 进入时再 `import()`:
+
 ```ts
 const blogModule = await import("@/generated/post-index");
 ```
@@ -170,17 +174,18 @@ const blogModule = await import("@/generated/post-index");
 
 **问题清单:**
 
-| 包 | 当前位置 | 应在 | 原因 |
-|---|---|---|---|
-| `gray-matter` | dependencies | devDependencies | 仅 `scripts/generate-content` 解析 frontmatter |
-| `js-yaml` | dependencies | devDependencies | 同上,构建期使用 |
-| `unified` | dependencies | devDependencies | markdown 编译期用,运行时已是 HTML |
-| `remark-gfm` / `remark-parse` / `remark-rehype` | dependencies | devDependencies | 同上 |
-| `rehype-highlight` / `rehype-raw` / `rehype-slug` / `rehype-stringify` | dependencies | devDependencies | 同上 |
-| `@tailwindcss/typography` | dependencies | devDependencies | tailwind 构建期插件 |
-| `isomorphic-dompurify` | devDependencies | dependencies(若运行时净化 HTML) | 待确认是否被 src 引用 |
+| 包                                                                     | 当前位置        | 应在                            | 原因                                           |
+| ---------------------------------------------------------------------- | --------------- | ------------------------------- | ---------------------------------------------- |
+| `gray-matter`                                                          | dependencies    | devDependencies                 | 仅 `scripts/generate-content` 解析 frontmatter |
+| `js-yaml`                                                              | dependencies    | devDependencies                 | 同上,构建期使用                                |
+| `unified`                                                              | dependencies    | devDependencies                 | markdown 编译期用,运行时已是 HTML              |
+| `remark-gfm` / `remark-parse` / `remark-rehype`                        | dependencies    | devDependencies                 | 同上                                           |
+| `rehype-highlight` / `rehype-raw` / `rehype-slug` / `rehype-stringify` | dependencies    | devDependencies                 | 同上                                           |
+| `@tailwindcss/typography`                                              | dependencies    | devDependencies                 | tailwind 构建期插件                            |
+| `isomorphic-dompurify`                                                 | devDependencies | dependencies(若运行时净化 HTML) | 待确认是否被 src 引用                          |
 
 **调查命令(动手前先跑):**
+
 ```bash
 grep -rn "gray-matter\|js-yaml\|^import .* from ['\"]unified" src/ scripts/
 grep -rn "isomorphic-dompurify" src/
@@ -198,10 +203,10 @@ grep -rn "isomorphic-dompurify" src/
 
 ### P1-4 · 大组件拆分
 
-| 文件 | 行数 | 拆分思路 |
-|---|---|---|
-| `src/components/home/AuthorPanel.vue` | 699 | 拆 `AuthorBio.vue` / `AuthorTimeline.vue` / `AuthorContact.vue`,父组件只负责布局 + props 透传 |
-| `src/components/scene/ThreeSceneCanvas.vue` | 501 | 抽 `composables/useThreeScene.ts` / `useStarField.ts` / `useHypercube.ts`,SFC 仅作生命周期入口 |
+| 文件                                        | 行数 | 拆分思路                                                                                       |
+| ------------------------------------------- | ---- | ---------------------------------------------------------------------------------------------- |
+| `src/components/home/AuthorPanel.vue`       | 699  | 拆 `AuthorBio.vue` / `AuthorTimeline.vue` / `AuthorContact.vue`,父组件只负责布局 + props 透传  |
+| `src/components/scene/ThreeSceneCanvas.vue` | 501  | 抽 `composables/useThreeScene.ts` / `useStarField.ts` / `useHypercube.ts`,SFC 仅作生命周期入口 |
 
 **约束:** 拆分时保持外部 API(props/emits)不变,确保 `tests/home/` 现有用例继续通过。
 
@@ -220,6 +225,7 @@ grep -rn "isomorphic-dompurify" src/
 ```
 
 **改成:**
+
 ```ts
 {
   path: "/:mode(home|works|blog|author|friend)?",
@@ -228,6 +234,7 @@ grep -rn "isomorphic-dompurify" src/
   props: true,
 }
 ```
+
 HomeView 内通过 `route.params.mode` 调用 store 的 `syncRouteMode()` 同步。
 
 **注意:** `router.push({ name: 'blog' })` 这类调用都要改,需要先全仓 grep 替换。
@@ -252,6 +259,7 @@ goWorks()  { this.setPanelMode("works"); }
 > 这一项偏维护者口味,如果团队认为 `goBlog()` 比 `setPanelMode("blog")` 可读性更好,可降级到 P3。建议先 grep 调用点数量再决定。
 
 **调查命令:**
+
 ```bash
 grep -rn "goBlog\|goAuthor\|goFriend\|goWorks\|goHome()" src/
 ```
@@ -320,9 +328,11 @@ esbuild: {
 **问题 3 — 业务路由 prefetch 缺:**
 
 可在 head 中显式 modulepreload 关键 chunk:
+
 ```html
 <link rel="modulepreload" href="/assets/HomeView-[hash].js" />
 ```
+
 但这需要构建后注入 hash,推荐用 vite-plugin-html 或 PWA 插件的 injectManifest 钩子来动态生成。低优先,可后做。
 
 ---
@@ -332,6 +342,7 @@ esbuild: {
 **位置:** `public/imported-assets/` (6.1MB) 与 `public/remote-assets/` (6.1MB)
 
 **调查命令:**
+
 ```bash
 diff -rq public/imported-assets public/remote-assets | head
 ls public/imported-assets | wc -l
@@ -358,22 +369,24 @@ ls public/remote-assets | wc -l
 
 **问题文件:**
 
-| 文件 | 行 | 问题 |
-|---|---|---|
-| `src/main.ts` | 4-7 | `./router`、`./App.vue` 用相对路径 |
-| `src/content/author.ts` | 2 | 相对路径 |
-| `src/content/posts.ts` | 2-3 | 相对路径 |
-| `src/content/friends.ts` | 2 | 相对路径 |
-| `src/components/article/ArticleContent.vue` | 6-8 | 相对路径 |
+| 文件                                        | 行  | 问题                               |
+| ------------------------------------------- | --- | ---------------------------------- |
+| `src/main.ts`                               | 4-7 | `./router`、`./App.vue` 用相对路径 |
+| `src/content/author.ts`                     | 2   | 相对路径                           |
+| `src/content/posts.ts`                      | 2-3 | 相对路径                           |
+| `src/content/friends.ts`                    | 2   | 相对路径                           |
+| `src/components/article/ArticleContent.vue` | 6-8 | 相对路径                           |
 
 **对比:** `src/router/index.ts:3,5-7` 全用 `@/`,风格不一致。
 
 **改动选择:**
 
 - A) 全部统一为 `@/`,加 ESLint 规则:
+
   ```js
   "no-restricted-imports": ["error", { "patterns": ["./*", "../*"] }]
   ```
+
   问题: sibling 之间也用 `@/` 路径会变长。
 
 - B) 折中规则: 同目录用 `./`,跨目录用 `@/`,加 lint 规则约束。
@@ -389,6 +402,7 @@ ls public/remote-assets | wc -l
 当前 `ci.yml` 与 `deploy-vps.yml` 都跑全套 typecheck+test+build。
 
 改为:
+
 - `ci.yml` 末尾 upload `dist/` artifact
 - `deploy-vps.yml` 改为 `workflow_run` 触发或先 download artifact
 
@@ -422,6 +436,7 @@ updates:
 **4. 覆盖率门槛**
 
 `vitest.config.ts` 加:
+
 ```ts
 test: {
   coverage: {
@@ -435,20 +450,21 @@ test: {
   },
 },
 ```
+
 然后在 `ci.yml` 加 `npm run test -- --coverage` 步骤。
 
 ---
 
 ### P2-11 · 根目录清理
 
-| 文件 | 大小 | 处置建议 |
-|---|---|---|
-| `Everything_Claude_Code_使用指南.docx` | 45KB | **删除** — 上次会话遗留,与博客业务无关 |
-| `generate_ecc_guide.py` | 25KB | **删除** — 同上 |
-| `dist-manual-deploy.tar.gz` | 16.5MB | 已 .gitignore;可删本地副本(deploy 流程不需要) |
-| `.preview.err.log` / `.preview.out.log` / `.vite-dev.log` | <5KB | 已被 `*.log` 覆盖,可删 |
-| `docs/plan.md` | 6KB | 迁移计划已收敛到 `docs/` 下集中维护 |
-| 多份 `AGENTS.md` (×11) | 3.6KB | 已 `**/AGENTS.md` 忽略,本地保留无碍 |
+| 文件                                                      | 大小   | 处置建议                                      |
+| --------------------------------------------------------- | ------ | --------------------------------------------- |
+| `Everything_Claude_Code_使用指南.docx`                    | 45KB   | **删除** — 上次会话遗留,与博客业务无关        |
+| `generate_ecc_guide.py`                                   | 25KB   | **删除** — 同上                               |
+| `dist-manual-deploy.tar.gz`                               | 16.5MB | 已 .gitignore;可删本地副本(deploy 流程不需要) |
+| `.preview.err.log` / `.preview.out.log` / `.vite-dev.log` | <5KB   | 已被 `*.log` 覆盖,可删                        |
+| `docs/plan.md`                                            | 6KB    | 迁移计划已收敛到 `docs/` 下集中维护           |
+| 多份 `AGENTS.md` (×11)                                    | 3.6KB  | 已 `**/AGENTS.md` 忽略,本地保留无碍           |
 
 **.gitignore 补充建议:**
 
@@ -475,6 +491,7 @@ test: {
 **问题:** `content/source/` 占整个仓库绝大部分,git pack/clone 慢。
 
 **方案:**
+
 - A) 走 git-lfs 跟踪原始素材
 - B) 抽到独立私有仓 + git submodule
 - C) 部署期外部下载(对象存储)

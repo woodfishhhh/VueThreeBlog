@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import { buildSiteContent } from "../../scripts/content/build-site-content";
 
@@ -14,8 +14,24 @@ describe("build-site-content", () => {
     const myblogDir = path.join(sourceRoot, "content", "source", "myblog", "前端");
     const notesDir = path.join(sourceRoot, "content", "source", "myblog", "笔记");
     const legacyPostDir = path.join(sourceRoot, "content", "posts", "ajax-basics-intro");
-    const aboutPath = path.join(sourceRoot, "content", "source", "blog", "source", "_data", "about.yml");
-    const linkPath = path.join(sourceRoot, "content", "source", "blog", "source", "_data", "link.yml");
+    const aboutPath = path.join(
+      sourceRoot,
+      "content",
+      "source",
+      "blog",
+      "source",
+      "_data",
+      "about.yml",
+    );
+    const linkPath = path.join(
+      sourceRoot,
+      "content",
+      "source",
+      "blog",
+      "source",
+      "_data",
+      "link.yml",
+    );
     const configPath = path.join(sourceRoot, "content", "source", "blog", "_config.yml");
     const publicDir = path.join(sourceRoot, "public", "asset");
 
@@ -190,7 +206,9 @@ describe("build-site-content", () => {
       expect(result.author.tenyear.end).toBe("2028-06-30");
       expect("avatar" in result.author).toBe(false);
       expect(result.friendLinks[0]?.name).toBe("Fomalhaut");
-      expect(result.friendLinks[0]?.avatar).toMatch(/^\/newBlog\/remote-assets\/[a-f0-9]{40}\.[a-z0-9]+$/);
+      expect(result.friendLinks[0]?.avatar).toMatch(
+        /^\/newBlog\/remote-assets\/[a-f0-9]{40}\.[a-z0-9]+$/,
+      );
     } finally {
       await new Promise<void>((resolve, reject) => {
         avatarServer.close((error) => {
@@ -298,7 +316,9 @@ describe("build-site-content", () => {
     });
     const article = Object.values(result.postsBySlug)[0];
 
-    expect(article?.html).toMatch(/src="\/newBlog\/content-assets\/content-image-[a-f0-9]{8}\/content\/source\/myblog\/assets\/diagram\.png"/);
+    expect(article?.html).toMatch(
+      /src="\/newBlog\/content-assets\/content-image-[a-f0-9]{8}\/content\/source\/myblog\/assets\/diagram\.png"/,
+    );
     expect(
       await readFile(
         path.join(

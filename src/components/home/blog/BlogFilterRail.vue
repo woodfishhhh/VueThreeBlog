@@ -28,9 +28,13 @@ const emit = defineEmits<{
   >
     <div class="flex items-start justify-between gap-4 border-b border-[var(--border-subtle)] pb-4">
       <div>
-        <div class="text-[11px] uppercase tracking-[0.32em] text-[color:var(--accent)] opacity-70">Filter Rail</div>
+        <div class="text-[11px] uppercase tracking-[0.32em] text-[color:var(--accent)] opacity-70">
+          Filter Rail
+        </div>
         <h3 class="mt-2 text-xl font-light text-[var(--stage-fg)]">筛选轨道</h3>
-        <p class="mt-1 text-xs text-[var(--stage-hint)]">{{ props.resultCount }} / {{ props.totalCount }} results</p>
+        <p class="mt-1 text-xs text-[var(--stage-hint)]">
+          {{ props.resultCount }} / {{ props.totalCount }} results
+        </p>
       </div>
       <button
         data-testid="blog-clear-filters"
@@ -53,9 +57,11 @@ const emit = defineEmits<{
             :data-testid="`blog-filter-type-${facet.value}`"
             type="button"
             class="rounded-full border px-3 py-2 text-sm transition-colors"
-            :class="props.selectedType === facet.value
-              ? 'border-cyan-300/70 bg-cyan-400/10 text-cyan-100'
-              : 'border-[var(--border-subtle)] bg-[var(--surface-1)] text-[var(--stage-hint)] hover:border-[var(--border-strong)] hover:text-[var(--stage-fg)]'"
+            :class="
+              props.selectedType === facet.value
+                ? 'border-cyan-300/70 bg-cyan-400/10 text-cyan-100'
+                : 'border-[var(--border-subtle)] bg-[var(--surface-1)] text-[var(--stage-hint)] hover:border-[var(--border-strong)] hover:text-[var(--stage-fg)]'
+            "
             :aria-pressed="props.selectedType === facet.value"
             @click="emit('toggle:type', facet.value)"
           >
@@ -73,9 +79,11 @@ const emit = defineEmits<{
             :data-testid="`blog-filter-category-${facet.value}`"
             type="button"
             class="rounded-full border px-3 py-2 text-sm transition-colors"
-            :class="props.selectedCategory === facet.value
-              ? 'border-blue-300/70 bg-blue-400/10 text-[var(--accent)]'
-              : 'border-[var(--border-subtle)] bg-[var(--surface-1)] text-[var(--stage-hint)] hover:border-[var(--border-strong)] hover:text-[var(--stage-fg)]'"
+            :class="
+              props.selectedCategory === facet.value
+                ? 'border-blue-300/70 bg-blue-400/10 text-[var(--accent)]'
+                : 'border-[var(--border-subtle)] bg-[var(--surface-1)] text-[var(--stage-hint)] hover:border-[var(--border-strong)] hover:text-[var(--stage-fg)]'
+            "
             :aria-pressed="props.selectedCategory === facet.value"
             @click="emit('toggle:category', facet.value)"
           >
@@ -93,9 +101,11 @@ const emit = defineEmits<{
             :data-testid="`blog-filter-tag-${facet.value}`"
             type="button"
             class="rounded-full border px-3 py-2 text-sm transition-colors"
-            :class="props.selectedTag === facet.value
-              ? 'border-fuchsia-300/70 bg-fuchsia-400/10 text-fuchsia-100'
-              : 'border-[var(--border-subtle)] bg-[var(--surface-1)] text-[var(--stage-hint)] hover:border-[var(--border-strong)] hover:text-[var(--stage-fg)]'"
+            :class="
+              props.selectedTag === facet.value
+                ? 'border-fuchsia-300/70 bg-fuchsia-400/10 text-fuchsia-100'
+                : 'border-[var(--border-subtle)] bg-[var(--surface-1)] text-[var(--stage-hint)] hover:border-[var(--border-strong)] hover:text-[var(--stage-fg)]'
+            "
             :aria-pressed="props.selectedTag === facet.value"
             @click="emit('toggle:tag', facet.value)"
           >

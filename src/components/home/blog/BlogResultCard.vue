@@ -30,18 +30,28 @@ function prefetchArticle() {
     :style="{ animationDelay: `${Math.min(props.index, 8) * 28}ms` }"
     @mouseenter="prefetchArticle"
   >
-    <span class="absolute left-0 top-5 hidden h-[calc(100%-2.5rem)] w-px bg-cyan-300/70 opacity-0 transition-opacity group-hover:opacity-100 md:block" />
+    <span
+      class="absolute left-0 top-5 hidden h-[calc(100%-2.5rem)] w-px bg-cyan-300/70 opacity-0 transition-opacity group-hover:opacity-100 md:block"
+    />
 
-    <div class="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--stage-hint)] md:block md:space-y-2">
-      <time class="block text-[var(--stage-hint-strong)]" :datetime="props.post.publishedAt">{{ props.post.publishedLabel }}</time>
-      <span class="inline-block rounded-full border border-cyan-300/25 bg-cyan-400/10 px-2 py-1 text-cyan-100">
+    <div
+      class="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--stage-hint)] md:block md:space-y-2"
+    >
+      <time class="block text-[var(--stage-hint-strong)]" :datetime="props.post.publishedAt">{{
+        props.post.publishedLabel
+      }}</time>
+      <span
+        class="inline-block rounded-full border border-cyan-300/25 bg-cyan-400/10 px-2 py-1 text-cyan-100"
+      >
         {{ props.post.type }}
       </span>
       <span class="block">{{ props.post.readingMinutes }} min read</span>
     </div>
 
     <div class="min-w-0">
-      <h3 class="text-xl font-semibold leading-snug text-[var(--stage-fg)] transition-colors group-hover:text-cyan-100 md:text-2xl">
+      <h3
+        class="text-xl font-semibold leading-snug text-[var(--stage-fg)] transition-colors group-hover:text-cyan-100 md:text-2xl"
+      >
         {{ props.post.title }}
       </h3>
 

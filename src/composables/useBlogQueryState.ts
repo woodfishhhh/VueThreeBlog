@@ -1,5 +1,11 @@
 import { computed } from "vue";
-import { useRoute, useRouter, type LocationQuery, type LocationQueryRaw, type LocationQueryValue } from "vue-router";
+import {
+  useRoute,
+  useRouter,
+  type LocationQuery,
+  type LocationQueryRaw,
+  type LocationQueryValue,
+} from "vue-router";
 
 import { sanitizeFilterValue, sanitizeSearchQuery } from "@/utils/input-validator";
 import type { BlogFilters, BlogSortKey } from "@/content/blog-hub";
@@ -57,13 +63,18 @@ export function useBlogQueryState() {
     tag: selectedTag.value,
   }));
 
-  const activeQuery = computed<LocationQueryRaw>(() => buildNextQuery({}, {
-    q: searchQuery.value,
-    type: selectedType.value,
-    category: selectedCategory.value,
-    tag: selectedTag.value,
-    sort: sortKey.value,
-  }));
+  const activeQuery = computed<LocationQueryRaw>(() =>
+    buildNextQuery(
+      {},
+      {
+        q: searchQuery.value,
+        type: selectedType.value,
+        category: selectedCategory.value,
+        tag: selectedTag.value,
+        sort: sortKey.value,
+      },
+    ),
+  );
 
   const hasActiveFilters = computed(() => Object.keys(activeQuery.value).length > 0);
 
@@ -137,7 +148,10 @@ function readQueryValue(value: LocationQueryValue | LocationQueryValue[]) {
  * 读取并校验 query 值（用于 computed getter）
  * 过滤控制字符并截断到最大长度
  */
-function readAndSanitizeQueryValue(value: LocationQueryValue | LocationQueryValue[], type: "search" | "filter"): string {
+function readAndSanitizeQueryValue(
+  value: LocationQueryValue | LocationQueryValue[],
+  type: "search" | "filter",
+): string {
   const raw = readQueryValue(value);
   if (type === "search") {
     return sanitizeSearchQuery(raw);
@@ -146,5 +160,7 @@ function readAndSanitizeQueryValue(value: LocationQueryValue | LocationQueryValu
 }
 
 function isBlogSortKey(value: string): value is BlogSortKey {
-  return value === "latest" || value === "oldest" || value === "reading-time" || value === "alphabetical";
+  return (
+    value === "latest" || value === "oldest" || value === "reading-time" || value === "alphabetical"
+  );
 }

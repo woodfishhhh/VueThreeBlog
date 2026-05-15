@@ -1,6 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { defineComponent } from "vue";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 const mocks = vi.hoisted(() => ({
   getPostSummaries: vi.fn(),
@@ -166,7 +166,9 @@ describe("PostView", () => {
 
     await flushPromises();
 
-    expect(wrapper.get("[data-testid='post-view-not-found']").text()).toContain("Article not found");
+    expect(wrapper.get("[data-testid='post-view-not-found']").text()).toContain(
+      "Article not found",
+    );
     expect(document.title).toBe("Article not found | WOODFISH");
   });
 
@@ -185,9 +187,13 @@ describe("PostView", () => {
     await flushPromises();
 
     expect(wrapper.get("[data-testid='post-view-article']")).toBeTruthy();
-    expect(wrapper.get("[data-testid='article-content-stub']").text()).toContain("Orbiting Interfaces");
+    expect(wrapper.get("[data-testid='article-content-stub']").text()).toContain(
+      "Orbiting Interfaces",
+    );
     expect(wrapper.text()).toContain("/ posts / orbiting-interfaces");
-    expect(wrapper.get("[data-testid='post-view-back-link']").attributes("aria-label")).toBe("Back Home");
+    expect(wrapper.get("[data-testid='post-view-back-link']").attributes("aria-label")).toBe(
+      "Back Home",
+    );
     expect(wrapper.get("[data-testid='post-view-back-link']").find("span").exists()).toBe(false);
     expect(wrapper.get("[data-testid='post-view-previous-link']").text()).toContain("Vector Notes");
     expect(wrapper.get("[data-testid='post-view-next-link']").text()).toContain("Signal Objects");
@@ -219,7 +225,9 @@ describe("PostView", () => {
         type: "Tutorial",
       },
     });
-    expect(wrapper.get("[data-testid='post-view-back-link']").attributes("aria-label")).toBe("Back to Blog");
+    expect(wrapper.get("[data-testid='post-view-back-link']").attributes("aria-label")).toBe(
+      "Back to Blog",
+    );
     expect(wrapper.get("[data-testid='post-view-back-link']").find("span").exists()).toBe(false);
   });
 });

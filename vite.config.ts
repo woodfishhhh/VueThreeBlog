@@ -1,160 +1,20 @@
-import { fileURLToPath, URL } from "node:url";
+import { resolve } from "node:path";
 
-import tailwindcss from "@tailwindcss/vite";
-import vue from "@vitejs/plugin-vue";
-import { defineConfig } from "vitest/config";
-import { visualizer } from "rollup-plugin-visualizer";
-import viteCompression from "vite-plugin-compression";
-import { VitePWA } from "vite-plugin-pwa";
+import { defineConfig } from "vite-plus";
 
-function normalizeBase(value: string | undefined) {
-  if (!value) {
-    return "/";
-  }
-
-  const trimmed = value.trim();
-  if (!trimmed || trimmed === "/") {
-    return "/";
-  }
-
-  const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
-  return withLeadingSlash.endsWith("/") ? withLeadingSlash : `${withLeadingSlash}/`;
-}
+import { createVitePlugins, normalizeBase } from "./scripts/vite-config-helpers.ts";
 
 const base = normalizeBase(process.env.VITE_BASE_PATH);
 
-/*
- * ============================================================
- *  Gzip / Brotli 预压缩
- * ============================================================
- * 构建完成后自动生成 .gz 压缩文件（.br 在 Node 兼容性问题，暂时禁用）。
- * nginx 配置示例（放在 server {} 块里）：
- *
- *   gzip on;
- *   gzip_types text/plain application/javascript application/json text/css;
- *   gzip_min_length 1000;
- *
- *   # Brotli（需要 nginx 安装了 brotli 模块）：
- *   brotli on;
- *   brotli_types text/plain application/javascript application/json text/css;
- *
- * 效果：nginx 直接返回 .gz / .br 文件给支持的浏览器，传输量减少 ~70-80%。
- */
-
-const compressionPlugins = [
-  viteCompression({
-    algorithm: "gzip",
-    ext: ".gz",
-    threshold: 1024,
-  }),
-];
-
-/*
- * ============================================================
- *  PWA / Service Worker
- * ============================================================
- * Service Worker = 运行在浏览器后台的脚本，可以拦截网络请求、缓存资源。
- * 相当于给你的网站加了一层"本地代理"。
- *
- * 缓存策略：
- * - 静态资源（JS/CSS/图片）：CacheFirst（优先读缓存）
- * - 文章列表 JSON：NetworkFirst（优先网络，失败读缓存）
- * - Google Fonts：StaleWhileRevalidate（返回缓存同时更新）
- *
- * 效果：
- * - 二次访问秒开（静态资源从缓存读取）
- * - 离线可用（地铁、电梯里网站也能打开）
- * - 后台更新（用户下次访问就是新版本）
- */
-const pwaPlugin = VitePWA({
-  registerType: "autoUpdate",
-  base,
-  scope: base,
-  injectRegister: false,
-  manifest: {
-    name: "WOODFISH Blog",
-    short_name: "WOODFISH",
-    description: "WOODFISH | Vue-powered immersive 3D blog experience",
-    theme_color: "#050510",
-    background_color: "#050510",
-    start_url: base,
-    scope: base,
-    display: "standalone",
-    icons: [
-      {
-        src: "favicon.svg",
-        sizes: "any",
-        type: "image/svg+xml",
-      },
-    ],
-  },
-  workbox: {
-    cleanupOutdatedCaches: true,
-    clientsClaim: true,
-    skipWaiting: true,
-    navigateFallback: `${base}index.html`,
-    globPatterns: ["**/*.{js,css,svg,png,jpg,webp,ico,woff,woff2}"],
-    navigateFallbackDenylist: [/^\/api\//i],
-    runtimeCaching: [
-      {
-        urlPattern: ({ request }) => request.mode === "navigate",
-        handler: "NetworkFirst",
-        options: {
-          cacheName: "page-shell-cache",
-          networkTimeoutSeconds: 3,
-          expiration: { maxEntries: 10, maxAgeSeconds: 60 * 5 },
-        },
-      },
-      {
-        urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-        handler: "StaleWhileRevalidate",
-        options: {
-          cacheName: "google-fonts-cache",
-          expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
-        },
-      },
-      {
-        urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-        handler: "CacheFirst",
-        options: {
-          cacheName: "gstatic-fonts-cache",
-          expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
-        },
-      },
-      {
-        urlPattern: /\/content\/.*\.(png|jpg|jpeg|webp|gif|svg)/i,
-        handler: "CacheFirst",
-        options: {
-          cacheName: "content-images-cache",
-          expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
-        },
-      },
-      {
-        urlPattern: /\/post-index.*\.json/i,
-        handler: "NetworkFirst",
-        options: {
-          cacheName: "post-index-cache",
-          expiration: { maxEntries: 5, maxAgeSeconds: 60 * 60 * 24 },
-        },
-      },
-    ],
-  },
-});
-
 export default defineConfig({
   base,
-  plugins: [
-    vue(),
-    tailwindcss(),
-    ...compressionPlugins,
-    pwaPlugin,
-    process.env.ANALYZE === "true"
-      ? visualizer({ filename: "dist/stats.html", open: true })
-      : null,
-  ].filter(Boolean),
+  plugins: createVitePlugins({
+    base,
+    analyze: process.env.ANALYZE === "true",
+  }),
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@": resolve(process.cwd(), "src"),
     },
   },
   build: {
@@ -194,14 +54,156 @@ export default defineConfig({
       },
     },
   },
-  esbuild:
-    process.env.NODE_ENV === "production"
-      ? { drop: ["console", "debugger"] }
-      : undefined,
+  esbuild: process.env.NODE_ENV === "production" ? { drop: ["console", "debugger"] } : undefined,
   test: {
     environment: "jsdom",
     globals: true,
     setupFiles: ["./tests/setup.ts"],
     include: ["tests/**/*.test.ts"],
+  },
+  lint: {
+    ignorePatterns: [
+      "dist/**",
+      "node_modules/**",
+      "public/**",
+      "content/**",
+      "src/generated/**",
+      "src/auto-imports.d.ts",
+      "src/components.d.ts",
+    ],
+    options: {
+      typeAware: true,
+      typeCheck: true,
+    },
+  },
+  fmt: {
+    ignorePatterns: [
+      "dist/**",
+      "node_modules/**",
+      "public/**",
+      "content/**",
+      "src/generated/**",
+      "src/auto-imports.d.ts",
+      "src/components.d.ts",
+    ],
+    singleQuote: false,
+    semi: true,
+    sortPackageJson: true,
+  },
+  run: {
+    enablePrePostScripts: true,
+    cache: true,
+    tasks: {
+      "app:analyze": {
+        command: "cross-env ANALYZE=true vp run app:build",
+      },
+      "app:build": {
+        command: "vp build",
+        dependsOn: ["vue:typecheck"],
+        env: ["ANALYZE", "NODE_ENV", "VITE_BASE_PATH"],
+        input: [
+          "index.html",
+          "package.json",
+          "tsconfig.json",
+          "vite.config.ts",
+          "scripts/vite-config-helpers.ts",
+          "src/**",
+          "public/**",
+          "!dist/**",
+        ],
+        output: ["dist/**"],
+      },
+      "agent:dist": {
+        command:
+          "cross-env VITE_BASE_PATH=/newBlog/ vp run app:build && cross-env VITE_BASE_PATH=/newBlog/ vp run dist:verify",
+      },
+      "agent:fast": {
+        command: "vp run check:quick && vp run test:unit",
+      },
+      "agent:fix": {
+        command: "vp check --fix && vp run vue:typecheck",
+      },
+      "agent:full": {
+        command: "vp run agent:static && vp run agent:test && vp run agent:dist",
+      },
+      "agent:inspect": {
+        command: "vp dev --host 127.0.0.1 --open /__inspect/",
+      },
+      "agent:preview": {
+        command: "vp preview --host 127.0.0.1",
+      },
+      "agent:static": {
+        command: "vp run check:static && vp run vue:typecheck",
+      },
+      "agent:test": {
+        command: "vp run test:unit",
+      },
+      "check:quick": {
+        command: "vp check --no-fmt --no-error-on-unmatched-pattern",
+        input: [{ auto: true }],
+      },
+      "check:static": {
+        command: "vp check",
+        input: [{ auto: true }],
+      },
+      "content:generate": {
+        command: "vp run content:index && vp run images:optimize",
+      },
+      "content:generate:ci": {
+        command: "vp run content:index:ci",
+      },
+      "content:index": {
+        command: "tsx scripts/generate-content.mts",
+        input: ["content/**", "package.json", "scripts/content/**", "scripts/generate-content.mts"],
+        output: [
+          "src/generated/**",
+          "public/content-assets/**",
+          "public/imported-assets/**",
+          "public/remote-assets/**",
+        ],
+      },
+      "content:index:ci": {
+        command: "tsx scripts/generate-content.mts --reuse-assets",
+        input: [{ auto: true }],
+        output: ["src/generated/**"],
+      },
+      "deploy:build": {
+        command:
+          "vp run content:generate:ci && cross-env VITE_BASE_PATH=/newBlog/ vp run app:build && cross-env VITE_BASE_PATH=/newBlog/ vp run dist:verify",
+      },
+      "dist:verify": {
+        command: "tsx scripts/verify-dist.mts",
+        env: ["DIST_DIR", "VITE_BASE_PATH"],
+      },
+      "e2e:test": {
+        command: "playwright test",
+        input: [{ auto: true }],
+        output: ["test-results/**", "playwright-report/**"],
+      },
+      "images:optimize": {
+        command: "tsx scripts/optimize-images.mts",
+        input: [{ auto: true }],
+        output: ["public/imported-assets/**", "public/remote-assets/**"],
+      },
+      "test:unit": {
+        command: "vp test",
+        input: [{ auto: true }],
+      },
+      "vue:typecheck": {
+        command: "vue-tsc --noEmit",
+        input: [
+          "package.json",
+          "tsconfig.json",
+          "vite.config.ts",
+          "scripts/**",
+          "src/**",
+          "tests/**",
+        ],
+      },
+    },
+  },
+  staged: {
+    "*.{js,ts,tsx,vue}": "vp check --fix",
+    "*.{json,md,css}": "vp fmt --write",
   },
 });

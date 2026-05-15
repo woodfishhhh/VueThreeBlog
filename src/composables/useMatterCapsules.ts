@@ -24,11 +24,7 @@ interface CapsuleBody {
 const WALL_THICKNESS = 96;
 const STEP_MS = 1000 / 60;
 
-export function useMatterCapsules({
-  active,
-  sceneRef,
-  skills,
-}: UseMatterCapsulesOptions) {
+export function useMatterCapsules({ active, sceneRef, skills }: UseMatterCapsulesOptions) {
   let engine: Matter.Engine | null = null;
   let mouseConstraint: Matter.MouseConstraint | null = null;
   let mouse: Matter.Mouse | null = null;
@@ -52,7 +48,7 @@ export function useMatterCapsules({
   function cleanup() {
     stopAnimation();
     if (windowResizeHandler !== null) {
-      window.removeEventListener('resize', windowResizeHandler);
+      window.removeEventListener("resize", windowResizeHandler);
       windowResizeHandler = null;
     }
     if (resizeTimer !== null) {
@@ -91,8 +87,7 @@ export function useMatterCapsules({
 
   function syncBodies() {
     for (const capsule of capsuleBodies) {
-      capsule.element.style.transform =
-        `translate(${capsule.body.position.x - capsule.width / 2}px, ${capsule.body.position.y - capsule.height / 2}px) rotate(${capsule.body.angle}rad)`;
+      capsule.element.style.transform = `translate(${capsule.body.position.x - capsule.width / 2}px, ${capsule.body.position.y - capsule.height / 2}px) rotate(${capsule.body.angle}rad)`;
     }
   }
 
@@ -126,8 +121,10 @@ export function useMatterCapsules({
   }
 
   function prefersReducedMotion() {
-    return typeof window.matchMedia === "function"
-      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return (
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    );
   }
 
   function layoutStatic(container: HTMLElement) {
@@ -151,7 +148,10 @@ export function useMatterCapsules({
 
       const row = Math.floor(freeBodyIndex / columns);
       const col = freeBodyIndex % columns;
-      const x = Math.min(gutter + col * colWidth + (colWidth - width) / 2, bounds.width - width - gutter);
+      const x = Math.min(
+        gutter + col * colWidth + (colWidth - width) / 2,
+        bounds.width - width - gutter,
+      );
       const y = 220 + row * 62;
       element.style.transform = `translate(${Math.max(gutter, x)}px, ${y}px)`;
       freeBodyIndex += 1;
@@ -212,7 +212,10 @@ export function useMatterCapsules({
     mouse = Matter.Mouse.create(container);
     // Explicitly correct for non-fullscreen scale and positions (like the 50vw panel layout).
     // This allows mouse clicks to map exactly to the physics bodies correctly within that constrained layout.
-    if ((mouse as any).element && typeof (mouse as any).element.removeEventListener === "function") {
+    if (
+      (mouse as any).element &&
+      typeof (mouse as any).element.removeEventListener === "function"
+    ) {
       (mouse as any).element.removeEventListener("mousewheel", (mouse as any).mousewheel);
       (mouse as any).element.removeEventListener("DOMMouseScroll", (mouse as any).mousewheel);
     }
@@ -268,7 +271,10 @@ export function useMatterCapsules({
       const initiallyStatic = element.hasAttribute("data-author-fixed");
       const width = Math.max(element.offsetWidth, initiallyStatic ? 288 : 120);
       const height = Math.max(element.offsetHeight, initiallyStatic ? 126 : 52);
-      const staticX = Math.min(bounds.width - width / 2 - 24, Math.max(width / 2 + 28, bounds.width * 0.38));
+      const staticX = Math.min(
+        bounds.width - width / 2 - 24,
+        Math.max(width / 2 + 28, bounds.width * 0.38),
+      );
       const staticY = Math.min(bounds.height * 0.22, height / 2 + 48);
 
       // Scatter freely across full width with staggered vertical entry inside the viewport
@@ -277,9 +283,7 @@ export function useMatterCapsules({
         : gutter + width / 2 + Math.random() * (usableWidth - width);
 
       const verticalSpread = bounds.height * 0.4;
-      const y = initiallyStatic
-        ? staticY
-        : height / 2 + 10 + Math.random() * verticalSpread;
+      const y = initiallyStatic ? staticY : height / 2 + 10 + Math.random() * verticalSpread;
       if (!initiallyStatic) {
         freeBodyIndex += 1;
       }
@@ -385,7 +389,7 @@ export function useMatterCapsules({
         }
       }, 200);
     };
-    window.addEventListener('resize', windowResizeHandler);
+    window.addEventListener("resize", windowResizeHandler);
 
     syncBodies();
     animationFrameId = requestAnimationFrame(tick);

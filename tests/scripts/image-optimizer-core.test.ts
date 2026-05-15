@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 
 import sharp from "sharp";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import { optimizeImageAsset } from "../../scripts/image-optimizer-core";
 
@@ -50,7 +50,8 @@ describe("image-optimizer-core", () => {
     const tempRoot = await mkdtemp(path.join(os.tmpdir(), "vuecubeblog-image-opt-skip-"));
     const targetDir = path.join(tempRoot, "public", "remote-assets");
     const targetFile = path.join(targetDir, "vector.svg");
-    const original = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 10 10\"><circle cx=\"5\" cy=\"5\" r=\"5\" fill=\"#fff\"/></svg>";
+    const original =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#fff"/></svg>';
 
     await mkdir(targetDir, { recursive: true });
     await writeFile(targetFile, original, "utf8");

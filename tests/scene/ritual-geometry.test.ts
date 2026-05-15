@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import { generateMobiusData, useMobiusStrip } from "@/composables/useMobiusStrip";
 import { useStarField } from "@/composables/useStarField";

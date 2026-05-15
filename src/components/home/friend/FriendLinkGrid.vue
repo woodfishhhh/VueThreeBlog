@@ -118,7 +118,8 @@ function setColumnSegmentRef(
   segmentIndex: number,
 ) {
   columnSegmentElements.value[columnIndex] ??= [];
-  columnSegmentElements.value[columnIndex][segmentIndex] = element instanceof HTMLElement ? element : null;
+  columnSegmentElements.value[columnIndex][segmentIndex] =
+    element instanceof HTMLElement ? element : null;
 }
 
 function getSegmentDistance() {
@@ -239,11 +240,7 @@ function handleLoopScroll() {
           data-testid="friend-loop-segment"
           :class="['friend-loop-segment', { 'friend-loop-segment--clone': segment.ariaHidden }]"
         >
-          <TransitionGroup
-            name="friend-card-list"
-            tag="div"
-            class="friend-waterfall-column"
-          >
+          <TransitionGroup name="friend-card-list" tag="div" class="friend-waterfall-column">
             <FriendLinkCard
               v-for="card in column"
               :key="`${segment.id}-${card.id}`"

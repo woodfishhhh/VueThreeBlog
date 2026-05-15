@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import { getRouteLocationForSiteMode, resolveSiteModeFromRoute } from "@/router/site-mode";
 
@@ -15,4 +15,3 @@ describe("site-mode routing helpers", () => {
     expect(getRouteLocationForSiteMode("author")).toEqual({ name: "author" });
   });
 });
-

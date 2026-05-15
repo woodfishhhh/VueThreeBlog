@@ -51,10 +51,15 @@ const cardStyle = computed<Record<string, string>>(() => ({
           loading="lazy"
           @error="avatarBroken = true"
         />
-        <div v-else class="h-16 w-16 shrink-0 rounded-[8px] border border-[var(--border-subtle)] bg-[var(--surface-soft)]" />
+        <div
+          v-else
+          class="h-16 w-16 shrink-0 rounded-[8px] border border-[var(--border-subtle)] bg-[var(--surface-soft)]"
+        />
 
         <div class="min-w-0 flex-1">
-          <h3 class="truncate text-xl font-semibold text-[var(--stage-fg)]">{{ props.link.name }}</h3>
+          <h3 class="truncate text-xl font-semibold text-[var(--stage-fg)]">
+            {{ props.link.name }}
+          </h3>
           <p class="mt-2 truncate text-[12px] text-[var(--stage-hint-strong)]">
             {{ domain }}
           </p>
@@ -122,8 +127,7 @@ const cardStyle = computed<Record<string, string>>(() => ({
 :root[data-theme="night"] .friend-link-card {
   border-color: var(--border-subtle);
   background:
-    linear-gradient(135deg, rgba(22, 28, 48, 0.72), rgba(12, 16, 32, 0.58)),
-    var(--surface-soft);
+    linear-gradient(135deg, rgba(22, 28, 48, 0.72), rgba(12, 16, 32, 0.58)), var(--surface-soft);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
 }
 
@@ -140,7 +144,9 @@ const cardStyle = computed<Record<string, string>>(() => ({
   .friend-link-card,
   .friend-link-card:hover {
     transform: none;
-    transition: border-color 180ms ease, box-shadow 180ms ease;
+    transition:
+      border-color 180ms ease,
+      box-shadow 180ms ease;
   }
 }
 </style>

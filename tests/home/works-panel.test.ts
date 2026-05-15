@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 import WorksPanel from "@/components/home/WorksPanel.vue";
 import { useSiteStore } from "@/stores/site";
@@ -67,7 +67,9 @@ describe("WorksPanel", () => {
     });
 
     expect(wrapper.find("[data-testid='works-view-toggle']").exists()).toBe(true);
-    expect(wrapper.find("[data-testid='works-view-toggle-orbit']").attributes("aria-pressed")).toBe("true");
+    expect(wrapper.find("[data-testid='works-view-toggle-orbit']").attributes("aria-pressed")).toBe(
+      "true",
+    );
     expect(wrapper.find("[data-testid='works-view-orbit']").exists()).toBe(false);
     expect(wrapper.find("[data-testid='works-view-case']").exists()).toBe(false);
     expect(wrapper.findAll("[data-testid='works-item']")).toHaveLength(0);

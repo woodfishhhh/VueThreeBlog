@@ -45,9 +45,7 @@ const cardHovered = ref(false);
 const cardGrabActive = ref(false);
 const geometryHovered = ref(false);
 const isMobile = ref(false);
-const hasCardHoverOnly = computed(
-  () => cardHovered.value && !cardGrabActive.value,
-);
+const hasCardHoverOnly = computed(() => cardHovered.value && !cardGrabActive.value);
 
 const onPointerDown = () => {
   if (store.isFocusing) isDragging.value = true;
@@ -89,11 +87,7 @@ const savedFocusRotations = {
     defaultRotations.night.y,
     defaultRotations.night.z,
   ),
-  day: new THREE.Euler(
-    defaultRotations.day.x,
-    defaultRotations.day.y,
-    defaultRotations.day.z,
-  ),
+  day: new THREE.Euler(defaultRotations.day.x, defaultRotations.day.y, defaultRotations.day.z),
 };
 
 let threeScene: ThreeScene | null = null;
@@ -152,8 +146,7 @@ function applyGroupTransform(
     immediate: boolean;
   },
 ) {
-  const activeRotationTween =
-    rotationTweenRef === "night" ? rotationTweenNight : rotationTweenDay;
+  const activeRotationTween = rotationTweenRef === "night" ? rotationTweenNight : rotationTweenDay;
   if (activeRotationTween) {
     activeRotationTween.kill();
     if (rotationTweenRef === "night") rotationTweenNight = null;
@@ -165,11 +158,7 @@ function applyGroupTransform(
     gsap.killTweensOf(group.rotation);
     gsap.killTweensOf(group.scale);
     group.position.copy(options.position);
-    group.rotation.set(
-      options.rotation.x,
-      options.rotation.y,
-      options.rotation.z,
-    );
+    group.rotation.set(options.rotation.x, options.rotation.y, options.rotation.z);
     group.scale.setScalar(options.scale);
     return;
   }
@@ -182,11 +171,7 @@ function applyGroupTransform(
     },
     options.rotation,
   );
-  group.rotation.set(
-    normalizedRotation.x,
-    normalizedRotation.y,
-    normalizedRotation.z,
-  );
+  group.rotation.set(normalizedRotation.x, normalizedRotation.y, normalizedRotation.z);
 
   gsap.to(group.position, {
     x: options.position.x,
@@ -225,17 +210,10 @@ function applyThemeImmediate(nextTheme: ThemeMode) {
   hypercube.setOpacity(isDay ? 0 : 1);
   mobius.setOpacity(isDay ? 1 : 0);
   starField.setOpacity(isDay ? 0 : 1);
-  hypercube.group.scale.setScalar(
-    isDay ? INACTIVE_SCALE : HYPERCUBE_SCENE_SCALE,
-  );
+  hypercube.group.scale.setScalar(isDay ? INACTIVE_SCALE : HYPERCUBE_SCENE_SCALE);
   mobius.group.scale.setScalar(isDay ? MOBIUS_SCENE_SCALE : INACTIVE_SCALE);
-  threeScene.scene.background = isDay
-    ? DAY_CLEAR_COLOR.clone()
-    : NIGHT_CLEAR_COLOR.clone();
-  threeScene.renderer.setClearColor(
-    isDay ? DAY_CLEAR_COLOR : NIGHT_CLEAR_COLOR,
-    1,
-  );
+  threeScene.scene.background = isDay ? DAY_CLEAR_COLOR.clone() : NIGHT_CLEAR_COLOR.clone();
+  threeScene.renderer.setClearColor(isDay ? DAY_CLEAR_COLOR : NIGHT_CLEAR_COLOR, 1);
 }
 
 function updateGeometryTransform(immediate = false) {
@@ -251,8 +229,7 @@ function updateGeometryTransform(immediate = false) {
     // For author view, panel is exactly 50vw wide, so left side bounds are 50vw. Center of that is 0.5.
     const halfScreenCenterNdc = 0.5;
     const halfFovRad = THREE.MathUtils.degToRad(threeScene.camera.fov / 2);
-    splitCenterOffset =
-      halfScreenCenterNdc * distance * Math.tan(halfFovRad) * aspect;
+    splitCenterOffset = halfScreenCenterNdc * distance * Math.tan(halfFovRad) * aspect;
   }
   const inwardOffset = splitCenterOffset * 0.9;
   const target = getGeometryTransformTarget({
@@ -368,9 +345,7 @@ function updateWorksOrbitCards(elapsed = 0, delta = 0) {
     visible && worksOrbitCards.isInteracting()
       ? getWorksCenterMagnetStrength(pointer, prefersReducedMotion)
       : 0;
-  hypercube?.setInteractionIntensity(
-    theme.value === "night" ? ritualIntensity : 0,
-  );
+  hypercube?.setInteractionIntensity(theme.value === "night" ? ritualIntensity : 0);
   mobius?.setInteractionIntensity(theme.value === "day" ? ritualIntensity : 0);
   starField?.setWarpIntensity(theme.value === "night" ? ritualIntensity : 0);
 }
@@ -446,9 +421,7 @@ function handleCanvasPointerDown(event: PointerEvent) {
   updatePointerFromEvent(event);
   raycaster.setFromCamera(pointer, threeScene.camera);
 
-  if (
-    isDesktopWorksOrbitMode(store.mode, store.worksViewMode, isMobile.value)
-  ) {
+  if (isDesktopWorksOrbitMode(store.mode, store.worksViewMode, isMobile.value)) {
     const worksHit = worksOrbitCards?.pick(raycaster, pointer);
     const action = resolveScenePointerDownAction({
       mode: store.mode,
@@ -473,12 +446,7 @@ function handleCanvasPointerDown(event: PointerEvent) {
   }
 
   if (
-    !shouldRaycastSceneGeometry(
-      store.mode,
-      store.worksViewMode,
-      store.isFocusing,
-      isMobile.value,
-    )
+    !shouldRaycastSceneGeometry(store.mode, store.worksViewMode, store.isFocusing, isMobile.value)
   ) {
     return;
   }
@@ -536,12 +504,8 @@ onMounted(async () => {
   });
   threeScene.scene.add(worksOrbitCards.group);
 
-  const { OrbitControls } =
-    await import("three/examples/jsm/controls/OrbitControls.js");
-  controls = new OrbitControls(
-    threeScene.camera,
-    threeScene.renderer.domElement,
-  );
+  const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls.js");
+  controls = new OrbitControls(threeScene.camera, threeScene.renderer.domElement);
   controls.enableZoom = true;
   controls.enablePan = false;
   controls.autoRotate = false;
@@ -558,10 +522,7 @@ onMounted(async () => {
   canvasRef.value.addEventListener("pointerdown", handleCanvasPointerDown);
   canvasRef.value.addEventListener("pointerup", releaseCardInteraction);
   canvasRef.value.addEventListener("pointercancel", releaseCardInteraction);
-  canvasRef.value.addEventListener(
-    "lostpointercapture",
-    releaseCardInteraction,
-  );
+  canvasRef.value.addEventListener("lostpointercapture", releaseCardInteraction);
 
   if (typeof window.matchMedia === "function") {
     reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -578,8 +539,7 @@ onMounted(async () => {
   sceneTimer.connect(document);
 
   function tick(timestamp?: number) {
-    if (!threeScene || !starField || !hypercube || !mobius || !sceneTimer)
-      return;
+    if (!threeScene || !starField || !hypercube || !mobius || !sceneTimer) return;
 
     sceneTimer.update(timestamp);
     const delta = sceneTimer.getDelta();
@@ -623,8 +583,7 @@ onMounted(async () => {
       }
 
       if (!introCompleted && introStartTime !== null) {
-        const introProgress =
-          (elapsed - introStartTime) / CAMERA_INTRO_DURATION;
+        const introProgress = (elapsed - introStartTime) / CAMERA_INTRO_DURATION;
         const normalizedProgress = Math.min(Math.max(introProgress, 0), 1);
         const easedProgress = 1 - Math.pow(1 - normalizedProgress, 4);
 
@@ -676,17 +635,10 @@ onMounted(async () => {
 
     if (
       activeRaycastGeometry &&
-      shouldRaycastSceneGeometry(
-        store.mode,
-        store.worksViewMode,
-        store.isFocusing,
-        isMobile.value,
-      )
+      shouldRaycastSceneGeometry(store.mode, store.worksViewMode, store.isFocusing, isMobile.value)
     ) {
       raycaster.setFromCamera(pointer, threeScene.camera);
-      const intersects = raycaster.intersectObject(
-        activeRaycastGeometry.hitMesh,
-      );
+      const intersects = raycaster.intersectObject(activeRaycastGeometry.hitMesh);
       geometryHovered.value = intersects.length > 0;
     } else if (geometryHovered.value) {
       geometryHovered.value = false;
@@ -753,27 +705,16 @@ watch(theme, (nextTheme) => {
 onBeforeUnmount(() => {
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
   window.removeEventListener("resize", handleResize);
-  if (container.value)
-    container.value.removeEventListener("pointermove", handlePointerMove);
-  if (canvasRef.value)
-    canvasRef.value.removeEventListener("pointerdown", handleCanvasPointerDown);
+  if (container.value) container.value.removeEventListener("pointermove", handlePointerMove);
+  if (canvasRef.value) canvasRef.value.removeEventListener("pointerdown", handleCanvasPointerDown);
   if (canvasRef.value) {
     canvasRef.value.removeEventListener("pointerup", releaseCardInteraction);
-    canvasRef.value.removeEventListener(
-      "pointercancel",
-      releaseCardInteraction,
-    );
-    canvasRef.value.removeEventListener(
-      "lostpointercapture",
-      releaseCardInteraction,
-    );
+    canvasRef.value.removeEventListener("pointercancel", releaseCardInteraction);
+    canvasRef.value.removeEventListener("lostpointercapture", releaseCardInteraction);
   }
   if (reducedMotionQuery) {
     if (typeof reducedMotionQuery.removeEventListener === "function") {
-      reducedMotionQuery.removeEventListener(
-        "change",
-        handleReducedMotionChange,
-      );
+      reducedMotionQuery.removeEventListener("change", handleReducedMotionChange);
     } else {
       reducedMotionQuery.removeListener(handleReducedMotionChange);
     }
@@ -832,7 +773,8 @@ onBeforeUnmount(() => {
     @pointerdown="onPointerDown"
     @pointerup="onPointerUp"
     @pointerleave="onPointerLeave"
-    @click="onClickBackground">
+    @click="onClickBackground"
+  >
     <canvas ref="canvasRef" class="h-full w-full outline-none"></canvas>
   </div>
 </template>

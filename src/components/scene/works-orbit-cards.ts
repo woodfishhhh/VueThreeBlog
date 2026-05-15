@@ -69,10 +69,7 @@ export interface WorksOrbitCards {
   dispose: () => void;
   drag: (pointerNdc: THREE.Vector2) => void;
   isInteracting: () => boolean;
-  pick: (
-    raycaster: THREE.Raycaster,
-    pointerNdc?: THREE.Vector2,
-  ) => WorksOrbitCardHit | null;
+  pick: (raycaster: THREE.Raycaster, pointerNdc?: THREE.Vector2) => WorksOrbitCardHit | null;
   release: (elapsed: number) => WorksOrbitCardReleaseResult;
   setHovered: (hit: WorksOrbitCardHit | null) => void;
   setTheme: (theme: ThemeMode) => void;
@@ -174,20 +171,14 @@ export function getWorksOrbitRadii(width: number) {
 
 export function isWorksLaunchZone(pointerNdc: THREE.Vector2) {
   return (
-    Math.abs(pointerNdc.x) <= LAUNCH_ZONE_HALF_NDC
-    && Math.abs(pointerNdc.y) <= LAUNCH_ZONE_HALF_NDC
+    Math.abs(pointerNdc.x) <= LAUNCH_ZONE_HALF_NDC && Math.abs(pointerNdc.y) <= LAUNCH_ZONE_HALF_NDC
   );
 }
 
-export function getWorksCenterMagnetStrength(
-  pointerNdc: THREE.Vector2,
-  reducedMotion = false,
-) {
+export function getWorksCenterMagnetStrength(pointerNdc: THREE.Vector2, reducedMotion = false) {
   const distance = Math.hypot(pointerNdc.x, pointerNdc.y);
   const strength = clamp(1 - distance / MAGNET_FALLOFF_NDC, 0, 1);
-  return reducedMotion
-    ? Math.min(strength, REDUCED_MOTION_INTENSITY_CAP)
-    : strength;
+  return reducedMotion ? Math.min(strength, REDUCED_MOTION_INTENSITY_CAP) : strength;
 }
 
 function getBaseAngle(index: number, count: number, elapsed: number) {
@@ -195,21 +186,14 @@ function getBaseAngle(index: number, count: number, elapsed: number) {
   return (index / safeCount) * TAU - Math.PI * 0.12 + elapsed * ORBIT_SPEED;
 }
 
-function getPointerWorldPosition(
-  pointerNdc: THREE.Vector2,
-  camera: THREE.PerspectiveCamera,
-) {
+function getPointerWorldPosition(pointerNdc: THREE.Vector2, camera: THREE.PerspectiveCamera) {
   dragRaycaster.setFromCamera(pointerNdc, camera);
   return dragPosition
     .copy(dragRaycaster.ray.origin)
     .addScaledVector(dragRaycaster.ray.direction, DRAG_DISTANCE_FROM_CAMERA);
 }
 
-function getDragScale(
-  camera: THREE.PerspectiveCamera,
-  frameScale: number,
-  strength: number,
-) {
+function getDragScale(camera: THREE.PerspectiveCamera, frameScale: number, strength: number) {
   const fov = THREE.MathUtils.degToRad(camera.fov);
   const viewHeight = 2 * Math.tan(fov / 2) * DRAG_DISTANCE_FROM_CAMERA;
   const viewWidth = viewHeight * camera.aspect;
@@ -348,10 +332,11 @@ function drawCardTexture(canvas: HTMLCanvasElement, work: WorkProjectData, theme
   const accent = isDay ? "#3558cc" : "#8ab2ff";
   const pin = isDay ? "rgba(155, 101, 24, 0.42)" : "rgba(138, 178, 255, 0.44)";
   const domain = getProjectDomain(work.liveUrl);
-  const initials = Array.from(work.name.replace(/[^a-z0-9]/gi, ""))
-    .slice(0, 2)
-    .join("")
-    .toUpperCase() || work.kind.slice(0, 2).toUpperCase();
+  const initials =
+    Array.from(work.name.replace(/[^a-z0-9]/gi, ""))
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || work.kind.slice(0, 2).toUpperCase();
 
   ctx.save();
   ctx.shadowColor = isDay ? "rgba(37, 32, 22, 0.16)" : "rgba(0, 0, 0, 0.42)";
@@ -567,8 +552,8 @@ export function createWorksOrbitCards({ theme, works }: WorksOrbitCardsOptions):
         [...screenHits.values()]
           .filter((screenHit) => {
             return (
-              Math.abs(pointerNdc.x - screenHit.x) <= screenHit.halfWidth
-              && Math.abs(pointerNdc.y - screenHit.y) <= screenHit.halfHeight
+              Math.abs(pointerNdc.x - screenHit.x) <= screenHit.halfWidth &&
+              Math.abs(pointerNdc.y - screenHit.y) <= screenHit.halfHeight
             );
           })
           .sort((a, b) => b.frontness - a.frontness)[0]?.hit ?? null
@@ -578,9 +563,7 @@ export function createWorksOrbitCards({ theme, works }: WorksOrbitCardsOptions):
       if (!interaction) return null;
 
       const activeInteraction = interaction;
-      const cardIndex = cards.findIndex(
-        (card) => card.work.slug === activeInteraction.slug,
-      );
+      const cardIndex = cards.findIndex((card) => card.work.slug === activeInteraction.slug);
       const card = cards[cardIndex];
       interaction = null;
 
@@ -650,10 +633,7 @@ export function createWorksOrbitCards({ theme, works }: WorksOrbitCardsOptions):
         card.group.rotateZ((index - 1) * 0.025);
 
         if (activeInteraction) {
-          const targetPosition = getPointerWorldPosition(
-            activeInteraction.pointerNdc,
-            camera,
-          );
+          const targetPosition = getPointerWorldPosition(activeInteraction.pointerNdc, camera);
           const strength = getWorksCenterMagnetStrength(
             activeInteraction.pointerNdc,
             reducedMotion,
@@ -690,20 +670,12 @@ export function createWorksOrbitCards({ theme, works }: WorksOrbitCardsOptions):
           const progress = clamp((elapsed - returnState.startedAt) / duration, 0, 1);
           const easedProgress = 1 - (1 - progress) ** 3;
 
-          card.group.position.lerpVectors(
-            returnState.startPosition,
-            orbitPosition,
-            easedProgress,
-          );
+          card.group.position.lerpVectors(returnState.startPosition, orbitPosition, easedProgress);
           card.group.scale.setScalar(
             THREE.MathUtils.lerp(returnState.startScale, orbitScale, easedProgress),
           );
           resolvedRenderOrder = Math.round(
-            THREE.MathUtils.lerp(
-              INTERACTION_RENDER_ORDER,
-              cardRenderOrder,
-              easedProgress,
-            ),
+            THREE.MathUtils.lerp(INTERACTION_RENDER_ORDER, cardRenderOrder, easedProgress),
           );
 
           if (progress >= 1) {
