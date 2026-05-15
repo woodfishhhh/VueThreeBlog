@@ -198,6 +198,7 @@ describe("PostPanel", () => {
     expect(wrapper.get("[data-testid='blog-editorial-layout']").classes()).toContain(
       "lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]",
     );
+    expect(wrapper.classes()).toContain("lg:overflow-visible");
     expect(wrapper.get("[data-testid='blog-filter-rail']").classes()).toContain(
       "lg:max-h-[calc(100vh-7rem)]",
     );

@@ -145,7 +145,7 @@ const { activateSkill } = useMatterCapsules({
   box-shadow:
     var(--author-capsule-shadow),
     inset 0 0 0 2px rgba(20, 20, 50, 1);
-  border: 22px solid #000;
+  border: 1px solid #000;
 }
 
 .author-capsule:active {

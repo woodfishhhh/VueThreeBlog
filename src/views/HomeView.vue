@@ -130,27 +130,23 @@ const focusHintTarget = computed(() => (theme.value === "day" ? "莫比乌斯带
         <Transition name="friend-panel" mode="out-in">
           <div
             v-if="siteStore.mode === 'friend'"
-            class="pointer-events-auto absolute inset-0 overflow-hidden"
+            class="stage-panel-gradient stage-panel-gradient--friend pointer-events-auto absolute inset-0 overflow-hidden"
           >
-            <div class="stage-panel-gradient stage-panel-gradient--friend h-full w-full">
-              <div class="h-full w-full">
-                <FriendPanel v-if="friendLinks.length > 0" :links="friendLinks" />
-                <div
-                  v-else
-                  class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]"
-                >
-                  <div class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
-                    {{ isFriendLinksLoading ? "Loading network" : "Network standby" }}
-                  </div>
-                  <p class="mt-4 max-w-md text-sm leading-7 text-[var(--stage-hint)]">
-                    {{
-                      isFriendLinksLoading
-                        ? "友情链接正在按需接入，稍后会完整出现。"
-                        : "友情链接会在你进入 Friend 面板时即时载入。"
-                    }}
-                  </p>
-                </div>
+            <FriendPanel v-if="friendLinks.length > 0" :links="friendLinks" />
+            <div
+              v-else
+              class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]"
+            >
+              <div class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
+                {{ isFriendLinksLoading ? "Loading network" : "Network standby" }}
               </div>
+              <p class="mt-4 max-w-md text-sm leading-7 text-[var(--stage-hint)]">
+                {{
+                  isFriendLinksLoading
+                    ? "友情链接正在按需接入，稍后会完整出现。"
+                    : "友情链接会在你进入 Friend 面板时即时载入。"
+                }}
+              </p>
             </div>
           </div>
         </Transition>

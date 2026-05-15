@@ -109,7 +109,7 @@ function isActive(id: (typeof navItems)[number]["id"]) {
     <Transition name="fade-slide">
       <div
         v-if="isOpen"
-        class="pointer-events-auto absolute right-4 top-16 sm:right-6 sm:top-20 flex min-w-[150px] flex-col gap-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-2)] p-4 shadow-lg backdrop-blur-md md:hidden"
+        class="pointer-events-auto absolute right-4 top-16 sm:right-6 sm:top-20 flex min-w-[150px] flex-col gap-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--background)] p-4 shadow-lg md:hidden"
       >
         <RouterLink
           v-for="item in navItems"

@@ -289,8 +289,7 @@ function handleLoopScroll() {
 }
 
 .friend-loop-segment--clone {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 500px;
+  /* content-visibility: auto removed — 离屏跳过渲染会导致卡片阴影突然出现/消失 */
 }
 
 .friend-waterfall-column {

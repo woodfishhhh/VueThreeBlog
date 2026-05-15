@@ -136,7 +136,7 @@ function visitRandomFriend() {
   background:
     linear-gradient(135deg, rgba(255, 251, 241, 0.72), rgba(255, 255, 255, 0.48)),
     var(--surface-soft);
-  box-shadow: 0 26px 90px rgba(37, 32, 22, 0.16);
+  box-shadow: 0 8px 32px rgba(37, 32, 22, 0.12);
 }
 
 .friend-links-pane__header {
@@ -252,7 +252,7 @@ function visitRandomFriend() {
 :root[data-theme="night"] .friend-links-pane {
   background:
     linear-gradient(135deg, rgba(12, 16, 32, 0.58), rgba(8, 12, 24, 0.42)), var(--surface-soft);
-  box-shadow: 0 26px 90px rgba(0, 0, 0, 0.34);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
 }
 
 :root[data-theme="night"] .friend-links-pane__random {

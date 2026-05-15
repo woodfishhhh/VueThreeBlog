@@ -90,7 +90,7 @@ const cardStyle = computed<Record<string, string>>(() => ({
     transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
     border-color 220ms ease;
-  contain: layout style paint;
+  contain: layout style;
 }
 
 .friend-link-card:hover {

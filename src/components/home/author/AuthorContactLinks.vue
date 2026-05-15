@@ -1,79 +1,193 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, useTemplateRef } from "vue";
+import gsap from "gsap";
 
+import { useTheme } from "@/composables/useTheme";
 import type { AuthorProfileData } from "@/types/content";
 
 const props = defineProps<{
   contacts: AuthorProfileData["contacts"];
 }>();
 
+const { theme } = useTheme();
+
 type ContactLink = {
-  href: string;
+  id: string;
+  href?: string;
+  /** 暗色主题用的 iconify 图标路径（含 collection/name，不含 ?color） */
   icon: string;
+  /** 暗色下颜色（hex，不含 #） */
+  colorDark: string;
+  /** 亮色下颜色（hex，不含 #）；缺省则与暗色相同 */
+  colorLight?: string;
   label: string;
+  info?: string;
 };
 
-const contactLinks = computed<ContactLink[]>(() =>
-  [
-    {
-      label: "GitHub",
-      href: props.contacts.github,
-      icon: "M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22",
-    },
-    {
-      label: "Bilibili",
-      href: props.contacts.bilibili,
-      icon: "M2 7h20v15H2z M7 2l5 5 5-5",
-    },
-    {
-      label: "QQ",
-      href: props.contacts.qq,
-      icon: "M12 3c4.8 0 7 3.6 7 8.2 0 2.4-.8 4.5-2.2 6 1 .3 2.5.8 2.5 1.6 0 .8-2.8 1-7.3.6-4.5.4-7.3.2-7.3-.6 0-.8 1.5-1.3 2.5-1.6A8.3 8.3 0 0 1 5 11.2C5 6.6 7.2 3 12 3Z",
-    },
-    {
-      label: "WeChat",
-      href: props.contacts.wechat,
-      icon: "M9 7c-3.9 0-7 2.6-7 5.8 0 1.8 1 3.4 2.7 4.5L4 20l3-1.6c.6.1 1.3.2 2 .2 3.9 0 7-2.6 7-5.8S12.9 7 9 7Zm8 3c-2.8 0-5 1.9-5 4.2S14.2 18.5 17 18.5c.5 0 1 0 1.5-.2l2.5 1.2-.7-2c1-.8 1.7-2 1.7-3.3C22 11.9 19.8 10 17 10Z",
-    },
-    {
-      label: "Email",
-      href: props.contacts.email,
-      icon: "M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6 12 13 2 6",
-    },
-    {
-      label: "Douyin",
-      href: props.contacts.douyin,
-      icon: "M14 2c0 3.2 2.3 5.7 5 5.7v3.8c-1.8 0-3.6-.5-5-1.5v6c0 3.3-2.4 6-5.5 6S3 19.3 3 16s2.4-6 5.5-6c.3 0 .7 0 1 .1v3.9a2.4 2.4 0 0 0-1-.2c-1.4 0-2.5 1-2.5 2.2s1.1 2.2 2.5 2.2S11 17.2 11 16V2h3Z",
-    },
-  ].filter((link) => link.href),
+/** 根据当前主题生成带色参数的 iconify CDN URL */
+function iconUrl(icon: string, colorDark: string, colorLight?: string): string {
+  const hex = theme.value === "day" && colorLight ? colorLight : colorDark;
+  return `https://api.iconify.design/${icon}.svg?color=%23${hex}`;
+}
+
+const rawLinks = computed<ContactLink[]>(() => [
+  {
+    id: "qq",
+    label: "QQ",
+    info: "3053932588",
+    icon: "fa-brands/qq",
+    colorDark: "12B7F5",
+    colorLight: "0D99D1", // 稍深，亮色下更清晰
+  },
+  {
+    id: "wechat",
+    label: "WeChat",
+    info: "woodfishhhh",
+    icon: "fa-brands/weixin",
+    colorDark: "07C160",
+    colorLight: "05A050",
+  },
+  {
+    id: "email",
+    label: "Email",
+    info: "woodfishhhh@163.com",
+    icon: "mdi/email",
+    colorDark: "EA4335",
+    colorLight: "C5271C",
+  },
+  {
+    id: "github",
+    label: "GitHub",
+    href: props.contacts.github,
+    icon: "mdi/github",
+    colorDark: "ffffff",
+    colorLight: "181717", // 亮色主题换成近黑
+  },
+  {
+    id: "bilibili",
+    label: "Bilibili",
+    href: props.contacts.bilibili,
+    icon: "ri/bilibili-fill",
+    colorDark: "00A1D6",
+    colorLight: "0080AA",
+  },
+  {
+    id: "douyin",
+    label: "Douyin",
+    href: props.contacts.douyin,
+    icon: "ri/tiktok-fill",
+    colorDark: "ffffff",
+    colorLight: "111111", // 亮色主题换成深色
+  },
+  {
+    id: "neteasemusic",
+    label: "网易云音乐",
+    href: "http://music.163.com/artist?id=36291742&userid=1502464532",
+    icon: "simple-icons/neteasecloudmusic",
+    colorDark: "C20C0C",
+    colorLight: "C20C0C",
+  },
+  {
+    id: "instagram",
+    label: "Instagram",
+    href: "https://www.instagram.com/p/DMADLYigio8ICcPrSM_oQlppDOpOBPm-qxmUFE0/?igsh=MXdicXptaWV4MWNlcQ==",
+    icon: "ri/instagram-fill",
+    colorDark: "E4405F",
+    colorLight: "C13353",
+  },
+]);
+
+const contactLinks = computed(() =>
+  rawLinks.value.map((l) => ({
+    ...l,
+    iconSrc: iconUrl(l.icon, l.colorDark, l.colorLight),
+  })),
 );
+
+const activePopup = ref<string | null>(null);
+const iconRefs = useTemplateRef<HTMLImageElement[]>("icons");
+const popupRefs = useTemplateRef<HTMLElement[]>("popups");
+
+function animateIcon(index: number, direction: "in" | "out") {
+  const icon = iconRefs.value?.[index];
+  if (!icon) {
+    return;
+  }
+
+  gsap.killTweensOf(icon);
+  gsap.to(icon, {
+    rotate: direction === "in" ? 360 : -24,
+    duration: direction === "in" ? 0.55 : 0.28,
+    ease: direction === "in" ? "power2.out" : "power2.inOut",
+    transformOrigin: "50% 50%",
+  });
+}
+
+function togglePopup(id: string, index: number) {
+  if (activePopup.value === id) {
+    // Close it
+    activePopup.value = null;
+    const el = popupRefs.value?.[index];
+    if (el) {
+      gsap.to(el, {
+        opacity: 0,
+        y: 10,
+        scale: 0.9,
+        duration: 0.2,
+        onComplete: () => {
+          el.style.display = "none";
+        },
+      });
+    }
+  } else {
+    // Hide others
+    popupRefs.value?.forEach((el) => {
+      gsap.killTweensOf(el);
+      el.style.display = "none";
+      el.style.opacity = "0";
+    });
+
+    activePopup.value = id;
+    const el = popupRefs.value?.[index];
+    if (el) {
+      el.style.display = "block";
+      gsap.fromTo(
+        el,
+        { opacity: 0, y: 10, scale: 0.9 },
+        { opacity: 1, y: -10, scale: 1, duration: 0.3, ease: "back.out(1.7)" },
+      );
+    }
+  }
+}
 </script>
 
 <template>
   <div class="author-contact-links">
-    <a
-      v-for="link in contactLinks"
-      :key="link.label"
-      :aria-label="link.label"
-      :href="link.href"
-      class="author-contact-links__item"
-      rel="noopener noreferrer"
-      :title="link.label"
-      target="_blank"
-    >
-      <svg
-        aria-hidden="true"
-        class="h-4 w-4"
-        fill="none"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="1.6"
-        viewBox="0 0 24 24"
+    <div v-for="(link, index) in contactLinks" :key="link.id" class="author-contact-links__wrapper">
+      <component
+        :is="link.href ? 'a' : 'button'"
+        :aria-label="link.label"
+        :href="link.href"
+        class="author-contact-links__item"
+        :rel="link.href ? 'noopener noreferrer' : undefined"
+        :target="link.href ? '_blank' : undefined"
+        :title="link.label"
+        @mouseenter="animateIcon(index, 'in')"
+        @mouseleave="animateIcon(index, 'out')"
+        @click="!link.href ? togglePopup(link.id, index) : undefined"
       >
-        <path :d="link.icon" />
-      </svg>
-    </a>
+        <img ref="icons" :src="link.iconSrc" :alt="link.label" class="author-contact-links__icon" />
+      </component>
+
+      <div
+        v-if="!link.href"
+        ref="popups"
+        class="author-contact-links__popup"
+        style="display: none; opacity: 0"
+      >
+        {{ link.label }}: {{ link.info }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -82,6 +196,10 @@ const contactLinks = computed<ContactLink[]>(() =>
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+}
+
+.author-contact-links__wrapper {
+  position: relative;
 }
 
 .author-contact-links__item {
@@ -93,19 +211,77 @@ const contactLinks = computed<ContactLink[]>(() =>
   border: 1px solid var(--border-subtle);
   border-radius: 999px;
   background: var(--author-contact-bg);
-  color: var(--stage-hint-strong);
+  cursor: pointer;
   transition:
-    transform 180ms ease,
     border-color 180ms ease,
     background-color 180ms ease,
-    color 180ms ease;
+    transform 180ms ease;
+  perspective: 1000px;
+}
+
+.author-contact-links__icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  will-change: transform;
 }
 
 .author-contact-links__item:hover {
-  transform: translateY(-2px);
   border-color: var(--border-strong);
   background: var(--author-contact-hover-bg);
-  color: var(--stage-fg);
+  transform: translateY(-2px);
+}
+
+.author-contact-links__popup {
+  position: absolute;
+  bottom: calc(100% + 0.8rem);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 12rem;
+  padding: 0.7rem 0.9rem;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 0.85rem;
+  background:
+    linear-gradient(180deg, rgba(15, 20, 34, 0.98), rgba(10, 14, 26, 0.98)), var(--background);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #f8fbff;
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.34),
+    0 2px 0 rgba(255, 255, 255, 0.08) inset;
+  backdrop-filter: none;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.author-contact-links__popup::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 0.9rem;
+  height: 0.9rem;
+  transform: translate(-50%, -52%) rotate(45deg);
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(12, 16, 28, 0.98);
+}
+
+:root[data-theme="day"] .author-contact-links__popup {
+  border-color: rgba(25, 33, 52, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 247, 252, 0.98)), var(--background);
+  color: #141b29;
+  box-shadow:
+    0 18px 42px rgba(18, 28, 46, 0.16),
+    0 1px 0 rgba(255, 255, 255, 0.7) inset;
+}
+
+:root[data-theme="day"] .author-contact-links__popup::after {
+  border-right-color: rgba(25, 33, 52, 0.14);
+  border-bottom-color: rgba(25, 33, 52, 0.14);
+  background: rgba(246, 248, 252, 0.98);
 }
 
 @media (max-width: 767px) {

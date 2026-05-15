@@ -42,7 +42,7 @@ function toggleTag(value: string) {
 </script>
 
 <template>
-  <div class="space-y-6 text-left overflow-hidden">
+  <div class="space-y-6 overflow-hidden text-left lg:overflow-visible">
     <BlogSearchBar
       :query="searchQuery"
       :sort="sortKey"

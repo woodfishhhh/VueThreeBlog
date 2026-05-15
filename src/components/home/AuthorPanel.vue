@@ -114,9 +114,8 @@ const screens = [
   height: 100%;
   box-sizing: border-box;
   justify-content: flex-end;
-  padding: clamp(4rem, 8vh, 6rem) 0 0;
+  padding: 0;
   background: var(--author-shell-bg);
-  transition: padding 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 :deep(.author-screen__panel) {
@@ -143,6 +142,11 @@ const screens = [
 :deep(.author-screen__panel--hero) {
   padding: 0;
   justify-content: flex-start;
+}
+
+/* About panel: nav clearance — shell top padding removed, so panel carries the offset */
+:deep(.author-screen__panel--about) {
+  padding-top: clamp(5.5rem, 11vh, 8rem);
 }
 
 /* Fullbleed capsule screen: panel completely fills the half-screen boundary */
@@ -174,19 +178,26 @@ const screens = [
   }
 
   :deep(.author-screen__shell) {
-    padding: clamp(3rem, 15vh, 6rem) 0 2rem;
+    padding: 0;
     background: var(--author-shell-bg-mobile);
   }
 
   :deep(.author-screen__panel) {
     width: 100%;
     min-height: 100%;
-    padding: clamp(1.2rem, 3vh, 2rem) 1rem 1.5rem;
+    padding: clamp(1.2rem, 3vh, 2rem) 1.5rem 1.5rem;
+    overflow-y: auto;
   }
 
-  /* About Me panel: tighter top shell padding so content fits in one viewport */
-  :deep([data-testid="author-screen-about"] .author-screen__shell) {
-    padding-top: clamp(2rem, 8vh, 3.5rem);
+  /* About panel on mobile: nav clearance */
+  :deep(.author-screen__panel--about) {
+    padding-top: clamp(4.5rem, 9vh, 6.5rem);
+  }
+}
+
+@media (min-width: 768px) {
+  :deep(.author-screen__panel--poster) {
+    overflow: visible;
   }
 }
 
