@@ -172,7 +172,7 @@ export default defineConfig({
           "vp run content:generate:ci && cross-env VITE_BASE_PATH=/newBlog/ vp run app:build && cross-env VITE_BASE_PATH=/newBlog/ vp run dist:verify",
       },
       "dist:verify": {
-        command: "tsx scripts/verify-dist.mts",
+        command: "node --import tsx scripts/verify-dist.mts",
         env: ["DIST_DIR", "VITE_BASE_PATH"],
       },
       "e2e:test": {
