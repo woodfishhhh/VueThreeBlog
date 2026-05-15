@@ -115,7 +115,7 @@ export default defineConfig({
       },
       "agent:dist": {
         command:
-          "cross-env VITE_BASE_PATH=/newBlog/ vp run app:build && cross-env VITE_BASE_PATH=/newBlog/ vp run dist:verify",
+          "cross-env VITE_BASE_PATH=/newBlog/ vp run app:build && cross-env VITE_BASE_PATH=/newBlog/ tsx scripts/verify-dist.mts",
       },
       "agent:fast": {
         command: "vp run check:quick && vp run test:unit",
@@ -169,11 +169,11 @@ export default defineConfig({
       },
       "deploy:build": {
         command:
-          "vp run content:generate:ci && cross-env VITE_BASE_PATH=/newBlog/ vp run app:build && cross-env VITE_BASE_PATH=/newBlog/ vp run dist:verify",
+          "vp run content:generate:ci && cross-env VITE_BASE_PATH=/newBlog/ vp run app:build && cross-env VITE_BASE_PATH=/newBlog/ tsx scripts/verify-dist.mts",
       },
       "dist:verify": {
-        command: "node --import tsx scripts/verify-dist.mts",
-        env: ["DIST_DIR", "VITE_BASE_PATH"],
+        command: "tsx scripts/verify-dist.mts",
+        untrackedEnv: ["DIST_DIR", "VITE_BASE_PATH"],
       },
       "e2e:test": {
         command: "playwright test",

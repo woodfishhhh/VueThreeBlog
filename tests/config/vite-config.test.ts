@@ -83,9 +83,10 @@ describe("Vite+ task graph", () => {
     expect(config.run?.cache).toBe(true);
     expect(config.run?.tasks?.["app:build"]?.dependsOn).toContain("vue:typecheck");
     expect(config.run?.tasks?.["app:build"]?.output).toContain("dist/**");
-    expect(config.run?.tasks?.["dist:verify"]?.command).toContain(
-      "node --import tsx scripts/verify-dist.mts",
-    );
+    expect(config.run?.tasks?.["agent:dist"]?.command).toContain("tsx scripts/verify-dist.mts");
+    expect(config.run?.tasks?.["agent:dist"]?.command).not.toContain("vp run dist:verify");
+    expect(config.run?.tasks?.["deploy:build"]?.command).toContain("tsx scripts/verify-dist.mts");
+    expect(config.run?.tasks?.["deploy:build"]?.command).not.toContain("vp run dist:verify");
     expect(config.run?.tasks?.["agent:full"]?.command).toContain("agent:static");
     expect(config.run?.tasks?.["content:index"]?.output).toEqual(
       expect.arrayContaining(["src/generated/**", "public/content-assets/**"]),
