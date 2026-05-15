@@ -31,4 +31,25 @@ app.use(pinia);
 app.use(router);
 app.mount("#app");
 
-registerSW({ immediate: true });
+const updateServiceWorker = registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    updateServiceWorker(true);
+  },
+  onRegisteredSW(_swUrl, registration) {
+    registration?.update().catch(() => {});
+  },
+});
+
+if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+  let reloading = false;
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (reloading) {
+      return;
+    }
+
+    reloading = true;
+    window.location.reload();
+  });
+}

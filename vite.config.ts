@@ -93,8 +93,18 @@ const pwaPlugin = VitePWA({
     clientsClaim: true,
     skipWaiting: true,
     navigateFallback: `${base}index.html`,
-    globPatterns: ["**/*.{js,css,html,svg,png,jpg,webp,ico,woff,woff2}"],
+    globPatterns: ["**/*.{js,css,svg,png,jpg,webp,ico,woff,woff2}"],
+    navigateFallbackDenylist: [/^\/api\//i],
     runtimeCaching: [
+      {
+        urlPattern: ({ request }) => request.mode === "navigate",
+        handler: "NetworkFirst",
+        options: {
+          cacheName: "page-shell-cache",
+          networkTimeoutSeconds: 3,
+          expiration: { maxEntries: 10, maxAgeSeconds: 60 * 5 },
+        },
+      },
       {
         urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
         handler: "StaleWhileRevalidate",
