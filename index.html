@@ -2,25 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/jpeg" href="https://pic1.imgdb.cn/item/682f3d1658cb8da5c807b704.jpg" />
+    <link rel="icon" type="image/jpeg" href="https:
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
       (() => {
         const KEY = "vuecubeblog-theme";
         const DEFAULT = "night";
-
         let nextTheme = DEFAULT;
         try {
           const stored = window.localStorage.getItem(KEY);
           if (stored === "night" || stored === "day") nextTheme = stored;
         } catch {}
-
         const root = document.documentElement;
         root.dataset.theme = nextTheme;
         root.style.colorScheme = nextTheme === "day" ? "light" : "dark";
       })();
     </script>
-
     <!--
       性能优化：内联关键 CSS
       ================================
@@ -28,7 +25,6 @@
       - 背景色 (#050510 深空黑)
       - 文字颜色 (白色)
       - 防止闪屏 (FOUC - Flash of Unstyled Content)
-
       完整 CSS 仍然由 Vite 加载（异步，不阻塞渲染）
     -->
     <style>
@@ -36,37 +32,33 @@
         --stage-bg: #050510;
         --stage-fg: #f6f8ff;
       }
-
       :root[data-theme="day"] {
         --stage-bg: #fafaf7;
         --stage-fg: #17191f;
       }
-
-      /* 关键 CSS：防止页面加载时闪烁 */
+      
       body { background-color: var(--stage-bg); color: var(--stage-fg); margin: 0; }
       #app { min-height: 100vh; }
     </style>
-
     <!-- SEO & Social Meta -->
     <meta
       name="description"
-      content="WOODFISH | Vue-powered immersive 3D blog experience." />
+      content="木鱼的鱼窝 | Vue-powered immersive 3D blog experience." />
     <meta name="theme-color" content="#050510" />
-    <link rel="canonical" href="https://woodfish.site/newBlog/" />
+    <link rel="canonical" href="https:
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="WOODFISH | VueCubeBlog" />
+    <meta property="og:title" content="木鱼的鱼窝 | VueCubeBlog" />
     <meta
       property="og:description"
-      content="WOODFISH | Vue-powered immersive 3D blog experience." />
-    <meta property="og:url" content="https://woodfish.site/newBlog/" />
-    <meta property="og:image" content="https://woodfish.site/newBlog/favicon.svg" />
+      content="木鱼的鱼窝 | Vue-powered immersive 3D blog experience." />
+    <meta property="og:url" content="https:
+    <meta property="og:image" content="https:
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="WOODFISH | VueCubeBlog" />
+    <meta name="twitter:title" content="木鱼的鱼窝 | VueCubeBlog" />
     <meta
       name="twitter:description"
-      content="WOODFISH | Vue-powered immersive 3D blog experience." />
-    <meta name="twitter:image" content="https://woodfish.site/newBlog/favicon.svg" />
-
+      content="木鱼的鱼窝 | Vue-powered immersive 3D blog experience." />
+    <meta name="twitter:image" content="https:
     <!--
       Content Security Policy (CSP)
       ==============================
@@ -77,7 +69,6 @@
       - img-src: 只允许同源图片、data/blob URL、以及 favicon 图床资源
       - connect-src: 只允许同源请求
       - frame-ancestors: 只能通过 HTTP 响应头配置，不能放在 meta CSP 中
-
       为什么禁止 'unsafe-inline'？
       -----------------------------
       如果允许内联脚本（unsafe-inline），攻击者通过 XSS 注入的 <script> 标签就能执行。
@@ -91,13 +82,12 @@
         script-src 'self' 'unsafe-inline' 'unsafe-eval';
         style-src 'self' 'unsafe-inline';
         font-src 'self';
-        img-src 'self' data: blob: https://pic1.imgdb.cn https://*.superbed.cc;
+        img-src 'self' data: blob: https:
         connect-src 'self';
         base-uri 'self';
-        form-action 'self' https://github.com;
+        form-action 'self' https:
       " />
-
-    <title>WOODFISH | VueCubeBlog</title>
+    <title>木鱼的鱼窝</title>
   </head>
   <body>
     <div id="app"></div>
