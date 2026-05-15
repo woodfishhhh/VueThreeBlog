@@ -6,6 +6,11 @@ import * as THREE from "three";
 
 import { createCircleTexture } from "@/components/scene/circle-texture";
 import { getGeometryTransformTarget } from "@/components/scene/geometry-transform";
+// import {
+//   createHomeBackdropGlyph,
+//   loadHomeBackdropTexture,
+//   type HomeBackdropGlyph,
+// } from "@/components/scene/home-backdrop-glyph";
 import { normalizeRotationForTween } from "@/components/scene/hypercube-rotation";
 import {
   isDesktopWorksOrbitMode,
@@ -73,6 +78,7 @@ const CAMERA_INTRO_START_POSITION = new THREE.Vector3(0, 1.5, 92);
 const CAMERA_INTRO_START_LOOK = new THREE.Vector3(0, 0, 0);
 const NIGHT_CLEAR_COLOR = new THREE.Color("#050510");
 const DAY_CLEAR_COLOR = new THREE.Color("#FAFAF7");
+const CLEAR_ALPHA = 0;
 const HYPERCUBE_SCENE_SCALE = 1;
 const MOBIUS_SCENE_SCALE = 1.7;
 const INACTIVE_SCALE = 0.001;
@@ -94,6 +100,7 @@ let threeScene: ThreeScene | null = null;
 let starField: StarField | null = null;
 let hypercube: Hypercube | null = null;
 let mobius: MobiusStrip | null = null;
+// let homeBackdropGlyph: HomeBackdropGlyph | null = null;
 let worksOrbitCards: WorksOrbitCards | null = null;
 let controls: {
   enableZoom: boolean;
@@ -112,6 +119,7 @@ let circleTexture: THREE.CanvasTexture | null = null;
 let reducedMotionQuery: MediaQueryList | null = null;
 let prefersReducedMotion = false;
 let suppressNextCanvasClick = false;
+// let sceneDisposed = false;
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -212,8 +220,8 @@ function applyThemeImmediate(nextTheme: ThemeMode) {
   starField.setOpacity(isDay ? 0 : 1);
   hypercube.group.scale.setScalar(isDay ? INACTIVE_SCALE : HYPERCUBE_SCENE_SCALE);
   mobius.group.scale.setScalar(isDay ? MOBIUS_SCENE_SCALE : INACTIVE_SCALE);
-  threeScene.scene.background = isDay ? DAY_CLEAR_COLOR.clone() : NIGHT_CLEAR_COLOR.clone();
-  threeScene.renderer.setClearColor(isDay ? DAY_CLEAR_COLOR : NIGHT_CLEAR_COLOR, 1);
+  threeScene.scene.background = null;
+  threeScene.renderer.setClearColor(isDay ? DAY_CLEAR_COLOR : NIGHT_CLEAR_COLOR, CLEAR_ALPHA);
 }
 
 function updateGeometryTransform(immediate = false) {
@@ -296,6 +304,7 @@ function handleResize() {
 
   threeScene.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   threeScene.resize(width, height);
+  // homeBackdropGlyph?.updateViewport({ height, width });
   updateGeometryTransform();
   updateWorksOrbitCards();
 }
@@ -479,14 +488,37 @@ function handleCanvasPointerDown(event: PointerEvent) {
 
 onMounted(async () => {
   if (!container.value || !canvasRef.value) return;
+  // sceneDisposed = false;
 
   const width = container.value.clientWidth;
   const height = container.value.clientHeight;
   isMobile.value = width < 768;
 
-  threeScene = useThreeScene({ canvas: canvasRef.value, width, height });
+  threeScene = useThreeScene({
+    canvas: canvasRef.value,
+    height,
+    transparentBackground: true,
+    width,
+  });
   threeScene.camera.position.copy(CAMERA_INTRO_START_POSITION);
   threeScene.camera.lookAt(CAMERA_INTRO_START_LOOK);
+
+  // void loadHomeBackdropTexture()
+  //   .then((texture) => {
+  //     if (!threeScene || sceneDisposed || !container.value) {
+  //       texture.dispose();
+  //       return;
+  //     }
+  //
+  //     const nextGlyph = createHomeBackdropGlyph({ texture, theme: theme.value });
+  //     nextGlyph.updateViewport({
+  //       height: container.value.clientHeight,
+  //       width: container.value.clientWidth,
+  //     });
+  //     homeBackdropGlyph = nextGlyph;
+  //     threeScene.scene.add(nextGlyph.group);
+  //   })
+  //   .catch(() => {});
 
   circleTexture = createCircleTexture();
   starField = useStarField(circleTexture);
@@ -687,6 +719,7 @@ watch(
   },
 );
 watch(theme, (nextTheme) => {
+  // homeBackdropGlyph?.setTheme(nextTheme);
   const geometry = getGeometryByTheme(nextTheme);
   if (store.isFocusing && geometry) {
     const targetRotation =
@@ -703,6 +736,7 @@ watch(theme, (nextTheme) => {
 });
 
 onBeforeUnmount(() => {
+  // sceneDisposed = true;
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
   window.removeEventListener("resize", handleResize);
   if (container.value) container.value.removeEventListener("pointermove", handlePointerMove);
@@ -743,6 +777,7 @@ onBeforeUnmount(() => {
   starField?.dispose();
   hypercube?.dispose();
   mobius?.dispose();
+  // homeBackdropGlyph?.dispose();
   worksOrbitCards?.dispose();
   circleTexture?.dispose();
   controls?.dispose();
@@ -752,6 +787,7 @@ onBeforeUnmount(() => {
   starField = null;
   hypercube = null;
   mobius = null;
+  // homeBackdropGlyph = null;
   worksOrbitCards = null;
   circleTexture = null;
   controls = null;
@@ -764,7 +800,7 @@ onBeforeUnmount(() => {
 <template>
   <div
     ref="container"
-    class="absolute inset-0 z-0 bg-[var(--stage-bg)] h-[100dvh]"
+    class="absolute inset-0 z-0 h-[100dvh]"
     :class="{
       'cursor-grab': (store.isFocusing && !isDragging) || hasCardHoverOnly,
       'cursor-grabbing': (store.isFocusing && isDragging) || cardGrabActive,

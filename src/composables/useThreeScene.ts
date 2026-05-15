@@ -5,6 +5,7 @@ export interface ThreeSceneOptions {
   width: number;
   height: number;
   backgroundColor?: string;
+  transparentBackground?: boolean;
 }
 
 export interface ThreeScene {
@@ -18,19 +19,20 @@ export interface ThreeScene {
 
 export function useThreeScene(options: ThreeSceneOptions): ThreeScene {
   const background = options.backgroundColor ?? "#050510";
+  const backgroundAlpha = options.transparentBackground ? 0 : 1;
 
   const renderer = new THREE.WebGLRenderer({
     canvas: options.canvas,
     antialias: true,
-    alpha: false,
+    alpha: options.transparentBackground ?? false,
     powerPreference: "high-performance",
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(options.width, options.height);
-  renderer.setClearColor(new THREE.Color(background));
+  renderer.setClearColor(new THREE.Color(background), backgroundAlpha);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(background);
+  scene.background = options.transparentBackground ? null : new THREE.Color(background);
 
   const camera = new THREE.PerspectiveCamera(75, options.width / options.height, 0.1, 1000);
 

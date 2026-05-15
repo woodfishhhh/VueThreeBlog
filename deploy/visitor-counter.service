@@ -1,0 +1,18 @@
+[Unit]
+Description=VueCubeBlog visitor counter service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/blog-stack/services/visitor-counter
+Environment=VISITOR_COUNTER_HOST=0.0.0.0
+Environment=VISITOR_COUNTER_PORT=3011
+Environment=VISITOR_COUNTER_DATA_FILE=/opt/blog-stack/services/visitor-counter/data/visitor-count.json
+ExecStart=/usr/bin/python3 /opt/blog-stack/services/visitor-counter/visitor-counter.py
+Restart=always
+RestartSec=2
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

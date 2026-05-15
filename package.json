@@ -16,6 +16,7 @@
     "build:deploy": "vp run deploy:build",
     "verify:dist": "vp run dist:verify",
     "deploy:vps": "powershell -ExecutionPolicy Bypass -File deploy/deploy.ps1",
+    "deploy:visitor-counter": "powershell -ExecutionPolicy Bypass -File deploy/install-visitor-counter.ps1",
     "preview": "vp preview",
     "analyze": "vp run app:analyze",
     "test": "vp run test:unit",

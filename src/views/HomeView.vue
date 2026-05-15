@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from "vue";
+import { computed, defineAsyncComponent, onMounted } from "vue";
 
 import AuthorPanel from "@/components/home/AuthorPanel.vue";
 import FriendPanel from "@/components/home/FriendPanel.vue";
 import PostPanel from "@/components/home/PostPanel.vue";
 import ReadingOverlay from "@/components/home/ReadingOverlay.vue";
 import SlideController from "@/components/home/SlideController.vue";
+import VisitorCountBadge from "@/components/home/VisitorCountBadge.vue";
 import WorksPanel from "@/components/home/WorksPanel.vue";
 import SiteNav from "@/components/layout/SiteNav.vue";
 import { useHomePanels } from "@/composables/useHomePanels";
 import { useTheme } from "@/composables/useTheme";
+import { useVisitorCount } from "@/composables/useVisitorCount";
 import { useSiteStore } from "@/stores/site";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -37,6 +39,17 @@ const { posts, author, friendLinks, works, isPostsLoading, isAuthorLoading, isFr
 const homeHint = computed(() => siteStore.mode === "home" && !siteStore.isFocusing);
 const focusHint = computed(() => siteStore.isFocusing);
 const focusHintTarget = computed(() => (theme.value === "day" ? "莫比乌斯带" : "超立方体"));
+const showVisitorCount = computed(() => siteStore.mode === "home");
+const {
+  total: visitorCountTotal,
+  isLoading: visitorCountLoading,
+  hasError: visitorCountError,
+  hydrate: hydrateVisitorCount,
+} = useVisitorCount();
+
+onMounted(() => {
+  void hydrateVisitorCount();
+});
 </script>
 
 <template>
@@ -44,7 +57,9 @@ const focusHintTarget = computed(() => (theme.value === "day" ? "莫比乌斯带
     <SiteNav />
 
     <div class="fixed inset-0 z-0 h-full w-full">
-      <ThreeSceneCanvas />
+      <div class="absolute inset-0 z-0" data-testid="home-scene-layer">
+        <ThreeSceneCanvas />
+      </div>
     </div>
 
     <SlideController>
@@ -74,6 +89,14 @@ const focusHintTarget = computed(() => (theme.value === "day" ? "莫比乌斯带
             </button>
           </div>
         </Transition>
+
+        <div v-if="showVisitorCount" class="pointer-events-none absolute bottom-6 left-6 z-20">
+          <VisitorCountBadge
+            :total="visitorCountTotal"
+            :is-loading="visitorCountLoading"
+            :has-error="visitorCountError"
+          />
+        </div>
 
         <Transition name="blog-panel" mode="out-in">
           <div
