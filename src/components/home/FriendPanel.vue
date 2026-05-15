@@ -46,7 +46,7 @@ function visitRandomFriend() {
             邻居星球
           </div>
           <h2
-            class="mt-2 text-4xl font-light text-[var(--stage-fg)] md:text-5xl">
+            class="mt-2 text-3xl sm:text-4xl font-light text-[var(--stage-fg)] md:text-5xl">
             友链
           </h2>
         </div>
@@ -137,7 +137,11 @@ function visitRandomFriend() {
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(255, 251, 241, 0.72), rgba(255, 255, 255, 0.48)),
+    linear-gradient(
+      135deg,
+      rgba(255, 251, 241, 0.72),
+      rgba(255, 255, 255, 0.48)
+    ),
     var(--surface-soft);
   box-shadow: 0 26px 90px rgba(37, 32, 22, 0.16);
 }

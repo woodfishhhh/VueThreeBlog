@@ -317,6 +317,7 @@ function handleResize() {
   const height = container.value.clientHeight;
   isMobile.value = width < 768;
 
+  threeScene.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   threeScene.resize(width, height);
   updateGeometryTransform();
   updateWorksOrbitCards();
@@ -822,7 +823,7 @@ onBeforeUnmount(() => {
 <template>
   <div
     ref="container"
-    class="absolute inset-0 z-0 bg-[var(--stage-bg)]"
+    class="absolute inset-0 z-0 bg-[var(--stage-bg)] h-[100dvh]"
     :class="{
       'cursor-grab': (store.isFocusing && !isDragging) || hasCardHoverOnly,
       'cursor-grabbing': (store.isFocusing && isDragging) || cardGrabActive,

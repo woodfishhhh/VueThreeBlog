@@ -22,10 +22,14 @@ const isDesktopOrbit = computed(
 const showCaseView = computed(
   () => !isLargeViewport.value || store.worksViewMode === "case",
 );
-const panelDescription = "作品卡片已进入WebGL轨道。按住卡片拖向中心,松手打开Live站点。";
+const panelDescription =
+  "作品卡片已进入WebGL轨道。按住卡片拖向中心,松手打开Live站点。";
 
 function resolveIsLargeViewport() {
-  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+  if (
+    typeof window === "undefined" ||
+    typeof window.matchMedia !== "function"
+  ) {
     return true;
   }
 
@@ -37,7 +41,10 @@ function handleMediaChange(event: MediaQueryListEvent) {
 }
 
 onMounted(() => {
-  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+  if (
+    typeof window === "undefined" ||
+    typeof window.matchMedia !== "function"
+  ) {
     return;
   }
 
@@ -68,7 +75,8 @@ onUnmounted(() => {
 
 <template>
   <div class="works-panel">
-    <div class="works-panel__header">
+    <div
+      class="works-panel__header px-4 sm:px-6 pt-20 sm:pt-24 lg:px-10 lg:pt-24 pb-0">
       <div class="works-panel__title">
         <p>{{ panelDescription }}</p>
       </div>
@@ -76,16 +84,26 @@ onUnmounted(() => {
         v-if="isLargeViewport"
         :model-value="store.worksViewMode"
         class="works-panel__toggle"
-        @update:model-value="store.setWorksViewMode"
-      />
+        @update:model-value="store.setWorksViewMode" />
     </div>
 
-    <ul v-if="isDesktopOrbit" class="works-panel__a11y-links" aria-label="作品链接">
+    <ul
+      v-if="isDesktopOrbit"
+      class="works-panel__a11y-links"
+      aria-label="作品链接">
       <li v-for="work in works" :key="work.slug">
-        <a :href="work.liveUrl" rel="noreferrer noopener" tabindex="-1" target="_blank">
+        <a
+          :href="work.liveUrl"
+          rel="noreferrer noopener"
+          tabindex="-1"
+          target="_blank">
           {{ work.name }}
         </a>
-        <a :href="work.githubUrl" rel="noreferrer noopener" tabindex="-1" target="_blank">
+        <a
+          :href="work.githubUrl"
+          rel="noreferrer noopener"
+          tabindex="-1"
+          target="_blank">
           {{ work.name }} GitHub
         </a>
       </li>
@@ -115,7 +133,6 @@ onUnmounted(() => {
   justify-content: space-between;
   gap: 1.5rem;
   pointer-events: none;
-  padding: clamp(5rem, 8vh, 6rem) clamp(1.25rem, 3vw, 2.5rem) 0;
 }
 
 .works-panel__title {
