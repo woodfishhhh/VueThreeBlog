@@ -58,11 +58,11 @@ jobs:
 
       - name: Upload site archive
         run: |
-          scp "${{ env.DEPLOY_ARCHIVE }}" "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ env.DEPLOY_REMOTE_ARCHIVE }}"
+          cat "${{ env.DEPLOY_ARCHIVE }}" | ssh "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" "cat > '${{ env.DEPLOY_REMOTE_ARCHIVE }}'"
 
       - name: Upload nginx config
         run: |
-          scp deploy/nginx.conf "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/default.conf"
+          cat deploy/nginx.conf | ssh "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" "cat > /tmp/default.conf"
 
       - name: Activate release
         run: |
