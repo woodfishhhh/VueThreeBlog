@@ -447,7 +447,7 @@ test: {
 | `generate_ecc_guide.py` | 25KB | **删除** — 同上 |
 | `dist-manual-deploy.tar.gz` | 16.5MB | 已 .gitignore;可删本地副本(deploy 流程不需要) |
 | `.preview.err.log` / `.preview.out.log` / `.vite-dev.log` | <5KB | 已被 `*.log` 覆盖,可删 |
-| `plan.md` | 6KB | 看是否仍在用,若否归档到 `docs/archive/` |
+| `docs/plan.md` | 6KB | 迁移计划已收敛到 `docs/` 下集中维护 |
 | 多份 `AGENTS.md` (×11) | 3.6KB | 已 `**/AGENTS.md` 忽略,本地保留无碍 |
 
 **.gitignore 补充建议:**
