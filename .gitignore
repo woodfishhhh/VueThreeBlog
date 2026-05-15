@@ -11,7 +11,33 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+coverage
+test-results
+playwright-report
+.vite-hooks/
+.vite/
+.vite-inspect/
 *.local
+
+# Agent/workflow local artifacts
+.claude/
+docs/superpowers/
+
+# Generated IDE/framework declarations
+src/auto-imports.d.ts
+src/components.d.ts
+
+# Generated content and localized assets
+src/generated/
+public/post-index.json
+public/content-assets/
+public/imported-assets/
+public/remote-assets/
+public/author-assets/
+
+# Stale static leftovers
+public/asset/f725f7fc67d79930b505550749765877.jpg
+public/asset/image.png
 
 # Editor directories and files
 .vscode/*
