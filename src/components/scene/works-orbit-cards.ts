@@ -92,6 +92,8 @@ const LAUNCH_ZONE_HALF_NDC = 0.28;
 const MAGNET_FALLOFF_NDC = 0.78;
 const REDUCED_MOTION_INTENSITY_CAP = 0.25;
 const INTERACTION_RENDER_ORDER = 1_000;
+const RETURN_ANIMATION_DURATION = 0.38;
+const RETURN_ANIMATION_DURATION_REDUCED = 0.18;
 export const WORKS_ORBIT_CARD_RENDER_LAYER = 1;
 
 interface CardInteractionState {
@@ -107,6 +109,12 @@ interface CardScreenHit {
   hit: WorksOrbitCardHit;
   x: number;
   y: number;
+}
+
+interface CardReturnState {
+  startedAt: number;
+  startPosition: THREE.Vector3;
+  startScale: number;
 }
 
 const orbitPosition = new THREE.Vector3();
@@ -501,6 +509,7 @@ export function createWorksOrbitCards({ theme, works }: WorksOrbitCardsOptions):
   let hoveredSlug: string | null = null;
   let interaction: CardInteractionState | null = null;
   const phaseOffsets = new Map<string, number>();
+  const returnStates = new Map<string, CardReturnState>();
   const screenHits = new Map<string, CardScreenHit>();
 
   return {
@@ -508,6 +517,7 @@ export function createWorksOrbitCards({ theme, works }: WorksOrbitCardsOptions):
     beginDrag(hit, pointerNdc) {
       const card = cards.find((item) => item.work.slug === hit.slug);
       if (!card) return;
+      returnStates.delete(card.work.slug);
       interaction = {
         hit: {
           action: "live",
@@ -578,6 +588,7 @@ export function createWorksOrbitCards({ theme, works }: WorksOrbitCardsOptions):
       hoveredSlug = card.work.slug;
 
       if (isWorksLaunchZone(activeInteraction.pointerNdc)) {
+        returnStates.delete(card.work.slug);
         return {
           action: "launch",
           url: card.work.liveUrl || activeInteraction.hit.url,
@@ -591,6 +602,11 @@ export function createWorksOrbitCards({ theme, works }: WorksOrbitCardsOptions):
         card.work.slug,
         projectedAngle - getBaseAngle(cardIndex, cards.length, elapsed),
       );
+      returnStates.set(card.work.slug, {
+        startedAt: elapsed,
+        startPosition: card.group.position.clone(),
+        startScale: card.group.scale.x,
+      });
 
       return { action: "resume" };
     },
@@ -628,6 +644,7 @@ export function createWorksOrbitCards({ theme, works }: WorksOrbitCardsOptions):
         });
         const hovered = hoveredSlug === card.work.slug;
         const activeInteraction = interaction?.slug === card.work.slug ? interaction : null;
+        const returnState = returnStates.get(card.work.slug);
 
         card.group.quaternion.copy(camera.quaternion);
         card.group.rotateZ((index - 1) * 0.025);
@@ -662,12 +679,43 @@ export function createWorksOrbitCards({ theme, works }: WorksOrbitCardsOptions):
         }
 
         orbitPosition.set(frame.position.x, frame.position.y, frame.position.z);
-        card.group.position.copy(orbitPosition);
-        card.group.scale.setScalar(frame.scale * (hovered ? 1.08 : 1));
-
+        const orbitScale = frame.scale * (hovered ? 1.08 : 1);
         const cardRenderOrder = Math.round(90 + frame.frontness * 50);
-        card.group.renderOrder = cardRenderOrder;
-        card.cardMesh.renderOrder = cardRenderOrder;
+        let resolvedRenderOrder = cardRenderOrder;
+
+        if (returnState) {
+          const duration = reducedMotion
+            ? RETURN_ANIMATION_DURATION_REDUCED
+            : RETURN_ANIMATION_DURATION;
+          const progress = clamp((elapsed - returnState.startedAt) / duration, 0, 1);
+          const easedProgress = 1 - (1 - progress) ** 3;
+
+          card.group.position.lerpVectors(
+            returnState.startPosition,
+            orbitPosition,
+            easedProgress,
+          );
+          card.group.scale.setScalar(
+            THREE.MathUtils.lerp(returnState.startScale, orbitScale, easedProgress),
+          );
+          resolvedRenderOrder = Math.round(
+            THREE.MathUtils.lerp(
+              INTERACTION_RENDER_ORDER,
+              cardRenderOrder,
+              easedProgress,
+            ),
+          );
+
+          if (progress >= 1) {
+            returnStates.delete(card.work.slug);
+          }
+        } else {
+          card.group.position.copy(orbitPosition);
+          card.group.scale.setScalar(orbitScale);
+        }
+
+        card.group.renderOrder = resolvedRenderOrder;
+        card.cardMesh.renderOrder = resolvedRenderOrder;
         card.cardMaterial.opacity = 1;
         card.cardMaterial.color.set(hovered ? "#ffffff" : "#f4f7ff");
         screenHits.set(

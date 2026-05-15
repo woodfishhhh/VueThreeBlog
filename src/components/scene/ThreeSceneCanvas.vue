@@ -275,7 +275,13 @@ function updateGeometryTransform(immediate = false) {
           y: savedFocusRotations.night.y,
           z: savedFocusRotations.night.z,
         }
-      : defaultRotations.night;
+      : immediate
+        ? defaultRotations.night
+        : {
+            x: hypercube.group.rotation.x,
+            y: hypercube.group.rotation.y,
+            z: hypercube.group.rotation.z,
+          };
   const dayRotation =
     store.isFocusing && activeTheme === "day"
       ? {
@@ -283,7 +289,13 @@ function updateGeometryTransform(immediate = false) {
           y: savedFocusRotations.day.y,
           z: savedFocusRotations.day.z,
         }
-      : defaultRotations.day;
+      : immediate
+        ? defaultRotations.day
+        : {
+            x: mobius.group.rotation.x,
+            y: mobius.group.rotation.y,
+            z: mobius.group.rotation.z,
+          };
 
   applyGroupTransform(hypercube.group, "night", {
     position: targetPosition,

@@ -234,6 +234,30 @@ describe("createWorksOrbitCardFrame", () => {
     cards.dispose();
   });
 
+  it("keeps the release pose on the first resume frame, then animates back to orbit", () => {
+    const camera = createCamera();
+    const cards = createWorksOrbitCards({ theme: "night", works });
+    const cardGroup = cards.group.children[0] as THREE.Group;
+
+    cards.beginDrag(
+      { action: "live", slug: "blog", url: works[0].liveUrl },
+      new THREE.Vector2(-0.6, 0.15),
+    );
+    cards.drag(new THREE.Vector2(0.7, 0.34));
+    updateOrbitCards(cards, camera, 0.1, 1);
+    const releasePosition = cardGroup.position.clone();
+
+    expect(cards.release(0.1)).toEqual({ action: "resume" });
+
+    updateOrbitCards(cards, camera, 0.1, 0.016);
+    expect(cardGroup.position.distanceTo(releasePosition)).toBeLessThan(0.001);
+
+    updateOrbitCards(cards, camera, 0.14, 0.016);
+    expect(cardGroup.position.distanceTo(releasePosition)).toBeGreaterThan(0.05);
+
+    cards.dispose();
+  });
+
   it("does not launch when release is called without a drag", () => {
     const cards = createWorksOrbitCards({ theme: "night", works });
 

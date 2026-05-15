@@ -22,11 +22,7 @@ const isDesktopOrbit = computed(
 const showCaseView = computed(
   () => !isLargeViewport.value || store.worksViewMode === "case",
 );
-const panelDescription = computed(() =>
-  isDesktopOrbit.value
-    ? "作品卡片已进入 WebGL 轨道。按住卡片拖向中心，松手打开 Live 站点。"
-    : "移动端使用项目列表：快速查看用途、入口和仓库。",
-);
+const panelDescription = "作品卡片已进入WebGL轨道。按住卡片拖向中心,松手打开Live站点。";
 
 function resolveIsLargeViewport() {
   if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
@@ -74,8 +70,6 @@ onUnmounted(() => {
   <div class="works-panel">
     <div class="works-panel__header">
       <div class="works-panel__title">
-        <div class="works-panel__eyebrow">Portfolio Matrix</div>
-        <h2>Selected Works</h2>
         <p>{{ panelDescription }}</p>
       </div>
       <WorksViewToggle
@@ -132,25 +126,9 @@ onUnmounted(() => {
   pointer-events: auto;
 }
 
-.works-panel__eyebrow {
-  color: var(--stage-hint);
-  font-size: 0.68rem;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-}
-
-.works-panel__title h2 {
-  margin: 0.75rem 0 0;
-  color: var(--stage-fg);
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 300;
-  letter-spacing: 0;
-  line-height: 1;
-}
-
 .works-panel__title p {
-  max-width: 37rem;
-  margin: 0.9rem 0 0;
+  max-width: 40rem;
+  margin: 0;
   color: var(--stage-hint);
   font-size: 0.92rem;
   line-height: 1.8;
@@ -183,10 +161,6 @@ onUnmounted(() => {
     display: block;
     pointer-events: auto;
     padding: 5rem 1.25rem 0;
-  }
-
-  .works-panel__title h2 {
-    font-size: clamp(1.9rem, 11vw, 3.2rem);
   }
 
   .works-panel__title p {
