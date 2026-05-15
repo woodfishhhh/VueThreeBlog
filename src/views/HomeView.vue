@@ -40,7 +40,10 @@ const focusHintTarget = computed(() => (theme.value === "day" ? "莫比乌斯带
 </script>
 
 <template>
-  <main class="relative min-h-screen overflow-hidden bg-[var(--stage-bg)] text-[var(--stage-fg)]">
+  <main
+    data-home-stage
+    class="relative min-h-screen overflow-hidden bg-[var(--stage-bg)] text-[var(--stage-fg)]"
+  >
     <SiteNav />
 
     <div class="fixed inset-0 z-0 h-full w-full">
@@ -75,90 +78,98 @@ const focusHintTarget = computed(() => (theme.value === "day" ? "莫比乌斯带
           </div>
         </Transition>
 
-        <Transition name="blog-panel" mode="out-in">
-          <div
-            v-if="siteStore.mode === 'blog'"
-            data-testid="blog-panel-overlay"
-            class="stage-panel-gradient stage-panel-gradient--blog pointer-events-auto absolute inset-0 h-full w-full overflow-y-auto overscroll-contain p-4 pt-20 sm:p-6 sm:pt-24 md:p-8 md:pt-24 md:pl-16 lg:p-10 lg:pt-24 lg:pl-20"
-          >
-            <div class="flex min-h-full w-full flex-col justify-start">
-              <PostPanel v-if="posts.length > 0" :posts="posts" />
-              <div
-                v-else
-                class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]"
-              >
-                <div class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
-                  {{ isPostsLoading ? "Loading archive" : "Archive standby" }}
-                </div>
-                <p
-                  class="mt-4 w-full text-xs sm:text-sm max-w-md leading-7 text-[var(--stage-hint)]"
-                >
-                  {{
-                    isPostsLoading
-                      ? "正在按需装载文章目录，马上就能进入阅读。"
-                      : "文章目录会在你进入 Blog 面板时即时载入。"
-                  }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </Transition>
+        <div
+          v-if="siteStore.mode === 'home'"
+          data-panel-layer="home"
+          data-panel-active="true"
+          class="pointer-events-none absolute inset-0"
+        />
 
-        <Transition name="author-panel" mode="out-in">
-          <div v-if="siteStore.mode === 'author'" class="pointer-events-auto absolute inset-0">
-            <div class="flex h-full w-full items-center justify-center">
-              <AuthorPanel v-if="author" :author="author" />
-              <div
-                v-else
-                class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]"
-              >
-                <div class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
-                  {{ isAuthorLoading ? "Loading profile" : "Profile standby" }}
-                </div>
-                <p class="mt-4 max-w-md text-sm leading-7 text-[var(--stage-hint)]">
-                  {{
-                    isAuthorLoading
-                      ? "作者资料正在按需同步，面板即将展开。"
-                      : "作者资料会在你进入 Author 面板时即时载入。"
-                  }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </Transition>
-
-        <Transition name="friend-panel" mode="out-in">
-          <div
-            v-if="siteStore.mode === 'friend'"
-            class="stage-panel-gradient stage-panel-gradient--friend pointer-events-auto absolute inset-0 overflow-hidden"
-          >
-            <FriendPanel v-if="friendLinks.length > 0" :links="friendLinks" />
+        <div
+          v-if="siteStore.mode === 'blog'"
+          data-panel-layer="blog"
+          data-panel-active="true"
+          data-testid="blog-panel-overlay"
+          class="stage-panel-gradient stage-panel-gradient--blog pointer-events-auto absolute inset-0 h-full w-full overflow-y-auto overscroll-contain p-4 pt-20 sm:p-6 sm:pt-24 md:p-8 md:pt-24 md:pl-16 lg:p-10 lg:pt-24 lg:pl-20"
+        >
+          <div class="flex min-h-full w-full flex-col justify-start">
+            <PostPanel v-if="posts.length > 0" :posts="posts" />
             <div
               v-else
               class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]"
             >
               <div class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
-                {{ isFriendLinksLoading ? "Loading network" : "Network standby" }}
+                {{ isPostsLoading ? "Loading archive" : "Archive standby" }}
               </div>
-              <p class="mt-4 max-w-md text-sm leading-7 text-[var(--stage-hint)]">
+              <p class="mt-4 w-full text-xs sm:text-sm max-w-md leading-7 text-[var(--stage-hint)]">
                 {{
-                  isFriendLinksLoading
-                    ? "友情链接正在按需接入，稍后会完整出现。"
-                    : "友情链接会在你进入 Friend 面板时即时载入。"
+                  isPostsLoading
+                    ? "正在按需装载文章目录，马上就能进入阅读。"
+                    : "文章目录会在你进入 Blog 面板时即时载入。"
                 }}
               </p>
             </div>
           </div>
-        </Transition>
+        </div>
 
-        <Transition name="works-panel" mode="out-in">
-          <div
-            v-if="siteStore.mode === 'works'"
-            class="stage-panel-gradient--works pointer-events-none absolute inset-0"
-          >
-            <WorksPanel :works="works" />
+        <div
+          v-if="siteStore.mode === 'author'"
+          data-panel-layer="author"
+          data-panel-active="true"
+          class="pointer-events-auto absolute inset-0"
+        >
+          <div class="flex h-full w-full items-center justify-center">
+            <AuthorPanel v-if="author" :author="author" />
+            <div
+              v-else
+              class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]"
+            >
+              <div class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
+                {{ isAuthorLoading ? "Loading profile" : "Profile standby" }}
+              </div>
+              <p class="mt-4 max-w-md text-sm leading-7 text-[var(--stage-hint)]">
+                {{
+                  isAuthorLoading
+                    ? "作者资料正在按需同步，面板即将展开。"
+                    : "作者资料会在你进入 Author 面板时即时载入。"
+                }}
+              </p>
+            </div>
           </div>
-        </Transition>
+        </div>
+
+        <div
+          v-if="siteStore.mode === 'friend'"
+          data-panel-layer="friend"
+          data-panel-active="true"
+          class="stage-panel-gradient stage-panel-gradient--friend pointer-events-auto absolute inset-0 overflow-hidden"
+        >
+          <FriendPanel v-if="friendLinks.length > 0" :links="friendLinks" />
+          <div
+            v-else
+            class="rounded-[28px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-6 py-7 text-[var(--stage-hint)]"
+          >
+            <div class="text-[11px] uppercase tracking-[0.36em] text-[var(--stage-hint)]">
+              {{ isFriendLinksLoading ? "Loading network" : "Network standby" }}
+            </div>
+            <p class="mt-4 max-w-md text-sm leading-7 text-[var(--stage-hint)]">
+              {{
+                isFriendLinksLoading
+                  ? "友情链接正在按需接入，稍后会完整出现。"
+                  : "友情链接会在你进入 Friend 面板时即时载入。"
+              }}
+            </p>
+          </div>
+        </div>
+
+        <div
+          v-if="siteStore.mode === 'works'"
+          data-panel-layer="works"
+          data-panel-active="true"
+          class="stage-panel-gradient--works pointer-events-none absolute inset-0"
+        >
+          <WorksPanel :works="works" />
+        </div>
       </div>
 
       <ReadingOverlay />

@@ -92,7 +92,7 @@ function handleToggleTheme(payload: { x: number; y: number }) {
 </script>
 
 <template>
-  <main ref="pageRoot" class="article-page">
+  <main ref="pageRoot" data-post-page class="article-page">
     <div class="article-page__ambient article-page__ambient--left" />
     <div class="article-page__ambient article-page__ambient--right" />
 
@@ -121,58 +121,56 @@ function handleToggleTheme(payload: { x: number; y: number }) {
       </div>
     </div>
 
-    <div v-if="isLoading" class="article-page__status" data-testid="post-view-loading">
-      <p class="article-page__status-label">Decoding article signal</p>
-      <p class="article-page__status-text">
-        Pulling the latest generated content and aligning the reading surface.
-      </p>
-    </div>
+    <div data-post-surface>
+      <div v-if="isLoading" class="article-page__status" data-testid="post-view-loading">
+        <p class="article-page__status-label">Decoding article signal</p>
+        <p class="article-page__status-text">
+          Pulling the latest generated content and aligning the reading surface.
+        </p>
+      </div>
 
-    <div
-      v-else-if="!article"
-      class="article-page__status article-page__status--empty"
-      data-testid="post-view-not-found"
-    >
-      <p class="article-page__status-label">Article not found</p>
-      <p class="article-page__status-text">
-        The requested route does not map to an available post in this generated archive.
-      </p>
-    </div>
-
-    <div
-      v-else
-      class="article-page__article w-full max-w-full overflow-hidden"
-      data-testid="post-view-article"
-    >
-      <ArticleContent :article="article" :scroll-container="pageRoot" />
-
-      <nav
-        v-if="previousPost || nextPost"
-        class="article-page__adjacent-nav"
-        aria-label="Adjacent posts"
+      <div
+        v-else-if="!article"
+        class="article-page__status article-page__status--empty"
+        data-testid="post-view-not-found"
       >
-        <RouterLink
-          v-if="previousPost"
-          :to="{ path: `/posts/${previousPost.canonicalSlug}` }"
-          class="article-page__adjacent-link article-page__adjacent-link--previous flex flex-col sm:flex-row gap-2 sm:gap-4"
-          data-testid="post-view-previous-link"
-        >
-          <span class="article-page__adjacent-label">上一篇</span>
-          <strong class="article-page__adjacent-title">{{ previousPost.title }}</strong>
-          <span class="article-page__adjacent-meta">{{ previousPost.publishedLabel }}</span>
-        </RouterLink>
+        <p class="article-page__status-label">Article not found</p>
+        <p class="article-page__status-text">
+          The requested route does not map to an available post in this generated archive.
+        </p>
+      </div>
 
-        <RouterLink
-          v-if="nextPost"
-          :to="{ path: `/posts/${nextPost.canonicalSlug}` }"
-          class="article-page__adjacent-link article-page__adjacent-link--next flex flex-col sm:flex-row gap-2 sm:gap-4"
-          data-testid="post-view-next-link"
+      <div v-else class="article-page__article w-full max-w-full overflow-hidden" data-testid="post-view-article">
+        <ArticleContent :article="article" :scroll-container="pageRoot" />
+
+        <nav
+          v-if="previousPost || nextPost"
+          class="article-page__adjacent-nav"
+          aria-label="Adjacent posts"
         >
-          <span class="article-page__adjacent-label">下一篇</span>
-          <strong class="article-page__adjacent-title">{{ nextPost.title }}</strong>
-          <span class="article-page__adjacent-meta">{{ nextPost.publishedLabel }}</span>
-        </RouterLink>
-      </nav>
+          <RouterLink
+            v-if="previousPost"
+            :to="{ path: `/posts/${previousPost.canonicalSlug}` }"
+            class="article-page__adjacent-link article-page__adjacent-link--previous flex flex-col sm:flex-row gap-2 sm:gap-4"
+            data-testid="post-view-previous-link"
+          >
+            <span class="article-page__adjacent-label">上一篇</span>
+            <strong class="article-page__adjacent-title">{{ previousPost.title }}</strong>
+            <span class="article-page__adjacent-meta">{{ previousPost.publishedLabel }}</span>
+          </RouterLink>
+
+          <RouterLink
+            v-if="nextPost"
+            :to="{ path: `/posts/${nextPost.canonicalSlug}` }"
+            class="article-page__adjacent-link article-page__adjacent-link--next flex flex-col sm:flex-row gap-2 sm:gap-4"
+            data-testid="post-view-next-link"
+          >
+            <span class="article-page__adjacent-label">下一篇</span>
+            <strong class="article-page__adjacent-title">{{ nextPost.title }}</strong>
+            <span class="article-page__adjacent-meta">{{ nextPost.publishedLabel }}</span>
+          </RouterLink>
+        </nav>
+      </div>
     </div>
   </main>
 </template>

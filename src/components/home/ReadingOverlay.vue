@@ -44,27 +44,28 @@ onBeforeUnmount(() => window.removeEventListener("keydown", handleEsc));
 </script>
 
 <template>
-  <Transition name="fade-slide">
-    <div
-      v-if="isOpen"
-      ref="scrollContainerRef"
-      class="article-overlay-scroll-root fixed inset-0 z-50 overflow-y-auto bg-[rgba(5,5,16,0.34)] p-6 backdrop-blur-sm md:p-20"
+  <div
+    v-if="isOpen"
+    data-reading-overlay
+    ref="scrollContainerRef"
+    class="article-overlay-scroll-root fixed inset-0 z-50 overflow-y-auto bg-[rgba(5,5,16,0.34)] p-6 backdrop-blur-sm md:p-20"
+  >
+    <button
+      class="fixed right-8 top-8 z-[60] flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--surface-1)] text-[var(--stage-hint)] transition-all hover:border-[var(--border-strong)] hover:text-[var(--stage-fg)]"
+      type="button"
+      @click="handleClose"
     >
-      <button
-        class="fixed right-8 top-8 z-[60] flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--surface-1)] text-[var(--stage-hint)] transition-all hover:border-[var(--border-strong)] hover:text-[var(--stage-fg)]"
-        type="button"
-        @click="handleClose"
-      >
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
 
+    <div data-reading-surface class="min-h-full">
       <div v-if="isLoading" class="article-page__status mt-20">Loading article…</div>
       <ArticleContent
         v-else-if="article"
@@ -80,5 +81,5 @@ onBeforeUnmount(() => window.removeEventListener("keydown", handleEsc));
         </p>
       </div>
     </div>
-  </Transition>
+  </div>
 </template>
