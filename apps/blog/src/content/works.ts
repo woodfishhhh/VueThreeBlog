@@ -6,7 +6,7 @@ const workProjects: WorkProjectData[] = [
     name: "WoodFishNest",
     description: "三维博客主站，用超立方体把文章、作者和作品入口组织在同一个空间里。",
     kind: "Blog",
-    liveUrl: "http://36.151.148.198/newBlog/",
+    liveUrl: "https://woodfish.site/newBlog/",
     githubUrl: "https://github.com/woodfishhhh/VueThreeBlog",
   },
   {
@@ -22,7 +22,7 @@ const workProjects: WorkProjectData[] = [
     name: "Pretext",
     description: "围绕几何与空间感展开的交互实验，把叙事感放进可触摸的立体结构里。",
     kind: "Lab",
-    liveUrl: "https://woodfish.site/pretext/",
+    liveUrl: "https://woodfish.site/pretext",
     githubUrl: "https://github.com/woodfishhhh/Pretext-cube",
   },
 ];

@@ -12,7 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@woodfish-nest/shared": "0.0.0"
+    "@woodfish-nest/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.5.2",
