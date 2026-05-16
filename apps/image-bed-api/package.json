@@ -26,6 +26,6 @@
     "@types/node": "^25.5.2",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.21"
+    "vitest": "^3.0.0"
   }
 }

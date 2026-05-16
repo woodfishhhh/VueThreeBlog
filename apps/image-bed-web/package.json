@@ -18,8 +18,8 @@
     "@types/node": "^25.5.2",
     "@vitejs/plugin-vue": "^6.0.5",
     "typescript": "~5.9.3",
-    "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.21",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.21",
+    "vite": "^7.3.0",
+    "vitest": "^3.0.0",
     "vue-tsc": "^3.2.6"
   }
 }

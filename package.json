@@ -13,8 +13,6 @@
     "generate:content:ci": "npm run generate:content:ci -w @woodfish-nest/blog",
     "optimize:images": "npm run optimize:images -w @woodfish-nest/blog",
     "typecheck": "npm run typecheck -w @woodfish-nest/blog",
-    "check": "npm run check -w @woodfish-nest/blog",
-    "check:fix": "npm run check:fix -w @woodfish-nest/blog",
     "build": "npm run build -w @woodfish-nest/blog",
     "build:with-content": "npm run build:with-content -w @woodfish-nest/blog",
     "build:deploy": "npm run build:deploy -w @woodfish-nest/blog",
