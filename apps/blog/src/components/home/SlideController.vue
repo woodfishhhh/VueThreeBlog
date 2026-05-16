@@ -2,7 +2,7 @@
 import { onBeforeUnmount, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
-import { getRouteLocationForSiteMode } from "@/router/site-mode";
+import { getRouteLocationForSiteMode } from "@/utils/site-mode";
 import { useSiteStore } from "@/stores/site";
 
 const siteStore = useSiteStore();

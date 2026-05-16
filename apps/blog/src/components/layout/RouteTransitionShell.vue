@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
 
 import { playRouteTransition } from "@/composables/useRouteTransitionOrchestrator";
 import { resolveTransitionIntent } from "@/motion/route-transition-intent";
@@ -79,9 +78,9 @@ watch(
     <div data-transition-scrim class="route-transition-scrim" />
     <div data-transition-blade class="route-transition-blade" />
     <div data-route-stage class="route-transition-stage">
-      <RouterView v-slot="{ Component, route: routeView }">
+      <NuxtPage v-slot="{ Component, route: routeView }">
         <component :is="Component" :key="getRouteViewKey(routeView)" data-route-view />
-      </RouterView>
+      </NuxtPage>
     </div>
   </div>
 </template>

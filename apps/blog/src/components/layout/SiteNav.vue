@@ -3,7 +3,7 @@ import { shallowRef } from "vue";
 
 import ThemeToggle from "@/components/layout/ThemeToggle.vue";
 import { useTheme } from "@/composables/useTheme";
-import { getRouteLocationForSiteMode } from "@/router/site-mode";
+import { getRouteLocationForSiteMode } from "@/utils/site-mode";
 import { useSiteStore } from "@/stores/site";
 
 const siteStore = useSiteStore();

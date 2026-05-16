@@ -29,7 +29,7 @@ import { useStarField, type StarField } from "@/composables/useStarField";
 import { useTheme, type ThemeMode } from "@/composables/useTheme";
 import { useThreeScene, type ThreeScene } from "@/composables/useThreeScene";
 import { getWorkProjects } from "@/content/works";
-import { getRouteLocationForSiteMode } from "@/router/site-mode";
+import { getRouteLocationForSiteMode } from "@/utils/site-mode";
 import { useSiteStore } from "@/stores/site";
 
 interface ActiveGeometry {
