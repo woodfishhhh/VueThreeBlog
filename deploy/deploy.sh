@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# deploy.sh - 部署 VueCubeBlog 到京东云 VPS
+# deploy.sh - 部署 WoodFishNest 到京东云 VPS
 # 用法: bash deploy/deploy.sh
 
 set -euo pipefail
@@ -9,6 +9,8 @@ REMOTE_DIR="${DEPLOY_DIR:-/opt/blog-stack/sites/newBlog}"
 CONTAINER="${DEPLOY_CONTAINER:-blog-nginx}"
 BASE_PATH="${VITE_BASE_PATH:-/newBlog/}"
 SITE_URL="${DEPLOY_SITE_URL:-https://woodfish.site/newBlog/}"
+APP_ROOT="${DEPLOY_APP_ROOT:-apps/blog}"
+DIST_DIR="${DEPLOY_DIST_DIR:-$APP_ROOT/dist}"
 SSH_OPTS=(-o StrictHostKeyChecking=accept-new)
 
 archive=""
@@ -23,13 +25,13 @@ echo "==> 1. 构建项目..."
 cd "$(dirname "$0")/.."
 VITE_BASE_PATH="$BASE_PATH" npm run build:deploy
 
-archive="$(mktemp -t vuecubeblog.XXXXXX.tar.gz)"
+archive="$(mktemp -t woodfishnest.XXXXXX.tar.gz)"
 deploy_id="$(date +%Y%m%d%H%M%S)"
-remote_archive="/tmp/vuecubeblog-$deploy_id.tar.gz"
-remote_nginx_conf="/tmp/vuecubeblog-nginx-$deploy_id.conf"
+remote_archive="/tmp/woodfishnest-$deploy_id.tar.gz"
+remote_nginx_conf="/tmp/woodfishnest-nginx-$deploy_id.conf"
 
-echo "==> 2. 打包 dist/..."
-tar -C dist -czf "$archive" .
+echo "==> 2. 打包 $DIST_DIR ..."
+tar -C "$DIST_DIR" -czf "$archive" .
 
 echo "==> 3. 上传到 VPS..."
 scp "${SSH_OPTS[@]}" "$archive" "$REMOTE:$remote_archive"

@@ -1,0 +1,22 @@
+{
+  "name": "@woodfish-nest/upload-cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "muyu-upload": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@woodfish-nest/shared": "0.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.2",
+    "typescript": "~5.9.3",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.21"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@woodfish-nest/content-tools",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "woodfish-content": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.11.1",
+    "isomorphic-dompurify": "^3.9.0",
+    "js-yaml": "^4.1.1",
+    "markdown-it": "^14.1.1",
+    "markdown-it-anchor": "^9.2.0",
+    "sharp": "^0.34.5",
+    "tsx": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^25.5.2",
+    "typescript": "~5.9.3",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.21"
+  }
+}

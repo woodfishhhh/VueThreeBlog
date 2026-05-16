@@ -69,3 +69,4 @@ generate_ecc_guide.py
 /blog-*.png
 /blog-*-snapshot.md
 /NUL
+/.tmp/

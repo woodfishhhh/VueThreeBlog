@@ -39,10 +39,19 @@ if ([string]::IsNullOrWhiteSpace($SiteUrl)) {
 }
 
 $projectRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+$distDir = if ([string]::IsNullOrWhiteSpace($env:DEPLOY_DIST_DIR)) {
+  Join-Path $projectRoot "apps/blog/dist"
+} else {
+  if ([System.IO.Path]::IsPathRooted($env:DEPLOY_DIST_DIR)) {
+    $env:DEPLOY_DIST_DIR
+  } else {
+    Join-Path $projectRoot $env:DEPLOY_DIST_DIR
+  }
+}
 $deployId = Get-Date -Format "yyyyMMddHHmmss"
-$archive = Join-Path $env:TEMP "vuecubeblog-$deployId.tar.gz"
-$remoteArchive = "/tmp/vuecubeblog-$deployId.tar.gz"
-$remoteNginxConf = "/tmp/vuecubeblog-nginx-$deployId.conf"
+$archive = Join-Path $env:TEMP "woodfishnest-$deployId.tar.gz"
+$remoteArchive = "/tmp/woodfishnest-$deployId.tar.gz"
+$remoteNginxConf = "/tmp/woodfishnest-nginx-$deployId.conf"
 $sshOptions = @("-o", "StrictHostKeyChecking=accept-new")
 
 function Invoke-CheckedNative {
@@ -76,15 +85,15 @@ try {
       $env:VITE_BASE_PATH = $previousBasePath
     }
   } else {
-    Write-Host "==> 1. Skip build; use existing dist/..."
+    Write-Host "==> 1. Skip build; use existing deploy artifact..."
     Invoke-CheckedNative npm run verify:dist
   }
 
-  Write-Host "==> 2. Package dist/..."
+  Write-Host "==> 2. Package $distDir ..."
   if (Test-Path -LiteralPath $archive) {
     Remove-Item -LiteralPath $archive -Force
   }
-  Invoke-CheckedNative tar -C dist -czf $archive .
+  Invoke-CheckedNative tar -C $distDir -czf $archive .
 
   Write-Host "==> 3. Upload archive and nginx config..."
   Invoke-CheckedNative scp @sshOptions $archive "${Remote}:$remoteArchive"

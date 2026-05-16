@@ -130,18 +130,42 @@ for ((i=1; i<=MAX_ATTEMPTS; i++)); do
     if [[ -n "${TOKEN}" ]]; then export TOKEN="${TOKEN}"; fi
     if [[ -n "${REMOTE_METADATA_HOST}" ]]; then export JDCLOUD_METADATA_SSH_HOST="${REMOTE_METADATA_HOST}"; fi
 
+    close_rc=0
     if [[ -n "${PROBE_FILE}" ]]; then
-      EXPECTED_IP="${EXPECTED_IP}" ROOT_DOMAIN="${ROOT_DOMAIN}" HOST_RECORD="${HOST_RECORD}" \
-        bash "$(dirname "$0")/close-wave5-with-dns-api.sh" --probe-file "${PROBE_FILE}"
+      if EXPECTED_IP="${EXPECTED_IP}" ROOT_DOMAIN="${ROOT_DOMAIN}" HOST_RECORD="${HOST_RECORD}" \
+        bash "$(dirname "$0")/close-wave5-with-dns-api.sh" --probe-file "${PROBE_FILE}"; then
+        close_rc=0
+      else
+        close_rc=$?
+      fi
     else
-      EXPECTED_IP="${EXPECTED_IP}" ROOT_DOMAIN="${ROOT_DOMAIN}" HOST_RECORD="${HOST_RECORD}" \
-        bash "$(dirname "$0")/close-wave5-with-dns-api.sh"
+      if EXPECTED_IP="${EXPECTED_IP}" ROOT_DOMAIN="${ROOT_DOMAIN}" HOST_RECORD="${HOST_RECORD}" \
+        bash "$(dirname "$0")/close-wave5-with-dns-api.sh"; then
+        close_rc=0
+      else
+        close_rc=$?
+      fi
     fi
 
-    echo "running section43 audit..."
-    bash "$(dirname "$0")/section43-audit.sh"
-    echo "Section 43 gate satisfied."
-    exit 0
+    if (( close_rc == 0 )); then
+      echo "running section43 audit..."
+      if bash "$(dirname "$0")/section43-audit.sh"; then
+        echo "Section 43 gate satisfied."
+        exit 0
+      else
+        close_rc=$?
+      fi
+      echo "section43 audit still pending (rc=${close_rc}); will retry if attempts remain." >&2
+    else
+      echo "close-wave5-with-dns-api still pending (rc=${close_rc}); will retry if attempts remain." >&2
+    fi
+
+    if (( i < MAX_ATTEMPTS )); then
+      sleep "${POLL_SECONDS}"
+      continue
+    fi
+
+    exit "${close_rc}"
   fi
 
   if (( i < MAX_ATTEMPTS )); then

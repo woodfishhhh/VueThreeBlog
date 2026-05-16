@@ -49,7 +49,6 @@ try {
   if ($LASTEXITCODE -ne 0) {
     Write-Host "[FAIL] ssh/curl failed"
   } else {
-    Write-Host "raw: $raw"
     try {
       $jsonPayload = $raw
       $start = $raw.IndexOf("{")
@@ -72,6 +71,7 @@ try {
       $rak = ReadJsonField $obj "accessKey"
       $rsk = ReadJsonField $obj "secretKey"
       $rst = ReadJsonField $obj "sessionToken"
+      Write-Host ("metadata code: {0}" -f $code)
       if ($code -eq "success" -and -not [string]::IsNullOrWhiteSpace($rak) -and -not [string]::IsNullOrWhiteSpace($rsk)) {
         Write-Host ("[PASS] remote metadata creds ready: AK={0} SK={1}" -f (Redact $rak), (Redact $rsk))
         if (-not [string]::IsNullOrWhiteSpace($rst)) {
