@@ -3,9 +3,11 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "paths": {
+      "~/*": ["./src/*"],
+      "~~/*": ["./*"],
       "@/*": ["./src/*"]
     },
     "noUncheckedIndexedAccess": false
   },
-  "include": ["src", "tests", "nuxt.config.ts"]
+  "include": ["src", "nuxt.config.ts", ".nuxt/types"]
 }

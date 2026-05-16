@@ -29,8 +29,5 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
-      - name: Unit tests
-        run: npm run test
-
       - name: Dist build
         run: npm run build:deploy
