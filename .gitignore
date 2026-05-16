@@ -21,7 +21,11 @@ playwright-report
 
 # Agent/workflow local artifacts
 .claude/
-docs/superpowers/
+docs/superpowers/*
+!docs/superpowers/plans/
+docs/superpowers/plans/*
+!docs/superpowers/plans/2026-05-16-woodfishnest-monorepo-muyu-image-bed.md
+!docs/superpowers/plans/2026-05-16-woodfishnest-monorepo-muyu-image-bed.completion-audit.md
 
 # Generated IDE/framework declarations
 src/auto-imports.d.ts
