@@ -1,13 +1,9 @@
 {
   // Nuxt generates .nuxt/tsconfig.json; this file extends it.
+  // Do NOT override "paths" or "include" here — that would replace (not merge)
+  // Nuxt's own aliases (#imports, #build/*, ~, @, etc.) and break type-checking.
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
-    "paths": {
-      "~/*": ["./src/*"],
-      "~~/*": ["./*"],
-      "@/*": ["./src/*"]
-    },
     "noUncheckedIndexedAccess": false
-  },
-  "include": ["src", "nuxt.config.ts", ".nuxt/types"]
+  }
 }
