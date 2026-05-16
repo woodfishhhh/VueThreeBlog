@@ -4,7 +4,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "noUncheckedIndexedAccess": false
   },
   "include": ["src", "tests", "nuxt.config.ts"]
 }

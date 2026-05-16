@@ -136,7 +136,7 @@ function buildNextQuery(
   return nextQuery;
 }
 
-function readQueryValue(value: LocationQueryValue | LocationQueryValue[]) {
+function readQueryValue(value: LocationQueryValue | LocationQueryValue[] | undefined) {
   if (Array.isArray(value)) {
     return value[0]?.trim() ?? "";
   }
@@ -149,7 +149,7 @@ function readQueryValue(value: LocationQueryValue | LocationQueryValue[]) {
  * 过滤控制字符并截断到最大长度
  */
 function readAndSanitizeQueryValue(
-  value: LocationQueryValue | LocationQueryValue[],
+  value: LocationQueryValue | LocationQueryValue[] | undefined,
   type: "search" | "filter",
 ): string {
   const raw = readQueryValue(value);

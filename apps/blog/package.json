@@ -8,7 +8,7 @@
     "generate:content": "tsx ../../packages/content-tools/src/cli.ts generate && tsx ../../packages/content-tools/src/cli.ts optimize-images",
     "generate:content:ci": "tsx ../../packages/content-tools/src/cli.ts generate --reuse-assets",
     "optimize:images": "tsx ../../packages/content-tools/src/cli.ts optimize-images",
-    "typecheck": "nuxt typecheck",
+    "typecheck": "nuxt prepare && nuxt typecheck",
     "build": "nuxt generate",
     "build:with-content": "tsx ../../packages/content-tools/src/cli.ts generate && tsx ../../packages/content-tools/src/cli.ts optimize-images && nuxt generate",
     "build:deploy": "tsx ../../packages/content-tools/src/cli.ts generate --reuse-assets && cross-env NUXT_APP_BASE_URL=/newBlog/ nuxt generate && cross-env NUXT_APP_BASE_URL=/newBlog/ tsx ../../packages/content-tools/src/cli.ts verify-dist --app-root . --base-path /newBlog/ --dist-dir dist",
