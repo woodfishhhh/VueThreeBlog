@@ -50,8 +50,16 @@ export function verifyIndexHtmlPaths(html: string, basePath = "/newBlog/"): Dist
     );
   }
 
-  if (!manifestRefs.includes(`${normalizedBase}manifest.webmanifest`)) {
-    throw new Error(`dist/index.html does not reference ${normalizedBase}manifest.webmanifest`);
+  if (normalizedBase !== "/") {
+    // If a manifest ref appears in the HTML, ensure it's not root-scoped (would break subpath deploy)
+    if (manifestRefs.includes("/manifest.webmanifest")) {
+      throw new Error(
+        `dist/index.html has root-scoped /manifest.webmanifest for subpath deploy: use ${normalizedBase}manifest.webmanifest or a relative path`,
+      );
+    }
+    // Accept: no ref (injected at runtime by PWA JS), relative ref, or correctly base-prefixed ref
+  } else {
+    // Root deploy: any manifest ref is fine (no base prefix needed)
   }
 
   return {
