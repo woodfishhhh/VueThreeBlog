@@ -1,0 +1,7 @@
+services:
+  image-bed-api:
+    env_file:
+      - ../../.tmp/image-bed-local.env
+    volumes:
+      - ../../.tmp/muyu-images:/srv/muyu-images
+      - ../../.tmp/muyu-data:/srv/muyu-data

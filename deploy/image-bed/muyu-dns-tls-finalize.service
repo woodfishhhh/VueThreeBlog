@@ -1,0 +1,13 @@
+[Unit]
+Description=Finalize Muyu DNS/TLS cutover when DNS is ready
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/muyu-image-bed/auto-finalize-dns-tls.sh
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

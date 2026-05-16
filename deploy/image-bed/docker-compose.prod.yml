@@ -1,0 +1,23 @@
+services:
+  image-bed-api:
+    image: ${MUYU_API_IMAGE:-woodfishnest/muyu-image-bed-api:latest}
+    container_name: muyu-image-bed-api
+    restart: unless-stopped
+    env_file:
+      - ${MUYU_ENV_FILE:-/etc/muyu/image-bed-api.env}
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - /srv/muyu-images:/srv/muyu-images
+      - /srv/muyu-data:/srv/muyu-data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
