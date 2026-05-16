@@ -80,6 +80,9 @@ export default defineNuxtConfig({
   app: {
     baseURL: process.env.NUXT_APP_BASE_URL || "/",
 
+    // Use "assets/" dir name to match verify-dist.ts expectations (old Vite behavior)
+    buildAssetsDir: "assets",
+
     // Disable Nuxt's built-in transitions; RouteTransitionShell handles them
     pageTransition: false,
     layoutTransition: false,
