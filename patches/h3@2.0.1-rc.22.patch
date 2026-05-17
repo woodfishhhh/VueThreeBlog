@@ -1,0 +1,16 @@
+diff --git a/dist/h3.mjs b/dist/h3.mjs
+--- a/dist/h3.mjs
++++ b/dist/h3.mjs
+@@ -21,7 +21,11 @@ function withoutBase(input = "", base = "") {
+ 	return "/" + input.slice(_base.length).replace(/^\/+/, "");
+ }
+ function decodePathname(pathname) {
+-	return decodeURI(pathname.includes("%25") ? pathname.replace(/%25/g, "%2525") : pathname);
++	try {
++		return decodeURI(pathname.includes("%25") ? pathname.replace(/%25/g, "%2525") : pathname);
++	} catch {
++		return pathname;
++	}
+ }
+ function resolveDotSegments(path) {
+ 	if (!path.includes(".") && !path.includes("%2")) return path;
