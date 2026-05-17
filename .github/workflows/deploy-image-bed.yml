@@ -193,6 +193,16 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
+      - name: Upload compose config
+        run: |
+          ssh "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" "mkdir -p /opt/muyu-image-bed/deploy/image-bed"
+          scp \
+            -o BatchMode=yes \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=4 \
+            deploy/image-bed/docker-compose.prod.yml \
+            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/opt/muyu-image-bed/deploy/image-bed/docker-compose.prod.yml"
+
       - name: Login VPS to GitHub Container Registry
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
