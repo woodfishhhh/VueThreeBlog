@@ -150,11 +150,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Typecheck image-bed-api
-        run: pnpm image-bed:api:typecheck
-
       - name: Build shared
         run: pnpm shared:build
+
+      - name: Typecheck image-bed-api
+        run: pnpm image-bed:api:typecheck
 
       - name: Build image-bed-api
         run: pnpm image-bed:api:build
