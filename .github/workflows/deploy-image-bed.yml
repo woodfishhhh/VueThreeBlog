@@ -65,10 +65,10 @@ jobs:
 
       - name: Deploy to VPS
         run: |
-          ssh "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" "mkdir -p /srv/muyu-admin/assets"
+          ssh "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" "mkdir -p /opt/blog-stack/sites/admin/assets"
           rsync -avz --delete \
             apps/image-bed-web/dist/ \
-            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/srv/muyu-admin/"
+            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/opt/blog-stack/sites/admin/"
 
       - name: Upload nginx config
         run: |
@@ -121,7 +121,7 @@ jobs:
 
       - name: Verify deployment
         run: |
-          curl -fsSL "https://img.woodfish.site/admin/" | grep -q 'lang="zh-CN"'
+          curl -kfsSL "https://img.woodfish.site/admin/" | grep -q 'lang="zh-CN"'
           echo "Web frontend deployed successfully"
 
   deploy-api:
@@ -211,5 +211,5 @@ jobs:
 
       - name: Smoke test API
         run: |
-          curl -fsSL "https://img.woodfish.site/api/health"
+          curl -kfsSL "https://img.woodfish.site/api/health"
           echo "API deployed successfully"

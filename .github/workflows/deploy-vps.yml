@@ -17,8 +17,10 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       VITE_BASE_PATH: /newBlog/
       DEPLOY_URL: https://woodfish.site/newBlog/
+      DEPLOY_ARCHIVE: vue-three-blog-${{ github.run_id }}.tar.gz
+      DEPLOY_REMOTE_ARCHIVE: /tmp/vue-three-blog-${{ github.run_id }}.tar.gz
+      DEPLOY_REMOTE_CHUNKS: /tmp/vue-three-blog-${{ github.run_id }}-chunks
       DEPLOY_DIR: ${{ secrets.DEPLOY_DIR || '/opt/blog-stack/sites/newBlog' }}
-      DEPLOY_REMOTE_NEXT: ${{ format('{0}.next.{1}', secrets.DEPLOY_DIR || '/opt/blog-stack/sites/newBlog', github.run_id) }}
       DEPLOY_CONTAINER: blog-nginx
 
     steps:
@@ -46,6 +48,12 @@ jobs:
       - name: Dist build
         run: pnpm build:deploy
 
+      - name: Package site archive
+        run: |
+          tar -czf "${{ env.DEPLOY_ARCHIVE }}" -C apps/blog/dist .
+          sha256sum "${{ env.DEPLOY_ARCHIVE }}" > "${{ env.DEPLOY_ARCHIVE }}.sha256"
+          split -b 1m -d -a 4 "${{ env.DEPLOY_ARCHIVE }}" "${{ env.DEPLOY_ARCHIVE }}.part-"
+
       - name: Configure SSH
         run: |
           install -m 700 -d ~/.ssh
@@ -53,17 +61,42 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Upload site dist
+      - name: Upload site archive chunks
         run: |
           ssh_dest="${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}"
-          remote_next="${{ env.DEPLOY_REMOTE_NEXT }}"
+          remote_chunks="${{ env.DEPLOY_REMOTE_CHUNKS }}"
+          remote_archive="${{ env.DEPLOY_REMOTE_ARCHIVE }}"
 
           # shellcheck disable=SC2029
-          ssh "$ssh_dest" "case '$remote_next' in /opt/blog-stack/sites/*.next.*) ;; *) echo 'Refusing unsafe staging dir: $remote_next' >&2; exit 2 ;; esac; rm -rf '$remote_next'; mkdir -p '$remote_next'"
-          rsync -az --delete --partial --timeout=300 \
-            -e "ssh -o BatchMode=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=4" \
-            apps/blog/dist/ \
-            "$ssh_dest:$remote_next/"
+          ssh "$ssh_dest" "rm -rf '$remote_chunks'; mkdir -p '$remote_chunks'; rm -f '$remote_archive'"
+
+          for part in "${{ env.DEPLOY_ARCHIVE }}".part-*; do
+            timeout 90s scp \
+              -o BatchMode=yes \
+              -o ServerAliveInterval=15 \
+              -o ServerAliveCountMax=4 \
+              "$part" \
+              "$ssh_dest:$remote_chunks/$(basename "$part")"
+          done
+
+          # shellcheck disable=SC2029
+          ssh "$ssh_dest" "cat '$remote_chunks'/${{ env.DEPLOY_ARCHIVE }}.part-* > '$remote_archive'"
+          local_sha="$(cut -d ' ' -f1 "${{ env.DEPLOY_ARCHIVE }}.sha256")"
+          # shellcheck disable=SC2029
+          remote_sha="$(ssh "$ssh_dest" "sha256sum '$remote_archive' | cut -d ' ' -f1")"
+          test "$local_sha" = "$remote_sha"
+
+          # shellcheck disable=SC2029
+          ssh "$ssh_dest" "rm -rf '$remote_chunks'"
+
+      - name: Verify remote archive
+        run: |
+          ssh_dest="${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}"
+          remote_archive="${{ env.DEPLOY_REMOTE_ARCHIVE }}"
+          remote_next="${{ env.DEPLOY_DIR }}.next.${{ github.run_id }}"
+
+          # shellcheck disable=SC2029
+          ssh "$ssh_dest" "case '$remote_next' in /opt/blog-stack/sites/*.next.*) ;; *) echo 'Refusing unsafe staging dir: $remote_next' >&2; exit 2 ;; esac; rm -rf '$remote_next'; mkdir -p '$remote_next'; tar -xzf '$remote_archive' -C '$remote_next'"
           # shellcheck disable=SC2029
           ssh "$ssh_dest" "test -f '$remote_next/index.html' && test -d '$remote_next/assets'"
 
@@ -81,12 +114,13 @@ jobs:
           ssh "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" <<EOF
           set -eu
 
+          archive="${{ env.DEPLOY_REMOTE_ARCHIVE }}"
           target_dir="${{ env.DEPLOY_DIR }}"
           base_path="${{ env.VITE_BASE_PATH }}"
           container="${{ env.DEPLOY_CONTAINER }}"
           config_path="/opt/blog-stack/nginx/conf.d/default.conf"
           config_backup="\${config_path}.bak.${{ github.run_id }}"
-          next_dir="${{ env.DEPLOY_REMOTE_NEXT }}"
+          next_dir="\${target_dir}.next.${{ github.run_id }}"
           backup_dir="\${target_dir}.bak.${{ github.run_id }}"
 
           rollback() {
@@ -145,6 +179,7 @@ jobs:
             exit 1
           fi
 
+          rm -f "\$archive"
           rm -rf "\$backup_dir"
           rm -f "\$config_backup"
           rm -f /tmp/default.conf
