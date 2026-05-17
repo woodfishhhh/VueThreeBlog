@@ -121,7 +121,9 @@ jobs:
 
       - name: Verify deployment
         run: |
-          curl -kfsSL "https://img.woodfish.site/admin/" | grep -q 'lang="zh-CN"'
+          html="$(curl -kfsSL "https://img.woodfish.site/admin/")"
+          printf '%s' "$html" | grep -q '<title>Muyu Admin</title>'
+          printf '%s' "$html" | grep -q '/admin/assets/'
           echo "Web frontend deployed successfully"
 
   deploy-api:
