@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted } from "vue";
+import { computed, onMounted } from "vue";
 
 import AuthorPanel from "@/components/home/AuthorPanel.vue";
 import FriendPanel from "@/components/home/FriendPanel.vue";
@@ -13,22 +13,6 @@ import { useHomePanels } from "@/composables/useHomePanels";
 import { useTheme } from "@/composables/useTheme";
 import { useVisitorCount } from "@/composables/useVisitorCount";
 import { useSiteStore } from "@/stores/site";
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Three.js 场景懒加载
-//
-// 为什么用 defineAsyncComponent？
-// Three.js + OrbitControls + GSAP 约 1MB+。
-// 之前是静态 import，意味着即使访问 /posts/xxx（完全不需要 3D）也要下载这些代码。
-//
-// 改成异步 import 后：
-// - 首页 / 依然会自动加载（HomeView 挂载时就加载）
-// - /posts/xxx 不会加载任何 Three.js 代码
-// - 等效减少 ~1MB 的 JS 执行时间
-// ─────────────────────────────────────────────────────────────────────────────
-const ThreeSceneCanvas = defineAsyncComponent(
-  () => import("@/components/scene/ThreeSceneCanvas.vue"),
-);
 
 const siteStore = useSiteStore();
 const { theme } = useTheme();
@@ -53,25 +37,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <main
-    data-home-stage
-    class="relative min-h-screen overflow-hidden bg-[var(--stage-bg)] text-[var(--stage-fg)]"
-  >
+  <main data-home-stage class="relative min-h-screen overflow-hidden text-[var(--stage-fg)]">
     <SiteNav />
-
-    <div class="fixed inset-0 z-0 h-full w-full">
-      <div class="absolute inset-0 z-0" data-testid="home-scene-layer">
-        <ThreeSceneCanvas />
-      </div>
-    </div>
 
     <SlideController>
       <div class="pointer-events-none fixed inset-0 z-10 flex h-full w-full">
         <Transition name="home-hint" mode="out-in">
-          <div
-            v-if="homeHint"
-            class="pointer-events-auto absolute bottom-8 flex w-full justify-center"
-          >
+          <div v-if="homeHint" class="pointer-events-auto absolute bottom-8 flex w-full justify-center">
             <div class="animate-bounce text-sm tracking-widest text-[var(--stage-hint)] opacity-70">
               点击{{ focusHintTarget }}进行探索
             </div>
@@ -79,10 +51,7 @@ onMounted(() => {
         </Transition>
 
         <Transition name="focus-hint" mode="out-in">
-          <div
-            v-if="focusHint"
-            class="pointer-events-auto absolute bottom-8 flex w-full justify-center"
-          >
+          <div v-if="focusHint" class="pointer-events-auto absolute bottom-8 flex w-full justify-center">
             <button
               class="animate-bounce cursor-pointer text-sm tracking-widest text-[var(--stage-hint)] transition-colors hover:text-[var(--stage-fg)]"
               type="button"

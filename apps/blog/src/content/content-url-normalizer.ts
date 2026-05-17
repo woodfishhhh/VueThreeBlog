@@ -1,3 +1,5 @@
+import { getBaseUrl } from "@/utils/base-url";
+
 function normalizeBasePath(value: string | undefined) {
   if (!value) {
     return "/";
@@ -97,7 +99,8 @@ function normalizeContentValue(value: unknown, normalizedBasePath: string): unkn
   return value;
 }
 
-export function normalizeContentPayload<T>(value: T, basePath = import.meta.env.BASE_URL): T {
-  const normalizedBasePath = normalizeBasePath(basePath);
+export function normalizeContentPayload<T>(value: T, basePath?: string): T {
+  const resolvedBasePath = basePath ?? getBaseUrl();
+  const normalizedBasePath = normalizeBasePath(resolvedBasePath);
   return normalizeContentValue(value, normalizedBasePath) as T;
 }

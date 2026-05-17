@@ -1,4 +1,5 @@
 import { shallowRef } from "vue";
+import { getBaseUrl } from "@/utils/base-url";
 
 const VISITOR_COUNT_STORAGE_KEY = "vuecubeblog:visitor-counted:v1";
 const VISITOR_COUNT_API_PATH = "api/visitor-count";
@@ -12,7 +13,7 @@ type VisitorCountResponse = {
 };
 
 function getApiUrl(path: string) {
-  return `${import.meta.env.BASE_URL}${path}`;
+  return `${getBaseUrl()}${path}`;
 }
 
 function readCountedMarker() {

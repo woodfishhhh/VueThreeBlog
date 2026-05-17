@@ -83,13 +83,11 @@ describe("HomeView", () => {
     expect(wrapper.get("[data-testid='visitor-count-badge']").text()).toContain("32");
   });
 
-  it("keeps the home visual texture inside the Three.js scene", () => {
+  it("does not contain a home-backdrop element (scene is hosted in RouteTransitionShell)", () => {
     const wrapper = mountHomeView();
 
-    const sceneLayer = wrapper.get("[data-testid='home-scene-layer']");
-
+    expect(wrapper.find("[data-testid='home-scene-layer']").exists()).toBe(false);
     expect(wrapper.find("[data-testid='home-backdrop']").exists()).toBe(false);
-    expect(sceneLayer.classes()).toContain("z-0");
   });
 
   it("hides the visitor badge outside home mode", async () => {

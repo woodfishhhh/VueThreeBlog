@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
+import { defineAsyncComponent, onMounted, watch } from "vue";
 
 import { playRouteTransition } from "@/composables/useRouteTransitionOrchestrator";
 import { resolveTransitionIntent } from "@/motion/route-transition-intent";
 import { useSiteStore, type SiteMode } from "@/stores/site";
+
+const ThreeSceneCanvas = defineAsyncComponent(() => import("@/components/scene/ThreeSceneCanvas.vue"));
 
 interface Snapshot {
   routeName: string | null;
@@ -40,12 +42,7 @@ function getRouteViewKey(routeView: { name: unknown; fullPath: string }) {
 }
 
 watch(
-  () =>
-    [
-      typeof route.name === "string" ? route.name : null,
-      siteStore.mode,
-      siteStore.activePostSlug,
-    ] as const,
+  () => [typeof route.name === "string" ? route.name : null, siteStore.mode, siteStore.activePostSlug] as const,
   ([routeName, siteMode, activePostSlug]) => {
     const nextSnapshot: Snapshot = {
       routeName,
@@ -77,6 +74,17 @@ watch(
   <div data-route-shell class="route-transition-shell">
     <div data-transition-scrim class="route-transition-scrim" />
     <div data-transition-blade class="route-transition-blade" />
+    <!-- 3D 场景层：持久存在于路由切换之上，仅 home 家族路由可见 -->
+    <!-- z-[1]: stage(z-[2]) 之下的背景层，透明 canvas 接受空白区域的鼠标事件 -->
+    <div
+      v-if="HOME_ROUTE_NAMES.has(typeof route.name === 'string' ? route.name : '')"
+      class="fixed inset-0 z-[1] h-full w-full"
+      data-scene-layer
+    >
+      <div class="absolute inset-0 z-0">
+        <ThreeSceneCanvas />
+      </div>
+    </div>
     <div data-route-stage class="route-transition-stage">
       <NuxtPage v-slot="{ Component, route: routeView }">
         <component :is="Component" :key="getRouteViewKey(routeView)" data-route-view />
@@ -94,7 +102,8 @@ watch(
 .route-transition-stage {
   position: relative;
   min-height: 100dvh;
-  z-index: 0;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .route-transition-scrim {
@@ -112,12 +121,7 @@ watch(
   z-index: 121;
   pointer-events: none;
   opacity: 0;
-  background: linear-gradient(
-    100deg,
-    transparent 22%,
-    rgba(255, 255, 255, 0.18) 50%,
-    transparent 78%
-  );
+  background: linear-gradient(100deg, transparent 22%, rgba(255, 255, 255, 0.18) 50%, transparent 78%);
   filter: blur(12px);
 }
 </style>

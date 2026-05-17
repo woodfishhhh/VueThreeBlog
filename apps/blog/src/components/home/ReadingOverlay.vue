@@ -48,7 +48,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", handleEsc));
     v-if="isOpen"
     data-reading-overlay
     ref="scrollContainerRef"
-    class="article-overlay-scroll-root fixed inset-0 z-50 overflow-y-auto bg-[rgba(5,5,16,0.34)] p-6 backdrop-blur-sm md:p-20"
+    class="article-overlay-scroll-root pointer-events-auto fixed inset-0 z-50 overflow-y-auto bg-[rgba(5,5,16,0.34)] p-6 backdrop-blur-sm md:p-20"
   >
     <button
       class="fixed right-8 top-8 z-[60] flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--surface-1)] text-[var(--stage-hint)] transition-all hover:border-[var(--border-strong)] hover:text-[var(--stage-fg)]"
@@ -56,12 +56,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", handleEsc));
       @click="handleClose"
     >
       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M6 18L18 6M6 6l12 12"
-        />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
 
@@ -76,9 +71,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", handleEsc));
       />
       <div v-else class="article-page__status article-page__status--empty mt-20">
         <p class="article-page__status-label">Article not found</p>
-        <p class="article-page__status-text">
-          The requested post is unavailable in generated content.
-        </p>
+        <p class="article-page__status-text">The requested post is unavailable in generated content.</p>
       </div>
     </div>
   </div>

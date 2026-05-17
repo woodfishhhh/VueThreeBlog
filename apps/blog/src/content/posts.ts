@@ -1,4 +1,5 @@
 import type { PostArticle, PostSummary } from "@/types/content";
+import { getBaseUrl } from "@/utils/base-url";
 import { normalizeContentPayload } from "./content-url-normalizer";
 import { resolvePostSlugFromIndex } from "./post-helpers";
 
@@ -12,7 +13,7 @@ function toPostSummary(article: PostArticle): PostSummary {
 }
 
 async function loadPostIndexFromPublicFile() {
-  const indexUrl = `${import.meta.env.BASE_URL}post-index.json`;
+  const indexUrl = `${getBaseUrl()}post-index.json`;
   const response = await fetch(indexUrl, { credentials: "same-origin" });
   if (!response.ok) {
     throw new Error(`Failed to load post index: ${response.status}`);

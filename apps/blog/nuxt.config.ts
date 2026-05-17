@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { fileURLToPath } from "node:url";
+
 export default defineNuxtConfig({
   // ── Source directory ──────────────────────────────────────────────────────
   // Keep existing src/ structure to minimise file moves
@@ -29,10 +31,17 @@ export default defineNuxtConfig({
 
   // ── Vite plugins (direct passthrough) ────────────────────────────────────
   vite: {
+    define: {
+      // __APP_BASE_URL__ is the true app base URL (e.g. "/" in dev, "/newBlog/" in prod).
+      // import.meta.env.BASE_URL is set by Nuxt to buildAssetsDir ("/assets") which is wrong
+      // for content path normalisation. We expose the real base URL via this define instead.
+      __APP_BASE_URL__: JSON.stringify(process.env.NUXT_APP_BASE_URL || "/"),
+    },
     resolve: {
       alias: {
-        // Keep @/ alias working for any edge cases; Nuxt also provides ~/
-        "@": new URL("src", import.meta.url).pathname,
+        // fileURLToPath 将 file:// URL 正确转换为 Windows 路径（处理路径中的非 ASCII 字符）
+        // new URL().pathname 在 Windows 上会产生 URL 编码路径（如 %E5%89%8D%E7%AB%AF），导致构建失败
+        "@": fileURLToPath(new URL("src", import.meta.url)),
       },
     },
     build: {
@@ -91,7 +100,7 @@ export default defineNuxtConfig({
       charset: "utf-8",
       viewport:
         "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
-      link: [{ rel: "icon", type: "image/png", href: "%BASE_URL%favicon.png" }],
+      link: [],
       meta: [
         { name: "description", content: "木鱼的鱼窝 | Vue-powered immersive 3D blog experience." },
         { name: "theme-color", content: "#050510" },

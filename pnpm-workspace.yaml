@@ -1,3 +1,5 @@
 packages:
-  - 'apps/*'
-  - 'packages/*'
+  - apps/*
+  - packages/*
+patchedDependencies:
+  h3@2.0.1-rc.22: patches/h3@2.0.1-rc.22.patch

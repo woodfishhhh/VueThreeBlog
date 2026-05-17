@@ -18,12 +18,14 @@ const INSECURE_TLS_HOSTS = new Set([
   "woodfishhhh.xyz",
   "www.woodfish.site",
   "woodfish.site",
+  "img.woodfish.site",
 ]);
 const LOCAL_MIRROR_HOSTS = new Set([
   "www.woodfishhhh.xyz",
   "woodfishhhh.xyz",
   "www.woodfish.site",
   "woodfish.site",
+  "img.woodfish.site",
 ]);
 const LOCAL_MIRROR_ENV = "VUECUBEBLOG_LOCAL_ASSET_MIRROR_DIRS";
 const DEFAULT_LOCAL_MIRROR_RELATIVE_DIRS = [
@@ -855,8 +857,8 @@ async function resolveLocalMirrorSource(
   const normalizedReference = normalizeMirrorLookupPath(reference);
   const suffixMatchedCandidates = normalizedReference
     ? candidates.filter((candidate) =>
-        normalizeMirrorLookupPath(candidate).endsWith(`/${normalizedReference}`),
-      )
+      normalizeMirrorLookupPath(candidate).endsWith(`/${normalizedReference}`),
+    )
     : [];
 
   for (const candidate of suffixMatchedCandidates) {
