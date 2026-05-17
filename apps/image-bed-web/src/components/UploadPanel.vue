@@ -48,16 +48,6 @@ function statusLabel(status: UploadItem["status"]) {
   };
   return map[status] ?? status;
 }
-
-function statusIcon(status: UploadItem["status"]) {
-  const map: Record<string, string> = {
-    pending: "M12 2v20M2 12h20",
-    uploading: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15",
-    done: "M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3",
-    failed: "M18 6L6 18M6 6l12 12",
-  };
-  return map[status] ?? "";
-}
 </script>
 
 <template>

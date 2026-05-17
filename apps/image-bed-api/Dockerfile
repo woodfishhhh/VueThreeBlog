@@ -1,21 +1,31 @@
 FROM node:22-bookworm-slim AS deps
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+RUN corepack enable
 WORKDIR /app
-COPY package.json package-lock.json ./
-COPY apps/blog/package.json apps/blog/package.json
+COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY patches ./patches
 COPY apps/image-bed-api/package.json apps/image-bed-api/package.json
 COPY packages/shared/package.json packages/shared/package.json
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
 FROM deps AS build
 WORKDIR /app
 COPY . .
-RUN npm run build -w @woodfish-nest/shared
-RUN npm run build -w @woodfish-nest/image-bed-api
+RUN pnpm shared:build
+RUN pnpm image-bed:api:build
 
 FROM node:22-bookworm-slim AS runtime
-WORKDIR /app
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
 ENV NODE_ENV=production
-COPY --from=deps /app/node_modules ./node_modules
+RUN corepack enable
+WORKDIR /app
+COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY patches ./patches
+COPY apps/image-bed-api/package.json ./apps/image-bed-api/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
+RUN pnpm install --prod --frozen-lockfile --filter @woodfish-nest/image-bed-api...
 COPY --from=build /app/apps/image-bed-api/dist ./apps/image-bed-api/dist
 COPY --from=build /app/apps/image-bed-api/migrations ./apps/image-bed-api/migrations
 COPY --from=build /app/apps/image-bed-api/package.json ./apps/image-bed-api/package.json

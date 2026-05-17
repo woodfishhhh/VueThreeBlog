@@ -1,0 +1,17 @@
+.git
+.omx
+.tmp
+.tmp-*
+.playwright-mcp
+.vite-hooks
+node_modules
+**/node_modules
+dist
+**/dist
+.nuxt
+**/.nuxt
+.output
+**/.output
+coverage
+**/coverage
+*.log

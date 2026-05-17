@@ -48,7 +48,9 @@ jobs:
         run: pnpm build:deploy
 
       - name: Package site archive
-        run: tar -czf "${{ env.DEPLOY_ARCHIVE }}" -C apps/blog/dist .
+        run: |
+          tar -czf "${{ env.DEPLOY_ARCHIVE }}" -C apps/blog/dist .
+          sha256sum "${{ env.DEPLOY_ARCHIVE }}" > "${{ env.DEPLOY_ARCHIVE }}.sha256"
 
       - name: Configure SSH
         run: |
@@ -59,11 +61,25 @@ jobs:
 
       - name: Upload site archive
         run: |
-          cat "${{ env.DEPLOY_ARCHIVE }}" | ssh "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" "cat > '${{ env.DEPLOY_REMOTE_ARCHIVE }}'"
+          timeout 180s scp \
+            -o BatchMode=yes \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=4 \
+            "${{ env.DEPLOY_ARCHIVE }}" \
+            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ env.DEPLOY_REMOTE_ARCHIVE }}"
+
+          local_sha="$(cut -d ' ' -f1 "${{ env.DEPLOY_ARCHIVE }}.sha256")"
+          remote_sha="$(ssh "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" "sha256sum '${{ env.DEPLOY_REMOTE_ARCHIVE }}' | cut -d ' ' -f1")"
+          test "$local_sha" = "$remote_sha"
 
       - name: Upload nginx config
         run: |
-          cat deploy/nginx.conf | ssh "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" "cat > /tmp/default.conf"
+          timeout 60s scp \
+            -o BatchMode=yes \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=4 \
+            deploy/nginx.conf \
+            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/default.conf"
 
       - name: Activate release
         run: |
