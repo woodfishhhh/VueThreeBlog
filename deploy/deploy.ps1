@@ -80,13 +80,13 @@ try {
     $previousBasePath = $env:VITE_BASE_PATH
     try {
       $env:VITE_BASE_PATH = $BasePath
-      Invoke-CheckedNative npm run build:deploy
+      Invoke-CheckedNative pnpm build:deploy
     } finally {
       $env:VITE_BASE_PATH = $previousBasePath
     }
   } else {
     Write-Host "==> 1. Skip build; use existing deploy artifact..."
-    Invoke-CheckedNative npm run verify:dist
+    Invoke-CheckedNative pnpm verify:dist
   }
 
   Write-Host "==> 2. Package $distDir ..."
