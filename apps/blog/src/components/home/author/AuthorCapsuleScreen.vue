@@ -144,8 +144,8 @@ const { activateSkill } = useMatterCapsules({
 .author-capsule:hover {
   box-shadow:
     var(--author-capsule-shadow),
-    inset 0 0 0 2px rgba(20, 20, 50, 1);
-  border: 1px solid #000;
+    inset 0 0 0 2px var(--author-capsule-hover-ring);
+  border-color: var(--author-capsule-hover-border);
 }
 
 .author-capsule:active {
@@ -174,6 +174,7 @@ const { activateSkill } = useMatterCapsules({
   line-height: 1;
   white-space: nowrap;
   color: var(--author-capsule-text);
+  pointer-events: none;
 }
 
 @media (max-width: 767px) {

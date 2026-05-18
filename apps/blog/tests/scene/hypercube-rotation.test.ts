@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import { normalizeRotationForTween } from "@/components/scene/hypercube-rotation";
+import {
+  normalizeRotationForTween,
+  shouldTweenRotation,
+} from "@/components/scene/hypercube-rotation";
 
 describe("normalizeRotationForTween", () => {
   it("collapses accumulated full turns before tweening back to the canonical pose", () => {
@@ -36,5 +39,22 @@ describe("normalizeRotationForTween", () => {
     expect(normalized.x).toBeCloseTo(target.x - Math.PI * 0.1, 5);
     expect(normalized.y).toBeCloseTo(target.y + Math.PI * 0.1, 5);
     expect(normalized.z).toBeCloseTo(target.z + Math.PI * 0.1, 5);
+  });
+});
+
+describe("shouldTweenRotation", () => {
+  it("does not request a rotation tween when route layout keeps the current pose", () => {
+    const current = { x: 0.42, y: 1.25, z: -0.15 };
+
+    expect(shouldTweenRotation(current, { ...current })).toBe(false);
+  });
+
+  it("requests a rotation tween when focus mode restores a saved pose", () => {
+    expect(
+      shouldTweenRotation(
+        { x: 0.42, y: 1.25, z: -0.15 },
+        { x: 0.5, y: 0.5, z: 0 },
+      ),
+    ).toBe(true);
   });
 });

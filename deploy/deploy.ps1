@@ -86,7 +86,7 @@ try {
     }
   } else {
     Write-Host "==> 1. Skip build; use existing deploy artifact..."
-    Invoke-CheckedNative pnpm verify:dist
+    Invoke-CheckedNative pnpm --filter "./apps/blog" exec tsx "../../packages/content-tools/src/cli.ts" verify-dist --dist-dir "apps/blog/dist" --base-path $BasePath
   }
 
   Write-Host "==> 2. Package $distDir ..."

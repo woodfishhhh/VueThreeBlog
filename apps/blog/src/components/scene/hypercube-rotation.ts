@@ -5,6 +5,7 @@ export type HypercubeRotation = {
 };
 
 const TAU = Math.PI * 2;
+const DEFAULT_ROTATION_EPSILON = 0.0001;
 
 function normalizeAngleForTween(current: number, target: number) {
   const delta = current - target;
@@ -22,4 +23,18 @@ export function normalizeRotationForTween(
     y: normalizeAngleForTween(current.y, target.y),
     z: normalizeAngleForTween(current.z, target.z),
   };
+}
+
+export function shouldTweenRotation(
+  current: HypercubeRotation,
+  target: HypercubeRotation,
+  epsilon = DEFAULT_ROTATION_EPSILON,
+) {
+  const normalized = normalizeRotationForTween(current, target);
+
+  return (
+    Math.abs(normalized.x - target.x) > epsilon ||
+    Math.abs(normalized.y - target.y) > epsilon ||
+    Math.abs(normalized.z - target.z) > epsilon
+  );
 }

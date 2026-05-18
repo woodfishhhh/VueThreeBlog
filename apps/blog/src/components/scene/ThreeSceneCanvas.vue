@@ -11,7 +11,10 @@ import { getGeometryTransformTarget } from "@/components/scene/geometry-transfor
 //   loadHomeBackdropTexture,
 //   type HomeBackdropGlyph,
 // } from "@/components/scene/home-backdrop-glyph";
-import { normalizeRotationForTween } from "@/components/scene/hypercube-rotation";
+import {
+  normalizeRotationForTween,
+  shouldTweenRotation,
+} from "@/components/scene/hypercube-rotation";
 import {
   isDesktopWorksOrbitMode,
   resolveScenePointerDownAction,
@@ -31,6 +34,7 @@ import { useThreeScene, type ThreeScene } from "@/composables/useThreeScene";
 import { getWorkProjects } from "@/content/works";
 import { getRouteLocationForSiteMode } from "@/utils/site-mode";
 import { useSiteStore } from "@/stores/site";
+import type { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 
 interface ActiveGeometry {
   group: THREE.Group;
@@ -98,19 +102,7 @@ let hypercube: Hypercube | null = null;
 let mobius: MobiusStrip | null = null;
 // let homeBackdropGlyph: HomeBackdropGlyph | null = null;
 let worksOrbitCards: WorksOrbitCards | null = null;
-let controls: {
-  enableZoom: boolean;
-  enablePan: boolean;
-  autoRotate: boolean;
-  enableDamping: boolean;
-  dampingFactor: number;
-  maxDistance: number;
-  minPolarAngle: number;
-  maxPolarAngle: number;
-  enabled: boolean;
-  update: () => void;
-  dispose: () => void;
-} | null = null;
+let controls: TrackballControls | null = null;
 let animationFrameId: number | null = null;
 let sceneTimer: THREE.Timer | null = null;
 let circleTexture: THREE.CanvasTexture | null = null;
@@ -187,19 +179,23 @@ function applyGroupTransform(
     ease: "power2.out",
   });
 
-  const nextTween = gsap.to(group.rotation, {
-    x: options.rotation.x,
-    y: options.rotation.y,
-    z: options.rotation.z,
-    duration: 0.8,
-    ease: "power2.out",
-    onComplete: () => {
-      if (rotationTweenRef === "night") rotationTweenNight = null;
-      else rotationTweenDay = null;
-    },
-  });
-  if (rotationTweenRef === "night") rotationTweenNight = nextTween;
-  else rotationTweenDay = nextTween;
+  if (shouldTweenRotation(normalizedRotation, options.rotation)) {
+    const nextTween = gsap.to(group.rotation, {
+      x: options.rotation.x,
+      y: options.rotation.y,
+      z: options.rotation.z,
+      duration: 0.8,
+      ease: "power2.out",
+      onComplete: () => {
+        if (rotationTweenRef === "night") rotationTweenNight = null;
+        else rotationTweenDay = null;
+      },
+    });
+    if (rotationTweenRef === "night") rotationTweenNight = nextTween;
+    else rotationTweenDay = nextTween;
+  } else {
+    group.rotation.set(options.rotation.x, options.rotation.y, options.rotation.z);
+  }
 
   gsap.to(group.scale, {
     x: options.scale,
@@ -302,6 +298,7 @@ function handleResize() {
 
   threeScene.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   threeScene.resize(width, height);
+  controls?.handleResize();
   // homeBackdropGlyph?.updateViewport({ height, width });
   updateGeometryTransform();
   updateWorksOrbitCards();
@@ -524,16 +521,15 @@ onMounted(async () => {
   });
   threeScene.scene.add(worksOrbitCards.group);
 
-  const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls.js");
-  controls = new OrbitControls(threeScene.camera, threeScene.renderer.domElement);
-  controls.enableZoom = true;
-  controls.enablePan = false;
-  controls.autoRotate = false;
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
+  const { TrackballControls } = await import("three/examples/jsm/controls/TrackballControls.js");
+  controls = new TrackballControls(threeScene.camera, threeScene.renderer.domElement);
+  controls.noZoom = false;
+  controls.noPan = true;
+  controls.rotateSpeed = 2;
+  controls.zoomSpeed = 0.9;
+  controls.staticMoving = false;
+  controls.dynamicDampingFactor = 0.08;
   controls.maxDistance = 15;
-  controls.minPolarAngle = 0.1;
-  controls.maxPolarAngle = Math.PI - 0.1;
   controls.enabled = store.isFocusing;
 
   applyThemeImmediate(theme.value);
