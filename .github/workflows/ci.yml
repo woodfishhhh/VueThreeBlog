@@ -28,7 +28,33 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Restore generated content cache
+        id: content-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/blog/src/generated
+            apps/blog/public/post-index.json
+            apps/blog/public/content-assets
+            apps/blog/public/imported-assets
+            apps/blog/public/remote-assets
+          key: content-gen-v1-${{
+            hashFiles(
+              'package.json',
+              'pnpm-workspace.yaml',
+              'apps/blog/package.json',
+              'apps/blog/content/source/myblog/**',
+              'apps/blog/content/posts/**',
+              'apps/blog/content/source/blog/source/_data/**',
+              'apps/blog/content/source/blog/_config.yml',
+              'packages/content-tools/src/**',
+              'packages/content-tools/package.json',
+              'pnpm-lock.yaml'
+            )
+          }}
+
       - name: Generate content
+        if: steps.content-cache.outputs.cache-hit != 'true'
         run: pnpm generate:content:ci
 
       - name: Typecheck
