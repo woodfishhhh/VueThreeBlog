@@ -218,6 +218,7 @@ jobs:
             # Pull latest image and restart
             cd /opt/muyu-image-bed || exit 1
             MUYU_API_IMAGE="ghcr.io/woodfishhhh/muyu-image-bed-api:latest" docker compose -f deploy/image-bed/docker-compose.prod.yml pull
+            docker rm -f muyu-image-bed-api >/dev/null 2>&1 || true
             MUYU_API_IMAGE="ghcr.io/woodfishhhh/muyu-image-bed-api:latest" docker compose -f deploy/image-bed/docker-compose.prod.yml up -d
 
             # Wait for healthcheck
