@@ -35,7 +35,7 @@
     "@playwright/test": "^1.59.1",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^25.5.2",
-    "@types/three": "^0.183.1",
+    "@types/three": "^0.184.1",
     "@vite-pwa/nuxt": "^1.1.1",
     "@vitejs/plugin-vue": "6.0.7",
     "@vue/test-utils": "^2.4.6",
@@ -44,8 +44,8 @@
     "nuxt": "npm:nuxt-nightly@5x",
     "sharp": "^0.34.5",
     "tsx": "^4.21.0",
-    "typescript": "~5.9.3",
-    "vitest": "^3.0.0",
+    "typescript": "~6.0.3",
+    "vitest": "^4.1.6",
     "vue-tsc": "^3.2.6"
   }
 }
