@@ -66,7 +66,7 @@ onUnmounted(() => {
   <div class="works-panel">
     <div class="works-panel__header px-4 sm:px-6 pt-20 sm:pt-24 lg:px-10 lg:pt-24 pb-0">
       <div class="works-panel__title">
-        <p>{{ panelDescription }}</p>
+        <p v-if="isDesktopOrbit">{{ panelDescription }}</p>
       </div>
       <WorksViewToggle
         v-if="isLargeViewport"

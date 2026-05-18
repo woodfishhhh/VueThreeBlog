@@ -4,6 +4,7 @@ import { useRoute, type LocationQueryValue } from "vue-router";
 
 import ArticleContent from "@/components/article/ArticleContent.vue";
 import ThemeToggle from "@/components/layout/ThemeToggle.vue";
+import { useGsapSmoothScroll } from "@/composables/useGsapSmoothScroll";
 import { useTheme } from "@/composables/useTheme";
 import { getPostSummaries, loadPostArticle, resolvePostSlug } from "@/content/posts";
 import { sanitizeSlug } from "@/utils/input-validator";
@@ -17,6 +18,7 @@ const resolvedSlug = shallowRef("");
 const previousPost = shallowRef<PostSummary | null>(null);
 const nextPost = shallowRef<PostSummary | null>(null);
 const { theme, toggleThemeAt } = useTheme();
+const { syncScrollPosition } = useGsapSmoothScroll(pageRoot);
 const blogReturnQuery = computed(() => {
   const nextQuery: Record<string, string> = {};
 
@@ -71,6 +73,7 @@ watch(
 
     if (pageRoot.value) {
       pageRoot.value.scrollTop = 0;
+      syncScrollPosition(0);
     }
 
     isLoading.value = false;

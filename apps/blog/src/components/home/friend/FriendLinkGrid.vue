@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, shallowRef, watch } fro
 import type { ComponentPublicInstance } from "vue";
 
 import FriendLinkCard from "@/components/home/friend/FriendLinkCard.vue";
+import { useGsapSmoothScroll } from "@/composables/useGsapSmoothScroll";
 import type { FriendLinkData } from "@/types/content";
 
 const props = defineProps<{
@@ -33,6 +34,10 @@ let releaseFrame = 0;
 let cachedSegmentDistance = 0;
 let resizeObserver: ResizeObserver | undefined;
 let scrollRaf = 0;
+const { syncScrollPosition } = useGsapSmoothScroll(scrollerRef, {
+  duration: 0.72,
+  wheelMultiplier: 1.08,
+});
 
 watch(
   () => props.links,
@@ -169,6 +174,7 @@ function resetLoopPosition() {
 
   isRecentering = true;
   scroller.scrollTop = distance;
+  syncScrollPosition(distance);
   releaseRecenteringLock();
 }
 
@@ -203,6 +209,7 @@ function handleLoopScroll() {
     if (scroller.scrollTop < lowerLimit) {
       isRecentering = true;
       scroller.scrollTop += distance;
+      syncScrollPosition(scroller.scrollTop);
       releaseRecenteringLock();
       return;
     }
@@ -210,6 +217,7 @@ function handleLoopScroll() {
     if (scroller.scrollTop > upperLimit) {
       isRecentering = true;
       scroller.scrollTop -= distance;
+      syncScrollPosition(scroller.scrollTop);
       releaseRecenteringLock();
     }
   });

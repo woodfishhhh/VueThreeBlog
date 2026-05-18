@@ -25,6 +25,14 @@ const workProjects: WorkProjectData[] = [
     liveUrl: "https://woodfish.site/pretext",
     githubUrl: "https://github.com/woodfishhhh/Pretext-cube",
   },
+  {
+    slug: "image-bed",
+    name: "木鱼图库",
+    description: "自托管图片管理与上传后台，为博客写作流提供图床、CDN 和 Typora 上传链路。",
+    kind: "Image Bed",
+    liveUrl: "https://img.woodfish.site/admin/",
+    githubUrl: "https://github.com/woodfishhhh/MuYuNest",
+  },
 ];
 
 export function getWorkProjects() {

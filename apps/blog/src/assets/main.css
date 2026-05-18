@@ -1261,9 +1261,8 @@ img {
   .article-shell__rail {
     display: block;
     position: sticky;
-    top: 4.35rem;
+    top: 5.25rem;
     align-self: start;
-    transform: translateY(-4.8rem);
   }
 
   .article-view__mobile-toc {
