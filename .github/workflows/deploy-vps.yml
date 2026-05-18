@@ -1,10 +1,18 @@
 name: Deploy to VPS
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
     branches:
       - main
   workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
 
 concurrency:
   group: vue-three-blog-vps
@@ -12,6 +20,12 @@ concurrency:
 
 jobs:
   deploy:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -26,27 +40,52 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Download blog dist artifact
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v4
+        with:
+          name: blog-dist
+          path: apps/blog/dist
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup pnpm
+        if: github.event_name == 'workflow_dispatch'
         uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
+        if: github.event_name == 'workflow_dispatch'
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
 
       - name: Install dependencies
+        if: github.event_name == 'workflow_dispatch'
         run: pnpm install --frozen-lockfile
 
       - name: Generate content
+        if: github.event_name == 'workflow_dispatch'
         run: pnpm generate:content:ci
 
       - name: Typecheck
+        if: github.event_name == 'workflow_dispatch'
         run: pnpm typecheck
 
       - name: Dist build
-        run: pnpm build:deploy
+        if: github.event_name == 'workflow_dispatch'
+        run: pnpm -F @woodfish-nest/blog build:deploy:dist
+
+      - name: Verify dist artifact
+        run: |
+          test -f apps/blog/dist/index.html
+          test -f apps/blog/dist/sw.js
+          test -f apps/blog/dist/manifest.webmanifest
+          test -d apps/blog/dist/assets
 
       - name: Package site archive
         run: |
