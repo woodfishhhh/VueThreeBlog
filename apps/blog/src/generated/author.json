@@ -32,6 +32,11 @@
       "img": "/remote-assets/aef876977bd91ee0a3cd091155b6a281a72ff3ab.svg"
     },
     {
+      "title": "Next.js",
+      "color": "#ffffff",
+      "img": "/remote-assets/672aa8db55ec35aae1db006f948ae9346e4ca039.svg"
+    },
+    {
       "title": "Bun",
       "color": "#f3f0e7",
       "img": "/remote-assets/0337d0b77ba743904d515d795389e391d2355799.svg"
@@ -170,6 +175,11 @@
       "title": "PostgreSQL",
       "color": "#336791",
       "img": "/remote-assets/ea435dbc4a747a98b84e721cfa8aff9d10969177.svg"
+    },
+    {
+      "title": "Redis",
+      "color": "#dc382d",
+      "img": "/remote-assets/814036b11679118076d13fd074bd098036cc120a.svg"
     },
     {
       "title": "Storybook",

@@ -31,6 +31,9 @@ skills:
     - title: Nuxt
       color: "#00dc82"
       img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original.svg
+    - title: Next.js
+      color: "#ffffff"
+      img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg
     - title: Bun
       color: "#f3f0e7"
       img: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bun/bun-original.svg
@@ -115,6 +118,9 @@ skills:
     - title: PostgreSQL
       color: "#336791"
       img: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg
+    - title: Redis
+      color: "#dc382d"
+      img: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg
     - title: Storybook
       color: "#ff4785"
       img: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/storybook/storybook-original.svg
@@ -148,4 +154,3 @@ contacts:
   wechat: https://www.woodfishhhh.xyz/images/f59723db9159310b6056abe8341f5d7.jpg.jpeg?_t=1750312263368
   email: https://www.woodfishhhh.xyz/images/d8d58d2f2c7ac5790fd37f388da41db4.png?_t=1759286665402
   douyin: https://www.douyin.com/user/MS4wLjABAAAAgbOrIhdi7Rl5RfaQ3fE3i7c2WnyR3zEOyLiK2Cjtcqk?from_tab_name=main
-
