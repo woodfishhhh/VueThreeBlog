@@ -348,6 +348,7 @@ img {
   z-index: 20;
   height: 100dvh;
   overflow-y: auto;
+  pointer-events: auto;
   padding: clamp(5.5rem, 7vw, 7.1rem) 1rem 4rem;
   background:
     radial-gradient(circle at top left, rgba(104, 144, 255, 0.16), transparent 30%),
@@ -1261,7 +1262,7 @@ img {
   .article-shell__rail {
     display: block;
     position: sticky;
-    top: 5.25rem;
+    top: 0;
     align-self: start;
   }
 

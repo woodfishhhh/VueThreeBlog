@@ -3,10 +3,6 @@ links:
     descr: 朋友们的网站
     type: item
     link_list:
-      - name: Fomalhaut
-        link: https://fomal.cc/
-        avatar: https://fomal.cc/favicon.ico
-        descr: 我的博客从这里学的
       - name: Mohao
         link: https://blog.mohao.me/
         avatar: https://blog.mohao.me/favicon.ico
@@ -38,7 +34,7 @@ links:
       - name: Cloud09_Space
         link: http://cloud09.space/
         avatar: https://raw.githubusercontent.com/cloud-oc/picx-images-hosting/refs/heads/master/Origin/Cloud_icon.pfpafpaii.png?spaceId=62ea150e-ff98-40ae-986e-7a386289383f&t=2e3b58d0-50e3-805b-8971-e02a5ca666a9
-        descr: 主题风格：受明日方舟：终末地官方网站启发所设计的NotionNext博客主题。主要内容：主要是个人的创作内容和搬运内容
+        descr: 受明日方舟：终末地官方网站启发所设计的NotionNext博客主题。主要内容：主要是个人的创作内容和搬运内容
       - name: 糖糖毬
         link: https://tantanchugasuki.cn/
         avatar: https://img.woodfish.site/o/糖糖毬.png

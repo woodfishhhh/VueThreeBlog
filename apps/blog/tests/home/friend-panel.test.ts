@@ -1,5 +1,6 @@
 import { mount } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vite-plus/test";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { nextTick } from "vue";
 
 import FriendPanel from "@/components/home/FriendPanel.vue";
 import FriendLinkApplicationForm from "@/components/home/friend/FriendLinkApplicationForm.vue";
@@ -41,11 +42,7 @@ describe("FriendPanel", () => {
     expect(wrapper.get("[data-testid='friend-panel-hero']")).toBeTruthy();
     expect(wrapper.get("[data-testid='friend-panel-grid']")).toBeTruthy();
     expect(wrapper.get("[data-testid='friend-panel-application']")).toBeTruthy();
-    const mainCards = wrapper
-      .findAll("[data-segment='main']")
-      .flatMap((segment) => segment.findAll("[data-testid='friend-link-card']"));
-
-    expect(mainCards).toHaveLength(2);
+    expect(wrapper.findAll("[data-testid='friend-link-card']")).toHaveLength(2);
     expect(wrapper.get("[data-testid='friend-application-site-name']")).toBeTruthy();
     expect(wrapper.get("[data-testid='friend-application-site-url']")).toBeTruthy();
     expect(wrapper.get("[data-testid='friend-application-avatar-url']")).toBeTruthy();
@@ -134,35 +131,22 @@ describe("FriendPanel", () => {
     expect(wrapper.find("[data-testid='friend-mobile-drawer']").exists()).toBe(false);
   });
 
-  it("renders independent repeated segments in each waterfall column", () => {
+  it("renders a regular two-column waterfall without repeated loop segments", () => {
     const wrapper = mount(FriendPanel, {
       props: {
         links,
       },
     });
 
-    const columns = wrapper.findAll("[data-testid='friend-loop-column']");
+    const columns = wrapper.findAll("[data-testid='friend-waterfall-column']");
 
     expect(columns).toHaveLength(2);
+    expect(wrapper.find("[data-testid='friend-loop-segment']").exists()).toBe(false);
+    expect(wrapper.get("#friend-links-container")).toBeTruthy();
+    expect(wrapper.findAll("[data-testid='friend-link-card']")).toHaveLength(2);
 
-    columns.forEach((column) => {
-      const segments = column.findAll("[data-testid='friend-loop-segment']");
-      const mainSegment = segments.find((segment) => segment.attributes("data-segment") === "main");
-      const cloneSegments = segments.filter(
-        (segment) => segment.attributes("data-segment") !== "main",
-      );
-
-      expect(segments.map((segment) => segment.attributes("data-segment"))).toEqual([
-        "clone-before",
-        "main",
-        "clone-after",
-      ]);
-      expect(mainSegment?.attributes("aria-hidden")).toBeUndefined();
-      expect(mainSegment?.findAll("[data-testid='friend-link-card']").length).toBeGreaterThan(0);
-      expect(cloneSegments.every((segment) => segment.attributes("aria-hidden") === "true")).toBe(
-        true,
-      );
-    });
+    expect(columns[0]?.findAll("[data-testid='friend-link-card']").length).toBeGreaterThan(0);
+    expect(columns[1]?.findAll("[data-testid='friend-link-card']").length).toBeGreaterThan(0);
   });
 
   it("lets card height grow from the description instead of a fixed minimum", () => {
@@ -184,6 +168,88 @@ describe("FriendPanel", () => {
       "--card-min-height",
     );
     expect(wrapper.text()).toContain(longDescription);
+  });
+
+  it("maps pointer position into per-card pseudo-3d style variables", async () => {
+    const wrapper = mount(FriendLinkCard, {
+      props: {
+        link: {
+          name: "Tilt Notes",
+          link: "https://tilt.example",
+          avatar: "",
+          descr: "有轻微景深的友链卡片。",
+          className: "友情链接",
+        },
+      },
+    });
+    const card = wrapper.get("[data-testid='friend-link-card']");
+
+    vi.spyOn(card.element, "getBoundingClientRect").mockReturnValue({
+      x: 0,
+      y: 0,
+      top: 0,
+      right: 200,
+      bottom: 100,
+      left: 0,
+      width: 200,
+      height: 100,
+      toJSON: () => ({}),
+    } as DOMRect);
+
+    const pointerMove = new MouseEvent("pointermove", {
+      clientX: 160,
+      clientY: 20,
+      bubbles: true,
+    });
+    Object.defineProperty(pointerMove, "pointerType", { value: "mouse" });
+
+    card.element.dispatchEvent(pointerMove);
+    await nextTick();
+
+    const style = card.attributes("style") ?? "";
+
+    expect(style).toContain("--tilt-rotate-x: 3.90deg");
+    expect(style).toContain("--tilt-rotate-y: 3.90deg");
+    expect(style).toContain("--tilt-glare-opacity: 0.34");
+    expect(style).toContain("--card-lift: -7px");
+  });
+
+  it("maps pointer position into the mobile submit trigger pseudo-3d style variables", async () => {
+    const wrapper = mount(FriendPanel, {
+      props: {
+        links,
+      },
+    });
+    const trigger = wrapper.get("[data-testid='friend-mobile-drawer-toggle']");
+
+    vi.spyOn(trigger.element, "getBoundingClientRect").mockReturnValue({
+      x: 0,
+      y: 0,
+      top: 0,
+      right: 100,
+      bottom: 40,
+      left: 0,
+      width: 100,
+      height: 40,
+      toJSON: () => ({}),
+    } as DOMRect);
+
+    const pointerMove = new MouseEvent("pointermove", {
+      clientX: 80,
+      clientY: 8,
+      bubbles: true,
+    });
+    Object.defineProperty(pointerMove, "pointerType", { value: "mouse" });
+
+    trigger.element.dispatchEvent(pointerMove);
+    await nextTick();
+
+    const style = trigger.attributes("style") ?? "";
+
+    expect(style).toContain("--friend-trigger-rotate-x: 3.90deg");
+    expect(style).toContain("--friend-trigger-rotate-y: 3.90deg");
+    expect(style).toContain("--friend-trigger-glare-opacity: 0.34");
+    expect(style).toContain("--friend-trigger-lift: -7px");
   });
 
   it("renders playful application-card motion layers while filling a draft", async () => {

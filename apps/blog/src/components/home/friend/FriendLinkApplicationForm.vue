@@ -260,7 +260,7 @@ function confirmIssueRedirect() {
     linear-gradient(135deg, rgba(255, 253, 246, 0.82), rgba(250, 245, 232, 0.68)),
     var(--surface-soft);
   box-shadow: 0 24px 52px rgba(37, 28, 16, 0.16);
-  transform: translateY(0) rotate(-0.5deg);
+  transform: translateY(0);
   transition:
     border-color 220ms ease,
     box-shadow 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
@@ -273,7 +273,7 @@ function confirmIssueRedirect() {
 .friend-application-card:focus-within {
   border-color: var(--border-strong);
   box-shadow: 0 30px 68px rgba(37, 28, 16, 0.22);
-  transform: translateY(-5px) rotate(0.35deg);
+  transform: translateY(-5px);
 }
 
 .friend-application-card.is-writing {
@@ -506,12 +506,12 @@ function confirmIssueRedirect() {
 @keyframes friend-application-arrive {
   from {
     opacity: 0;
-    transform: translateY(18px) rotate(-1.8deg);
+    transform: translateY(18px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) rotate(-0.5deg);
+    transform: translateY(0);
   }
 }
 

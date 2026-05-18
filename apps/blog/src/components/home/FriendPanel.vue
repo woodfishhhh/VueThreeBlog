@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef } from "vue";
+import { computed, shallowRef } from "vue";
 
 import FriendLinkApplicationForm from "@/components/home/friend/FriendLinkApplicationForm.vue";
 import FriendLinkGrid from "@/components/home/friend/FriendLinkGrid.vue";
@@ -10,6 +10,18 @@ const props = defineProps<{
 }>();
 
 const isMobileApplicationOpen = shallowRef(false);
+const mobileTriggerTilt = shallowRef(createMobileTriggerTiltState());
+
+const mobileTriggerStyle = computed<Record<string, string>>(() => ({
+  "--friend-trigger-rotate-x": mobileTriggerTilt.value.rotateX,
+  "--friend-trigger-rotate-y": mobileTriggerTilt.value.rotateY,
+  "--friend-trigger-glare-x": mobileTriggerTilt.value.glareX,
+  "--friend-trigger-glare-y": mobileTriggerTilt.value.glareY,
+  "--friend-trigger-glare-opacity": mobileTriggerTilt.value.glareOpacity,
+  "--friend-trigger-lift": mobileTriggerTilt.value.lift,
+  "--friend-trigger-shadow-y": mobileTriggerTilt.value.shadowY,
+  "--friend-trigger-shadow-blur": mobileTriggerTilt.value.shadowBlur,
+}));
 
 function openMobileApplication() {
   isMobileApplicationOpen.value = true;
@@ -17,6 +29,71 @@ function openMobileApplication() {
 
 function closeMobileApplication() {
   isMobileApplicationOpen.value = false;
+}
+
+function createMobileTriggerTiltState() {
+  return {
+    rotateX: "0deg",
+    rotateY: "0deg",
+    glareX: "50%",
+    glareY: "50%",
+    glareOpacity: "0",
+    lift: "0px",
+    shadowY: "18px",
+    shadowBlur: "42px",
+  };
+}
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+function handleMobileTriggerPointerMove(event: PointerEvent) {
+  if (event.pointerType !== "mouse" || prefersReducedMotion()) {
+    return;
+  }
+
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) {
+    return;
+  }
+
+  const x = (event.clientX - rect.left) / rect.width - 0.5;
+  const y = (event.clientY - rect.top) / rect.height - 0.5;
+  const maxTilt = 13;
+
+  mobileTriggerTilt.value = {
+    rotateX: `${(-y * maxTilt).toFixed(2)}deg`,
+    rotateY: `${(x * maxTilt).toFixed(2)}deg`,
+    glareX: `${((x + 0.5) * 100).toFixed(1)}%`,
+    glareY: `${((y + 0.5) * 100).toFixed(1)}%`,
+    glareOpacity: "0.34",
+    lift: "-7px",
+    shadowY: "30px",
+    shadowBlur: "70px",
+  };
+}
+
+function handleMobileTriggerFocus() {
+  if (prefersReducedMotion()) {
+    return;
+  }
+
+  mobileTriggerTilt.value = {
+    ...createMobileTriggerTiltState(),
+    glareOpacity: "0.22",
+    lift: "-4px",
+    shadowY: "26px",
+    shadowBlur: "60px",
+  };
+}
+
+function resetMobileTriggerTilt() {
+  mobileTriggerTilt.value = createMobileTriggerTiltState();
 }
 
 function visitRandomFriend() {
@@ -38,7 +115,7 @@ function visitRandomFriend() {
       <FriendLinkApplicationForm />
     </section>
 
-    <section data-testid="friend-panel-grid" class="friend-links-pane">
+    <section id="friend-links-container" data-testid="friend-panel-grid" class="friend-links-pane">
       <header data-testid="friend-panel-hero" class="friend-links-pane__header">
         <div>
           <div class="text-[11px] tracking-[0.22em] text-[var(--stage-hint)]">邻居星球</div>
@@ -65,8 +142,13 @@ function visitRandomFriend() {
     <button
       data-testid="friend-mobile-drawer-toggle"
       class="friend-mobile-application-trigger md:hidden"
+      :style="mobileTriggerStyle"
       type="button"
+      @blur="resetMobileTriggerTilt"
+      @focus="handleMobileTriggerFocus"
       @click="openMobileApplication"
+      @pointerleave="resetMobileTriggerTilt"
+      @pointermove="handleMobileTriggerPointerMove"
     >
       提交友链
     </button>
@@ -130,13 +212,20 @@ function visitRandomFriend() {
   display: flex;
   min-height: 0;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   background:
     linear-gradient(135deg, rgba(255, 251, 241, 0.72), rgba(255, 255, 255, 0.48)),
     var(--surface-soft);
   box-shadow: 0 8px 32px rgba(37, 32, 22, 0.12);
+  scrollbar-width: none;
+}
+
+.friend-links-pane::-webkit-scrollbar {
+  display: none;
 }
 
 .friend-links-pane__header {
@@ -187,12 +276,43 @@ function visitRandomFriend() {
   right: 1rem;
   bottom: 1.2rem;
   z-index: 30;
+  overflow: hidden;
   border: 1px solid var(--border-strong);
   border-radius: 999px;
   background: var(--stage-fg);
   padding: 0.78rem 1.1rem;
   color: var(--stage-bg);
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 var(--friend-trigger-shadow-y) var(--friend-trigger-shadow-blur) rgba(0, 0, 0, 0.2);
+  transform: perspective(720px) translateY(var(--friend-trigger-lift))
+    rotateX(var(--friend-trigger-rotate-x)) rotateY(var(--friend-trigger-rotate-y));
+  transform-style: preserve-3d;
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
+.friend-mobile-application-trigger::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      circle at var(--friend-trigger-glare-x) var(--friend-trigger-glare-y),
+      rgba(255, 255, 255, 0.58),
+      rgba(255, 255, 255, 0.18) 30%,
+      transparent 62%
+    );
+  content: "";
+  opacity: var(--friend-trigger-glare-opacity);
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.friend-mobile-application-trigger:hover,
+.friend-mobile-application-trigger:focus-visible {
+  border-color: var(--stage-fg);
 }
 
 .friend-mobile-drawer {
@@ -274,11 +394,21 @@ function visitRandomFriend() {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .friend-mobile-application-trigger,
   .friend-drawer-enter-active,
   .friend-drawer-leave-active,
   .friend-drawer-enter-active .friend-mobile-drawer__sheet,
   .friend-drawer-leave-active .friend-mobile-drawer__sheet {
     transition: none;
+  }
+
+  .friend-mobile-application-trigger {
+    transform: none;
+    will-change: auto;
+  }
+
+  .friend-mobile-application-trigger::before {
+    opacity: 0;
   }
 }
 </style>

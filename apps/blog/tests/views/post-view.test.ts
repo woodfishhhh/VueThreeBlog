@@ -1,6 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { defineComponent } from "vue";
-import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
 
 const mocks = vi.hoisted(() => ({
   getPostSummaries: vi.fn(),
@@ -198,6 +199,12 @@ describe("PostView", () => {
     expect(wrapper.get("[data-testid='post-view-previous-link']").text()).toContain("Vector Notes");
     expect(wrapper.get("[data-testid='post-view-next-link']").text()).toContain("Signal Objects");
     expect(document.title).toBe("Orbiting Interfaces | WOODFISH");
+  });
+
+  it("keeps the post scroll surface interactive inside the route transition stage", () => {
+    const css = readFileSync("src/assets/main.css", "utf8");
+
+    expect(css).toMatch(/\.article-page\s*{[^}]*pointer-events:\s*auto;/s);
   });
 
   it("preserves the originating blog query in the back link", async () => {

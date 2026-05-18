@@ -37,6 +37,7 @@
     "@types/node": "^25.5.2",
     "@types/three": "^0.183.1",
     "@vite-pwa/nuxt": "^1.1.1",
+    "@vitejs/plugin-vue": "6.0.7",
     "@vue/test-utils": "^2.4.6",
     "cross-env": "^10.1.0",
     "jsdom": "^29.0.1",

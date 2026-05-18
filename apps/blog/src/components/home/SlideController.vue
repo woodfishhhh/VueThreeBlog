@@ -35,27 +35,13 @@ function scrollElement(element: HTMLElement, top: number, behavior: ScrollBehavi
   });
 }
 
-function scrollFriendLinks(top: number) {
-  const friendScroll = document.getElementById("friend-links-container");
-
-  if (!friendScroll) {
-    return false;
-  }
-
-  scrollElement(friendScroll, top, "auto");
-  return true;
-}
-
 function handleWheel(event: WheelEvent) {
   if (siteStore.isFocusing || siteStore.mode === "reading") {
     return;
   }
 
   if (siteStore.mode === "friend") {
-    if (scrollFriendLinks(event.deltaY)) {
-      event.preventDefault();
-      return;
-    }
+    return;
   }
 
   if (Math.abs(event.deltaY) <= 30) {
@@ -96,11 +82,7 @@ function handleTouchMove(event: TouchEvent) {
   const diff = touchStartY - touchEndY;
 
   if (siteStore.mode === "friend") {
-    if (scrollFriendLinks(diff)) {
-      event.preventDefault();
-      touchStartY = touchEndY;
-      return;
-    }
+    return;
   }
 
   if (Math.abs(diff) <= 40) {
