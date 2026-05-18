@@ -223,7 +223,7 @@ jobs:
 
             # Wait for healthcheck
             for i in {1..30}; do
-              if curl -fsSL http://127.0.0.1:3000/api/health >/dev/null 2>&1; then
+              if curl -fsSL http://172.18.0.1:3000/api/health >/dev/null 2>&1; then
                 echo "API health check passed"
                 exit 0
               fi

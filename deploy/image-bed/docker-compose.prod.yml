@@ -6,7 +6,7 @@ services:
     env_file:
       - ${MUYU_ENV_FILE:-/etc/muyu/image-bed-api.env}
     ports:
-      - "127.0.0.1:3000:3000"
+      - "172.18.0.1:3000:3000"
     volumes:
       - /srv/muyu-images:/srv/muyu-images
       - /srv/muyu-data:/srv/muyu-data
