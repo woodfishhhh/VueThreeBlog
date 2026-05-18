@@ -88,11 +88,7 @@ const defaultRotations = {
   day: { x: 0.3, y: 0.36, z: 0 },
 } as const;
 const savedFocusRotations = {
-  night: new THREE.Euler(
-    defaultRotations.night.x,
-    defaultRotations.night.y,
-    defaultRotations.night.z,
-  ),
+  night: new THREE.Euler(defaultRotations.night.x, defaultRotations.night.y, defaultRotations.night.z),
   day: new THREE.Euler(defaultRotations.day.x, defaultRotations.day.y, defaultRotations.day.z),
 };
 
@@ -109,6 +105,8 @@ let controls: {
   enableDamping: boolean;
   dampingFactor: number;
   maxDistance: number;
+  minPolarAngle: number;
+  maxPolarAngle: number;
   enabled: boolean;
   update: () => void;
   dispose: () => void;
@@ -320,9 +318,7 @@ function updateWorksOrbitCards(elapsed = 0, delta = 0) {
   const height = container.value.clientHeight;
   const activeGeometry = getActiveGeometry();
   const visible =
-    isDesktopWorksOrbitMode(store.mode, store.worksViewMode, isMobile.value) &&
-    !store.isFocusing &&
-    !!activeGeometry;
+    isDesktopWorksOrbitMode(store.mode, store.worksViewMode, isMobile.value) && !store.isFocusing && !!activeGeometry;
 
   if (activeGeometry) {
     activeGeometry.group.getWorldPosition(geometryWorldCenter);
@@ -351,9 +347,7 @@ function updateWorksOrbitCards(elapsed = 0, delta = 0) {
   }
 
   const ritualIntensity =
-    visible && worksOrbitCards.isInteracting()
-      ? getWorksCenterMagnetStrength(pointer, prefersReducedMotion)
-      : 0;
+    visible && worksOrbitCards.isInteracting() ? getWorksCenterMagnetStrength(pointer, prefersReducedMotion) : 0;
   hypercube?.setInteractionIntensity(theme.value === "night" ? ritualIntensity : 0);
   mobius?.setInteractionIntensity(theme.value === "day" ? ritualIntensity : 0);
   starField?.setWarpIntensity(theme.value === "night" ? ritualIntensity : 0);
@@ -417,10 +411,7 @@ function releaseCardInteraction(event?: PointerEvent) {
   }
   cardGrabActive.value = worksOrbitCards.isInteracting();
 
-  if (
-    event?.currentTarget instanceof HTMLElement &&
-    event.currentTarget.hasPointerCapture(event.pointerId)
-  ) {
+  if (event?.currentTarget instanceof HTMLElement && event.currentTarget.hasPointerCapture(event.pointerId)) {
     event.currentTarget.releasePointerCapture(event.pointerId);
   }
 }
@@ -454,9 +445,7 @@ function handleCanvasPointerDown(event: PointerEvent) {
     return;
   }
 
-  if (
-    !shouldRaycastSceneGeometry(store.mode, store.worksViewMode, store.isFocusing, isMobile.value)
-  ) {
+  if (!shouldRaycastSceneGeometry(store.mode, store.worksViewMode, store.isFocusing, isMobile.value)) {
     return;
   }
 
@@ -477,8 +466,7 @@ function handleCanvasPointerDown(event: PointerEvent) {
 
   event.stopPropagation();
 
-  const targetRotation =
-    theme.value === "day" ? savedFocusRotations.day : savedFocusRotations.night;
+  const targetRotation = theme.value === "day" ? savedFocusRotations.day : savedFocusRotations.night;
   targetRotation.copy(activeGeometry.group.rotation);
 
   store.goHome();
@@ -544,6 +532,8 @@ onMounted(async () => {
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
   controls.maxDistance = 15;
+  controls.minPolarAngle = 0.1;
+  controls.maxPolarAngle = Math.PI - 0.1;
   controls.enabled = store.isFocusing;
 
   applyThemeImmediate(theme.value);
@@ -603,12 +593,7 @@ onMounted(async () => {
       const targetPos = new THREE.Vector3(0, 0, 10);
       const targetLook = new THREE.Vector3(0, 0, 0);
 
-      if (
-        store.mode === "blog" ||
-        store.mode === "author" ||
-        store.mode === "friend" ||
-        store.mode === "works"
-      ) {
+      if (store.mode === "blog" || store.mode === "author" || store.mode === "friend" || store.mode === "works") {
         targetPos.set(0, 0, 12);
       } else if (store.mode === "reading") {
         targetPos.set(0, 0, 15);
@@ -619,11 +604,7 @@ onMounted(async () => {
         const normalizedProgress = Math.min(Math.max(introProgress, 0), 1);
         const easedProgress = 1 - Math.pow(1 - normalizedProgress, 4);
 
-        threeScene.camera.position.lerpVectors(
-          CAMERA_INTRO_START_POSITION,
-          targetPos,
-          easedProgress,
-        );
+        threeScene.camera.position.lerpVectors(CAMERA_INTRO_START_POSITION, targetPos, easedProgress);
         threeScene.camera.lookAt(targetLook);
 
         if (normalizedProgress >= 1) introCompleted = true;
@@ -722,8 +703,7 @@ watch(theme, (nextTheme) => {
   // homeBackdropGlyph?.setTheme(nextTheme);
   const geometry = getGeometryByTheme(nextTheme);
   if (store.isFocusing && geometry) {
-    const targetRotation =
-      nextTheme === "day" ? savedFocusRotations.day : savedFocusRotations.night;
+    const targetRotation = nextTheme === "day" ? savedFocusRotations.day : savedFocusRotations.night;
     targetRotation.copy(geometry.group.rotation);
   }
   cardHovered.value = false;
