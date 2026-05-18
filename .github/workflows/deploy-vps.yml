@@ -110,12 +110,24 @@ jobs:
           ssh "$ssh_dest" "rm -rf '$remote_chunks'; mkdir -p '$remote_chunks'; rm -f '$remote_archive'"
 
           for part in "${{ env.DEPLOY_ARCHIVE }}".part-*; do
-            timeout 90s scp \
-              -o BatchMode=yes \
-              -o ServerAliveInterval=15 \
-              -o ServerAliveCountMax=4 \
-              "$part" \
-              "$ssh_dest:$remote_chunks/$(basename "$part")"
+            uploaded=0
+            for attempt in 1 2 3; do
+              if timeout 180s scp \
+                -o BatchMode=yes \
+                -o ServerAliveInterval=15 \
+                -o ServerAliveCountMax=4 \
+                "$part" \
+                "$ssh_dest:$remote_chunks/$(basename "$part")"; then
+                uploaded=1
+                break
+              fi
+
+              if [ "$attempt" -lt 3 ]; then
+                sleep 5
+              fi
+            done
+
+            test "$uploaded" -eq 1
           done
 
           # shellcheck disable=SC2029
