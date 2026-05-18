@@ -4,6 +4,7 @@ import { onBeforeUnmount, watch, type Ref } from "vue";
 interface UseGsapSmoothScrollOptions {
   duration?: number;
   ease?: string;
+  onSettle?: (container: HTMLElement) => void;
   wheelMultiplier?: number;
 }
 
@@ -77,6 +78,7 @@ export function useGsapSmoothScroll(
         isAnimating = false;
         activeTween = null;
         targetScrollTop = boundContainer.scrollTop;
+        options.onSettle?.(boundContainer);
       },
     });
   }
@@ -137,6 +139,7 @@ export function useGsapSmoothScroll(
   });
 
   return {
+    isSmoothScrolling: () => isAnimating,
     syncScrollPosition,
   };
 }

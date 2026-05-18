@@ -145,7 +145,7 @@ function handleToggleTheme(payload: { x: number; y: number }) {
 
       <div
         v-else
-        class="article-page__article w-full max-w-full overflow-hidden"
+        class="article-page__article w-full max-w-full"
         data-testid="post-view-article"
       >
         <ArticleContent :article="article" :scroll-container="pageRoot" />

@@ -34,9 +34,10 @@ let releaseFrame = 0;
 let cachedSegmentDistance = 0;
 let resizeObserver: ResizeObserver | undefined;
 let scrollRaf = 0;
-const { syncScrollPosition } = useGsapSmoothScroll(scrollerRef, {
-  duration: 0.72,
-  wheelMultiplier: 1.08,
+const { isSmoothScrolling, syncScrollPosition } = useGsapSmoothScroll(scrollerRef, {
+  duration: 0.42,
+  onSettle: () => enforceLoopPosition(),
+  wheelMultiplier: 0.48,
 });
 
 watch(
@@ -178,6 +179,33 @@ function resetLoopPosition() {
   releaseRecenteringLock();
 }
 
+function enforceLoopPosition() {
+  const scroller = scrollerRef.value;
+  const distance = getSegmentDistance();
+
+  if (!scroller || distance <= 0) {
+    return;
+  }
+
+  const lowerLimit = distance * 0.45;
+  const upperLimit = distance * 1.55;
+
+  if (scroller.scrollTop < lowerLimit) {
+    isRecentering = true;
+    scroller.scrollTop += distance;
+    syncScrollPosition(scroller.scrollTop);
+    releaseRecenteringLock();
+    return;
+  }
+
+  if (scroller.scrollTop > upperLimit) {
+    isRecentering = true;
+    scroller.scrollTop -= distance;
+    syncScrollPosition(scroller.scrollTop);
+    releaseRecenteringLock();
+  }
+}
+
 function releaseRecenteringLock() {
   if (releaseFrame) {
     window.cancelAnimationFrame(releaseFrame);
@@ -190,36 +218,13 @@ function releaseRecenteringLock() {
 }
 
 function handleLoopScroll() {
-  if (isRecentering || scrollRaf) {
+  if (isRecentering || isSmoothScrolling() || scrollRaf) {
     return;
   }
 
   scrollRaf = window.requestAnimationFrame(() => {
     scrollRaf = 0;
-    const scroller = scrollerRef.value;
-    const distance = getSegmentDistance();
-
-    if (!scroller || distance <= 0) {
-      return;
-    }
-
-    const lowerLimit = distance * 0.45;
-    const upperLimit = distance * 1.55;
-
-    if (scroller.scrollTop < lowerLimit) {
-      isRecentering = true;
-      scroller.scrollTop += distance;
-      syncScrollPosition(scroller.scrollTop);
-      releaseRecenteringLock();
-      return;
-    }
-
-    if (scroller.scrollTop > upperLimit) {
-      isRecentering = true;
-      scroller.scrollTop -= distance;
-      syncScrollPosition(scroller.scrollTop);
-      releaseRecenteringLock();
-    }
+    enforceLoopPosition();
   });
 }
 </script>
