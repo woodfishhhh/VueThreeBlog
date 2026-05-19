@@ -43,6 +43,9 @@ public/imported-assets/
 public/remote-assets/
 public/author-assets/
 
+# Storybook build output
+storybook-static/
+
 # Stale static leftovers
 public/asset/f725f7fc67d79930b505550749765877.jpg
 public/asset/image.png

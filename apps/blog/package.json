@@ -17,7 +17,9 @@
     "preview": "nuxt preview",
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "storybook": "storybook dev --port 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.0",
@@ -34,6 +36,11 @@
   "devDependencies": {
     "@pinia/nuxt": "^0.11.3",
     "@playwright/test": "^1.59.1",
+    "@storybook/addon-essentials": "^8.6.18",
+    "@storybook/addon-interactions": "^8.6.18",
+    "@storybook/blocks": "^8.6.18",
+    "@storybook/vue3": "^8.6.18",
+    "@storybook/vue3-vite": "^8.6.18",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^25.5.2",
     "@types/three": "^0.183.1",
@@ -44,6 +51,7 @@
     "jsdom": "^29.0.1",
     "nuxt": "npm:nuxt-nightly@5x",
     "sharp": "^0.34.5",
+    "storybook": "^8.6.18",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
     "vitest": "^3.0.0",
