@@ -10,7 +10,6 @@ on:
       - "apps/image-bed-api/**"
       - "packages/shared/**"
       - "package.json"
-      - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
       - ".npmrc"
       - "patches/**"
